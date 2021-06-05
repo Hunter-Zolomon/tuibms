@@ -4,21 +4,22 @@ template <class T>
 class AVL {
     public:
         AVL();
+        ~AVL();
 
-        bool insertIntoTree(T data);
-        bool searchTree(T data);
-        bool deleteFromTree(T data);
-        bool updateTree(T datatochange, T newdata);
+        bool insertIntoTree(DTO<T> data);
+        bool searchTree(DTO<T> data);
+        bool deleteFromTree(DTO<T> data);
+        bool updateTree(DTO<T> datatochange, DTO<T> newdata);
         void clearTree();
     private:
-        AVLNode* rootNode;
+        AVLNode<T>* rootNode;
 
-        AVLNode<T>* search(T data, AVLNode<T>* node);
+        AVLNode<T>* search(DTO<T> data, AVLNode<T>* node);
         AVLNode<T>* leftRotate(AVLNode<T>* node);
         AVLNode<T>* leftRightRotate(AVLNode<T>* node);
         AVLNode<T>* rightRotate(AVLNode<T>* node);
         AVLNode<T>* rightLeftRotate(AVLNode<T>* node);
-        AVLNode<T>* insertInto(T data, AVLNode<T>* node);
-        AVLNode<T>* deleteFrom(T data, AVLNode<T>* node);
+        AVLNode<T>* insertInto(DTO<T> data, AVLNode<T>* node);
+        AVLNode<T>* deleteFrom(DTO<T> data, AVLNode<T>* node);
         int getHeight(AVLNode<T>* node);
 };

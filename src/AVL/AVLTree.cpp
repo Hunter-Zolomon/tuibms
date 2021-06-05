@@ -1,16 +1,16 @@
-#include "AVLNode.h"
-#include "AVLTree.h"
+#include <AVLNode.h>
+#include <AVLTree.h>
 
 template<class T>
-AVL<T>::AVL() { rootNode = NULL; }
+AVL<T>::AVL() { rootNode = nullptr; }
 
 template<class T>
-int AVL<T>::getHeight(AVLNode<T>* node) { return node == NULL ? -1 : node->height; }
+int AVL<T>::getHeight(AVLNode<T>* node) { return node == nullptr ? -1 : node->height; }
 
 template<class T>
-AVLNode<T>* AVL<T>::search(T data, AVLNode<T>* node) {
-    if (node == NULL)
-        return NULL;
+AVLNode<T>* AVL<T>::search(DTO<T> data, AVLNode<T>* node) {
+    if (node == nullptr)
+        return nullptr;
     else if (data == node->data)
         return node;
     else if (data < node->data)
@@ -21,8 +21,8 @@ AVLNode<T>* AVL<T>::search(T data, AVLNode<T>* node) {
 }
 
 template<class T>
-bool AVL<T>::searchTree(T data) {
-    if (search(data, rootNode) == NULL)
+bool AVL<T>::searchTree(DTO<T> data) {
+    if (search(data, rootNode) == nullptr)
         return false;
     return true;
 }
@@ -33,7 +33,7 @@ AVLNode<T>* AVL<T>::leftRotate(AVLNode<T>* node) {
     node->right->left = node;
     node->right = leftchildnode;
     node->height = max(getHeight(node->left), getHeight(node->right)) + 1;
-    if (node->right != NULL)
+    if (node->right != nullptr)
         node->right->height = max(getHeight(node->right->left), getHeight(node->right->right)) + 1;
     return newroot;
 }
@@ -44,7 +44,7 @@ AVLNode<T>* AVL<T>::rightRotate(AVLNode<T>* node) {
     node->left->right = node;
     node->left = rightchildnode;
     node->height = max(getHeight(node->left), getHeight(node->right)) + 1;
-    if (node->left != NULL)
+    if (node->left != nullptr)
         node->left->height = max(getHeight(node->left->left), getHeight(node->left->right)) + 1;
     return newroot;
 }
@@ -62,8 +62,8 @@ AVLNode<T>* AVL<T>::rightLeftRotate(AVLNode<T>* node) {
 }
 
 template<class T>
-AVLNode<T>* AVL<T>::insertInto(T data, AVLNode<T>* node) {
-    if (node == NULL)
+AVLNode<T>* AVL<T>::insertInto(DTO<T> data, AVLNode<T>* node) {
+    if (node == nullptr)
         return node = new AVLNode<T>(data);
     else {
         if (data = node->data)
@@ -90,15 +90,15 @@ AVLNode<T>* AVL<T>::insertInto(T data, AVLNode<T>* node) {
 }
 
 template<class T>
-bool AVL<T>::insertIntoTree(T data) { rootNode = insertInto(data, rootNode); }
+bool AVL<T>::insertIntoTree(DTO<T> data) { rootNode = insertInto(data, rootNode); }
 
 template<class T>
-AVLNode<T>* AVL<T>::deleteFrom(T data, AVLNode<T>* node) {
-    if (node == NULL)
-        return NULL;
+AVLNode<T>* AVL<T>::deleteFrom(DTO<T> data, AVLNode<T>* node) {
+    if (node == nullptr)
+        return nullptr;
     else {
         if (data == node->data) {
-            if (node->right == NULL) {
+            if (node->right == nullptr) {
                 AVLNode<T>* currentnode = node;
                 node = node->left;
                 delete currentnode;
@@ -106,7 +106,7 @@ AVLNode<T>* AVL<T>::deleteFrom(T data, AVLNode<T>* node) {
             }
             else {
                 AVLNode<T>* currentnode = node->right;
-                while (currentnode->left != NULL)
+                while (currentnode->left != nullptr)
                     currentnode = currentnode->left;
                 node->data = currentnode->data;
                 node->right = deleteFrom(currentnode->data, node->right);
@@ -134,14 +134,14 @@ AVLNode<T>* AVL<T>::deleteFrom(T data, AVLNode<T>* node) {
 }
 
 template<class T>
-bool AVL<T>::deleteFromTree(T data) {
-    if (deleteFrom(data, node) != NULL)
+bool AVL<T>::deleteFromTree(DTO<T> data) {
+    if (deleteFrom(data, node) != nullptr)
         return true;
     else return false;
 }
 
 template<class T>
-bool AVL<T>::updateTree(T datatochange, T newdata) {
+bool AVL<T>::updateTree(DTO<T> datatochange, DTO<T> newdata) {
     if (deleteFromTree(datatochange)) {
         insertIntoTree(newdata);
         return true;
