@@ -1,11 +1,14 @@
 //#include <string>
-#include <DTO.hpp>
-#include <AVLTree.h>
+#include "DTO.h"
+#include "AVLTree.h"
+
+#ifndef HASHTABLE_H_
+#define HASHTABLE_H_
 
 template<class T>
 struct HTO {
-    DTO<T> data;
-    AVL* treeprt;
+    DTO<T>* data;
+    AVL<T>* treeptr;
 };
 
 template<class T>
@@ -21,7 +24,9 @@ class HashTable {
 
         HashTable(int tablesize);
         ~HashTable();
-        bool addToTable(DTO<T> dataobj);
+        bool addToTable(DTO<T>* dataobj);
         bool removeFromTable(int key);
         DTO<T>* operator[](int key); 
 };
+
+#endif

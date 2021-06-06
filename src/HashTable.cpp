@@ -1,17 +1,21 @@
+#include <cstddef>
+#include <string>
 #include <HashTable.h>
 
 template<class T>
 HashTable<T>::HashTable(int tablesize) {
-    hashtable = new HTO[tablesize];
-    for (int i = 0; i < tablesize; i++)
-        *(hashtable + i) = NULL;
+    hashtable = new HTO<T>[tablesize];
+    for (int i = 0; i < tablesize; i++) {
+        (hashtable + i)->data = nullptr;
+        (hashtable + i)->treeptr = nullptr;
+    }
     tblsize = tablesize;
 }
 
 template<class T>
 HashTable<T>::~HashTable() {
     for (int i = 0; i < tblsize; i++) {
-        if (*(hashtable + i) != NULL) {
+        if ((hashtable + i) != nullptr) {
             delete (hashtable + i);
             delete[] hashtable;
         }
@@ -20,7 +24,7 @@ HashTable<T>::~HashTable() {
 
 template<class T>
 int HashTable<T>::hashFunction(int key) {
-    //TODO implement hash function.
+    return key % tblsize; // TODO Implement better hashfunction
 }
 
 template<class T>
@@ -45,9 +49,9 @@ DTO<T>* HashTable<T>::operator[](int key) {
 }
 
 template<class T>
-bool HashTable<T>::addToTable(DTO<T> dataobj) {
-    int inputindx = hashFunction(dataobj.id);
-    if ((hashtable + inputindx)->data != NULL) {
+bool HashTable<T>::addToTable(DTO<T>* dataobj) {
+    int inputindx = hashFunction(dataobj->id);
+    if ((hashtable + inputindx)->data != nullptr) {
         return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
     } else {
         (hashtable + inputindx)->data = dataobj;
@@ -59,10 +63,9 @@ bool HashTable<T>::addToTable(DTO<T> dataobj) {
 template<class T>
 bool HashTable<T>::removeFromTable(int key) {
     int searchidx = hashFunction(key);
-    if ((hashtable + searchidx)->data != NULL) {
+    if ((hashtable + searchidx)->data != nullptr) {
         //searchidx = NULL; Needs to nullify
-        //delete (*(hashtable + searchidx))->data;
-        (hashtable + searchidx)->data = NULL;
+        delete (hashtable + searchidx);
         return true;
     }
     else {
@@ -71,3 +74,5 @@ bool HashTable<T>::removeFromTable(int key) {
     }
     return false;
 }
+
+template class HashTable<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
