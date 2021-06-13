@@ -1,6 +1,3 @@
-# Terminal Book Management System (TuiBMS)
-Terminal Book Management System
-
 [![Contributors][contributors-shield]][contributors-url]
 [![Issues][issues-shield]][issues-url]
 [![GPL License][license-shield]][license-url]

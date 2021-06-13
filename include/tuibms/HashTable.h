@@ -17,7 +17,7 @@ class HashTable {
     private:
         HTO<T>* hashtable;
 
-        int hashFunction(int key);
+		size_t hashFunction(int key, int p);
     public:
         int datacount;
         int tblsize;

@@ -28,6 +28,7 @@ class AVL {
         AVLNode<T>* insertInto(DTO<T>* data, AVLNode<T>* node);
         //AVLNode<T>* deleteFrom(DTO<T>* data, AVLNode<T>* node); Changed
         AVLNode<T>* deleteFrom(int key, AVLNode<T>* node);
+		void deleteTree(AVLNode<T>* node);
         int getHeight(AVLNode<T>* node);
 };
 
