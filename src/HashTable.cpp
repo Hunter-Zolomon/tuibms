@@ -14,9 +14,10 @@ HashTable<T>::HashTable(int tablesize) {
     hashtable = new HTO<T>[tablesize];
     for (int i = 0; i < tablesize; i++) {
         (hashtable + i)->data = nullptr;
-        (hashtable + i)->treeptr = nullptr;
+        (hashtable + i)->treeptr = new AVL<T>();
     }
     tblsize = tablesize;
+    datacount = 0;
 }
 
 template<class T>
@@ -63,6 +64,33 @@ DTO<T>* HashTable<T>::operator[](int key) {
     }
 }
 
+template<class T>
+DTO<T>* HashTable<T>::getFromHashTable(int key){
+    int searchidx = hashFunction(key, HASH_P);
+	if ((hashtable + searchidx)->data->id == key) {
+        //searchidx = NULL; Needs to nullify
+        return (hashtable + searchidx)->data;
+    }
+    else {
+        try{
+            DTO<T>* searchobj = (hashtable + searchidx)->treeptr->searchTree(key);
+            if (searchobj != nullptr) {
+                //searchidx = NULL;
+                return searchobj;
+            }
+            else {
+                //searchidx = NULL;
+                delete searchobj;
+                return nullptr;
+            } 
+        }
+        catch(...){
+            return nullptr;
+        }
+        
+    }
+}
+
 /**
  * Takes pointer to DTO object containing data type T as specified in the hashtable constructor and attempts to add it to the table.
  *
@@ -73,9 +101,15 @@ template<class T>
 bool HashTable<T>::addToTable(DTO<T>* dataobj) {
     int inputindx = hashFunction(dataobj->id, HASH_P);
     if ((hashtable + inputindx)->data != nullptr) {
-        return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
+        if ((hashtable + inputindx)->treeptr->insertIntoTree(dataobj)){
+            datacount++;
+            return true;
+        }
+        else return false;
+        //return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
     } else {
         (hashtable + inputindx)->data = dataobj;
+        datacount++;
         return true;
     }
     return false;
@@ -94,17 +128,29 @@ bool HashTable<T>::removeFromTable(int key) {
         //searchidx = NULL; Needs to nullify
 		if ((hashtable + searchidx)->data->id == key) {
 			delete (hashtable + searchidx)->data;
+            datacount--;
 			return true;
 		}
 		else {
-			return (hashtable + searchidx)->treeptr->deleteFromTree(key);
+            if ((hashtable + searchidx)->treeptr->deleteFromTree(key)){
+                datacount--;
+                return true;
+            }
+            else return false;
+			//return (hashtable + searchidx)->treeptr->deleteFromTree(key);
 		} 
     }
     else {
         //return (*(hashtable + searchidx))->treeptr->deleteFromTree(key); // delete function argument RECHECK after AVL implementation
-        return (hashtable + searchidx)->treeptr->deleteFromTree(key);
+        if ((hashtable + searchidx)->treeptr->deleteFromTree(key)){
+            datacount--;
+            return true;
+        }
+        else return false;
+        //return (hashtable + searchidx)->treeptr->deleteFromTree(key);
     }
     return false;
 }
 
 template class HashTable<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
+template class HashTable<std::wstring>;
