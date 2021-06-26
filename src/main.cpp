@@ -7,7 +7,7 @@
 #include <thread>      // for sleep_for, thread
 #include <utility>     // for move
 #include <vector>      // for vector
- 
+
 #include <ftxui/component/captured_mouse.hpp>  // for ftxui
 #include <ftxui/component/component.hpp>  // for Checkbox, Renderer, Horizontal, Vertical, Input, Menu, Radiobox, Tab, Toggle
 #include <ftxui/component/component_base.hpp>  // for ComponentBase
@@ -18,9 +18,21 @@
 #include <ftxui/screen/color.hpp>  // for Color, Color::BlueLight, Color::RedLight, Color::Black, Color::Blue, Color::Cyan, Color::CyanLight, Color::GrayDark, Color::GrayLight, Color::Green, Color::GreenLight, Color::Magenta, Color::MagentaLight, Color::Red, Color::White, Color::Yellow, Color::YellowLight, Color::Default
 #include <ftxui/component/menu.hpp>
 
+#include <HashTable.h>
+#include <AVLTree.h>
+#include <DTO.h>
+#include <Book.h>
+
+
 using namespace ftxui;
 
+std::vector<std::wstring> book_populate_menu(); // todo
+std::vector<std::wstring> patron_populate_menu();
+std::vector<std::wstring> loan_populate_menu();
+
 int main(int argc, char* argv[]) {
+
+	HashTable<std::wstring>* table1 = new HashTable<std::wstring>(5);
 
 	const char* title = R"(
 	######## ##     ## #### ########  ##     ##  ######  
@@ -30,19 +42,21 @@ int main(int argc, char* argv[]) {
 	   ##    ##     ##  ##  ##     ## ##     ##       ## 
 	   ##    ##     ##  ##  ##     ## ##     ## ##    ## 
 	   ##     #######  #### ########  ##     ##  ######                       
-	)";
+	)"; 
 
-	std::cout << title << std::endl;
+	std::cout << title << std::endl; 
+	
+	std::wstring user_search_input = L""; // Used for all tabs
 
-	std::wstring user_search_input = L"";
-
-	int dialog_to_show = 0; //0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
+	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
+	int dialog_to_show = 0; 
 
 	#pragma region Book Tab
-
 	// ---------------------------------------- Book Tab ---------------------------------------- 
 	//Book Search
 	auto book_user_search_input = Input(&user_search_input, L"Search books");
+
+	std::vector<Book> book_objects = {};
 
 	// Book Menu
 	std::vector<std::wstring> book_menu_entries = 	{	
@@ -53,6 +67,7 @@ int main(int argc, char* argv[]) {
 													};
 	int book_menu_entries_selectedidx = 0;
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx);
+
 
 	MenuBase::From(book_menu)->on_enter = [&](){
 		dialog_to_show = 1;
@@ -100,25 +115,21 @@ int main(int argc, char* argv[]) {
 	};
 
 	// Book Editor - Buttons
-	auto book_button_add 	= Button(L"Add New", 		[&](){
-		std::wstring book_line_content = 	input_book_id_content + L" - " +
-											input_book_isbn_content + L" - " +
-											input_book_title_content + L" - " +
-											input_book_author_content + L" - " +
-											input_book_year_content + L" - " +	
-											input_book_category_content + L" - " +
-											input_book_genre_content + L" - " + 
-											input_book_available_content;
+	auto book_button_add 	= Button(L"Add New",[&](){
+		Book book_line_content(123, input_book_isbn_content, input_book_title_content,
+								input_book_author_content, input_book_year_content,
+								input_book_category_content, input_book_genre_content,true);
+		std::wstring book_line_content_menu_entry = book_line_content.getBookMenuEntry();
+		book_menu_entries.push_back(book_line_content_menu_entry);
 
-		book_menu_entries.push_back(book_line_content);
 	}, true);
 
-	auto book_button_save 	= Button(L"Save Changes", 	[](){
+	auto book_button_save 	= Button(L"Save Changes",[](){
 		// 
 	}, true);
 
-	auto book_button_cancel = Button(L"Cancel", 		[](){
-
+	auto book_button_cancel = Button(L"Cancel", [](){
+		//
 	}, true);
 
 	// Book Editor - Button Container
@@ -149,7 +160,14 @@ int main(int argc, char* argv[]) {
 
 	auto book_dialog_container = Container::Horizontal({
 		Button(&book_dialog_entries[0], [&] {
-			
+			DTO<std::wstring>* DTO_Insert = new DTO<std::wstring>(book_menu_entries[book_menu_entries_selectedidx]);
+			table1->addToTable(DTO_Insert);
+			int insertId = DTO_Insert->id;
+			DTO<std::wstring>* DTO_Result = table1->getFromHashTable(insertId);
+			user_search_input = DTO_Result->dataobj;
+			dialog_to_show = 0;
+			user_search_input = L"";
+			delete table1;
 		}),
 		Button(&book_dialog_entries[1], [&] {
 				book_menu_entries.erase(book_menu_entries.begin() + book_menu_entries_selectedidx);
@@ -192,9 +210,9 @@ int main(int argc, char* argv[]) {
 									book_editor_section()	| color(Color::GreenLight)
 								})), 
 							hbox({
-								book_button_add->	Render() | flex,
-								book_button_save->	Render() | flex,
-								book_button_cancel->Render() | flex
+								book_button_add->	Render()| flex,
+								book_button_save->	Render()| flex,
+								book_button_cancel->Render()| flex
 								}) 							| color(Color::GreenLight)
 						})
 					})
@@ -207,7 +225,8 @@ int main(int argc, char* argv[]) {
 			return book_tab(L"BOOKS", L"BOOK EDITOR");
 	});
 
-	#pragma endregion
+
+	#pragma endregion 
 
 	#pragma region Patron Tab
 
@@ -330,10 +349,10 @@ int main(int argc, char* argv[]) {
 	// Patron - Tab Render Function
 	auto patron_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
 		return vbox({
-				patron_user_search_input->Render() | flex,
+				patron_user_search_input->Render() 		| flex,
 				separator(),
 				hbox({
-					window(	text(left_window_text) | 		color(Color::BlueLight), 
+					window(	text(left_window_text) 		|	color(Color::BlueLight), 
 							vbox({
 								patron_menu->Render() 
 							})) | flex | 					color(Color::BlueLight),
@@ -346,7 +365,7 @@ int main(int argc, char* argv[]) {
 								patron_button_add->		Render() | flex,
 								patron_button_save->	Render() | flex,
 								patron_button_cancel->	Render() | flex
-								}) ,
+								}) 						|	color(Color::BlueLight),
 						})
 					})
 				});
@@ -502,9 +521,9 @@ int main(int argc, char* argv[]) {
 							loan_editor_section()  		| color(Color::CyanLight),
 						})),
 						hbox({
-							loan_button_loan->	Render() | flex,
-							loan_button_extend->Render() | flex,
-							loan_button_return->Render() | flex
+							loan_button_loan->	Render()| flex,
+							loan_button_extend->Render()| flex,
+							loan_button_return->Render()| flex
 						}) 								| color(Color::CyanLight)
 				})
 			})
@@ -594,5 +613,4 @@ int main(int argc, char* argv[]) {
 	#pragma endregion
 
 	return EXIT_SUCCESS;
-
 }
