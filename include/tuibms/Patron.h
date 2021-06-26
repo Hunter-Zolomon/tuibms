@@ -1,7 +1,7 @@
 #include <string>
 
 class Patron{
-    int patron_id, 
+    int patron_id;
     int patron_num_borrowed;
     
     std::wstring    patron_fname,   patron_lname,   
