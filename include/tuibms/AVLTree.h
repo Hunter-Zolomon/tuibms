@@ -11,10 +11,11 @@ class AVL {
 
         bool insertIntoTree(DTO<T>* data);
         //bool searchTree(DTO<T>* data); Changed
-        DTO<T>* searchTree(int key);
+        DTO<T>* searchTree(int key); //Possibly change to reference instead
         //bool deleteFromTree(DTO<T>* data); Changed
         bool deleteFromTree(int key);
-        bool updateTree(DTO<T>* datatochange, DTO<T>* newdata);
+        //bool updateTree(DTO<T>* datatochange, DTO<T>* newdata); Changed
+		bool updateTree(int id_of_dto_tochange, T newdata);
         void clearTree();
     private:
         AVLNode<T>* rootNode;
