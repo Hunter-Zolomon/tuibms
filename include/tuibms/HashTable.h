@@ -24,9 +24,10 @@ class HashTable {
 
         HashTable(int tablesize);
         ~HashTable();
-        bool addToTable(DTO<T>* dataobj);
+        //bool addToTable(DTO<T>* dataobj); Depracated. Use operator() instead
         bool removeFromTable(int key);
-        DTO<T>* operator[](int key); 
+		bool operator()(DTO<T>* dataobj);
+        DTO<T>& operator[](int key); 
 };
 
 #endif

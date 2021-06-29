@@ -11,20 +11,21 @@
 
 template<class T>
 HashTable<T>::HashTable(int tablesize) {
-    hashtable = new HTO<T>[tablesize];
+	this->tblsize = tablesize;
+	this->datacount = 0;
+    this->hashtable = new HTO<T>[tablesize];
     for (int i = 0; i < tablesize; i++) {
-        (hashtable + i)->data = nullptr;
-        (hashtable + i)->treeptr = nullptr;
+        (this->hashtable + i)->data = nullptr;
+        (this->hashtable + i)->treeptr = new AVL<T>();
     }
-    tblsize = tablesize;
 }
 
 template<class T>
 HashTable<T>::~HashTable() {
-    for (int i = 0; i < tblsize; i++) {
-        if ((hashtable + i) != nullptr) {
-            delete (hashtable + i);
-            delete[] hashtable;
+    for (int i = 0; i < this->tblsize; i++) {
+        if (nullptr != (this->hashtable + i)) {
+            delete (this->hashtable + i);
+            delete[] this->hashtable;
         }
     }
 }
@@ -43,22 +44,23 @@ size_t HashTable<T>::hashFunction(int key, int p) {
  */
 
 template<class T>
-DTO<T>* HashTable<T>::operator[](int key) {
+DTO<T>& HashTable<T>::operator[](int key) {
     int searchidx = hashFunction(key, HASH_P);
-	if ((hashtable + searchidx)->data->id == key) {
+	if ((this->hashtable + searchidx)->data->id == key) {
         //searchidx = NULL; Needs to nullify
-        return (hashtable + searchidx)->data;
+        return *((this->hashtable + searchidx)->data);
     }
     else {
-        DTO<T>* searchobj = (hashtable + searchidx)->treeptr->searchTree(key);
-        if (searchobj != nullptr) {
+        DTO<T>* searchobj = (this->hashtable + searchidx)->treeptr->searchTree(key);
+		if (nullptr != searchobj) {
             //searchidx = NULL;
-            return searchobj;
+            return *searchobj;
         }
         else {
+			return *searchobj;
             //searchidx = NULL;
-            delete searchobj;
-            return nullptr;
+            //delete searchobj;
+            //return nullptr;
         } 
     }
 }
@@ -70,6 +72,23 @@ DTO<T>* HashTable<T>::operator[](int key) {
  */
 
 template<class T>
+bool HashTable<T>::operator()(DTO<T>* dataobj) {
+	int inputindx = hashFunction(dataobj->id, HASH_P);
+	if (nullptr != (this->hashtable + inputindx)->data) {
+		if ((this->hashtable + inputindx)->treeptr->insertIntoTree(dataobj)) {
+			this->datacount++;
+			return true;
+		}
+    } else {
+        (this->hashtable + inputindx)->data = dataobj;
+		this->datacount++;
+        return true;
+    }
+    return false;
+}
+
+/* Depracated Method Call (Use operator () instead)
+template<class T>
 bool HashTable<T>::addToTable(DTO<T>* dataobj) {
     int inputindx = hashFunction(dataobj->id, HASH_P);
     if ((hashtable + inputindx)->data != nullptr) {
@@ -80,6 +99,7 @@ bool HashTable<T>::addToTable(DTO<T>* dataobj) {
     }
     return false;
 }
+*/
 
 /**
  * Takes the integer key value to be used for a unique table search and deletion.
@@ -90,19 +110,26 @@ bool HashTable<T>::addToTable(DTO<T>* dataobj) {
 template<class T>
 bool HashTable<T>::removeFromTable(int key) {
     int searchidx = hashFunction(key, HASH_P);
-    if ((hashtable + searchidx)->data != nullptr) {
+	if (nullptr != (this->hashtable + searchidx)->data) {
         //searchidx = NULL; Needs to nullify
-		if ((hashtable + searchidx)->data->id == key) {
+		if ((this->hashtable + searchidx)->data->id == key) {
 			delete (hashtable + searchidx)->data;
+			this->datacount--;
 			return true;
 		}
 		else {
-			return (hashtable + searchidx)->treeptr->deleteFromTree(key);
+			if((this->hashtable + searchidx)->treeptr->deleteFromTree(key)) {
+				this->datacount--;
+				return true;
+			}
 		} 
     }
     else {
         //return (*(hashtable + searchidx))->treeptr->deleteFromTree(key); // delete function argument RECHECK after AVL implementation
-        return (hashtable + searchidx)->treeptr->deleteFromTree(key);
+        if ((this->hashtable + searchidx)->treeptr->deleteFromTree(key)) {
+			this->datacount--;
+			return true;
+		}
     }
     return false;
 }
