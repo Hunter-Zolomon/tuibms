@@ -46,7 +46,6 @@ int main(int argc, char* argv[]) {
 
 	std::cout << title << std::endl; 
 	
-	std::wstring user_search_input = L""; // Used for all tabs
 
 	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
 	int dialog_to_show = 0; 
@@ -54,7 +53,8 @@ int main(int argc, char* argv[]) {
 	#pragma region Book Tab
 	// ---------------------------------------- Book Tab ---------------------------------------- 
 	//Book Search
-	auto book_user_search_input = Input(&user_search_input, L"Search books");
+	std::wstring book_user_search_text = L""; // Used for all tabs
+	auto book_user_search_input = Input(&book_user_search_text, L"Search books");
 
 	std::vector<Book> book_objects = {};
 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 
 	// Book Editor - Buttons
 	auto book_button_add 	= Button(L"Add New",[&](){
-		Book book_line_content(123, input_book_isbn_content, input_book_title_content,
+		Book book_line_content(input_book_isbn_content, input_book_title_content,
 								input_book_author_content, input_book_year_content,
 								input_book_category_content, input_book_genre_content,true);
 		std::wstring book_line_content_menu_entry = book_line_content.getBookMenuEntry();
@@ -164,9 +164,9 @@ int main(int argc, char* argv[]) {
 			table1->addToTable(DTO_Insert);
 			int insertId = DTO_Insert->id;
 			DTO<std::wstring>* DTO_Result = table1->getFromHashTable(insertId);
-			user_search_input = DTO_Result->dataobj;
+			book_user_search_text = DTO_Result->dataobj;
 			dialog_to_show = 0;
-			user_search_input = L"";
+			book_user_search_text = L"";
 			delete table1;
 		}),
 		Button(&book_dialog_entries[1], [&] {
@@ -233,7 +233,8 @@ int main(int argc, char* argv[]) {
 	// ---------------------------------------- Patron Tab ---------------------------------------- 
 
 	// Patron Search
-	auto patron_user_search_input = Input(&user_search_input, L"Search patrons");
+	std::wstring patron_user_search_text = L"";
+	auto patron_user_search_input = Input(&patron_user_search_text, L"Search patrons");
 
 	// Patron Menu
 	std::vector<std::wstring> patron_menu_entries = { 
@@ -355,7 +356,7 @@ int main(int argc, char* argv[]) {
 					window(	text(left_window_text) 		|	color(Color::BlueLight), 
 							vbox({
 								patron_menu->Render() 
-							})) | flex | 					color(Color::BlueLight),
+							})) | flex 					| 	color(Color::BlueLight),
 					vbox({ 
 						window(	text(right_window_text)	| 	color(Color::BlueLight), 
 							vbox({
@@ -377,6 +378,7 @@ int main(int argc, char* argv[]) {
 		}
 	);
 
+
 	#pragma endregion
 
 	#pragma region Loan Tab
@@ -384,7 +386,8 @@ int main(int argc, char* argv[]) {
 	// ---------------------------------------- Loan Tab ---------------------------------------- 
 
 	// Loan Search
-	auto loan_user_search_input = Input(&user_search_input, L"Search loans");
+	std::wstring loan_user_seach_text = L"";
+	auto loan_user_search_input = Input(&loan_user_seach_text, L"Search loans");
 	
 	// Loan Menu
 	std::vector<std::wstring> loan_menu_entries = 	{	

@@ -1,16 +1,14 @@
 #include <string>
 
 class Book{
-    int book_id; //remove
     std::wstring    book_isbn,      book_title, 
                     book_author,    book_year, 
                     book_category,  book_genre;
     bool book_isAvailable;
     public:
-        Book(int id, std::wstring isbn, std::wstring title, std::wstring author,
+        Book(std::wstring isbn, std::wstring title, std::wstring author,
              std::wstring year, std::wstring category,std::wstring genre, bool isAvailable);
 
-        int getId();
         bool getIsAvailable();
         std::wstring getIsbn();
         std::wstring getTitle();
@@ -21,7 +19,6 @@ class Book{
         
         std::wstring getBookMenuEntry();
 
-        void setId(int id);
         void setIsAvailable(bool isAvailable);
         void setIsbn(std::wstring isbn);
         void setTitle(std::wstring title);
@@ -29,6 +26,5 @@ class Book{
         void setYear(std::wstring year);
         void setCategory(std::wstring category);
         void setGenre(std::wstring genre);
-
 
 };
