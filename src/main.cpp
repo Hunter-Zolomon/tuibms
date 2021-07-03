@@ -139,20 +139,24 @@ int main(int argc, char* argv[]) {
 		book_button_cancel
 	});
 
-	// Book - Search & Menu Container
-	auto book_books_container = Container::Vertical({
-		book_user_search_input,
-		book_menu
-	});
-
-	// Book - Main Content Container 
-	auto book_content_container = Container::Horizontal({
-		book_books_container,
+	// Book Editor - Editor & Button Container
+	auto book_editor_button_container = Container::Vertical({
 		book_editor_section_input,
 		book_button_container
 	});
 
+	// Book Editor - Book Section Stuff
+	auto book_content_container = Container::Horizontal({
+		book_menu,
+		book_editor_button_container
+	});
 
+	// Book Editor - Book Section Stuff & Search Field
+	auto book_tab_container = Container::Vertical({
+		book_user_search_input,
+		book_content_container
+	});
+	
 	// Book - Dialog Box 
 	std::vector<std::wstring> book_dialog_entries = {
 		L"Edit Book", L"Delete Book", L"Loan", L"Exit",
@@ -166,8 +170,8 @@ int main(int argc, char* argv[]) {
 			DTO<std::wstring>* DTO_Result = table1->getFromHashTable(insertId);
 			book_user_search_text = DTO_Result->dataobj;
 			dialog_to_show = 0;
-			book_user_search_text = L"";
-			delete table1;
+			user_search_input = L"";
+			//delete table1;
 		}),
 		Button(&book_dialog_entries[1], [&] {
 				book_menu_entries.erase(book_menu_entries.begin() + book_menu_entries_selectedidx);
@@ -221,7 +225,7 @@ int main(int argc, char* argv[]) {
 
 
 	// Book - Main Renderer 
-	auto book_tab_renderer = Renderer(book_content_container, [&]() { 
+	auto book_tab_renderer = Renderer(book_tab_container, [&]() { 
 			return book_tab(L"BOOKS", L"BOOK EDITOR");
 	});
 
