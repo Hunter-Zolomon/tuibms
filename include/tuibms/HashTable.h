@@ -20,6 +20,7 @@ class HashTable {
 
 		size_t hashFunction(int key, int p);
     public:
+        DTO<T>* getFromHashTable(int key);
         int datacount;
         int tblsize;
 

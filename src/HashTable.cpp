@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include <HashTable.h>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 #define HASH_P 14
 
@@ -66,6 +69,33 @@ DTO<T>& HashTable<T>::operator[](int key) {
     }
 }
 
+template<class T>
+DTO<T>* HashTable<T>::getFromHashTable(int key){
+    int searchidx = hashFunction(key, HASH_P);
+	if ((hashtable + searchidx)->data->id == key) {
+        //searchidx = NULL; Needs to nullify
+        return (hashtable + searchidx)->data;
+    }
+    else {
+        try{
+            DTO<T>* searchobj = (hashtable + searchidx)->treeptr->searchTree(key);
+            if (searchobj != nullptr) {
+                //searchidx = NULL;
+                return searchobj;
+            }
+            else {
+                //searchidx = NULL;
+                delete searchobj;
+                return nullptr;
+            } 
+        }
+        catch(...){
+            return nullptr;
+        }
+        
+    }
+}
+
 /**
  * Returns a vector containing all DTO pointers contained within the hashtable and collision resolution trees.
  */
@@ -111,9 +141,15 @@ template<class T>
 bool HashTable<T>::addToTable(DTO<T>* dataobj) {
     int inputindx = hashFunction(dataobj->id, HASH_P);
     if ((hashtable + inputindx)->data != nullptr) {
-        return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
+        if ((hashtable + inputindx)->treeptr->insertIntoTree(dataobj)){
+            datacount++;
+            return true;
+        }
+        else return false;
+        //return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
     } else {
         (hashtable + inputindx)->data = dataobj;
+        datacount++;
         return true;
     }
     return false;
@@ -154,3 +190,7 @@ bool HashTable<T>::removeFromTable(int key) {
 }
 
 template class HashTable<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
+template class HashTable<std::wstring>;
+template class HashTable<Book>;
+template class HashTable<Patron>;
+template class HashTable<Loan>;

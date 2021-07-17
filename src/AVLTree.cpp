@@ -2,6 +2,9 @@
 #include <AVLNode.h>
 #include <AVLTree.h>
 #include <vector>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 /**
  * AVL tree constructor. Creates root node with no left/right pointers and an empty container.
@@ -20,6 +23,10 @@ void AVL<T>::deleteTree(AVLNode<T>* node) {
 	deleteTree(node->left);
 	deleteTree(node->right);
 	delete node;
+    if (node==rootNode){
+        rootNode = nullptr;
+    }
+    node = nullptr;
 }
 
 /**
@@ -146,8 +153,8 @@ AVLNode<T>* AVL<T>::deleteFrom(int key, AVLNode<T>* node) {
         if (key == node->data->id) {
 			if (nullptr == node->right) {
                 AVLNode<T>* currentnode = node;
-                node = node->left;
-                delete currentnode;
+                node = node->left; //node = nullptr
+                delete currentnode; //node 
                 return node;
             }
             else {
@@ -188,7 +195,12 @@ AVLNode<T>* AVL<T>::deleteFrom(int key, AVLNode<T>* node) {
 
 template<class T>
 bool AVL<T>::deleteFromTree(int key) {
-	if (nullptr != deleteFrom(key, rootNode))
+    if (rootNode->data->id == key && rootNode->height==0){
+        deleteFrom(key, rootNode);
+        rootNode = nullptr;
+        return true;
+    }
+    else if (nullptr != deleteFrom(key, rootNode))
         return true;
     else return false;
 }
@@ -243,3 +255,7 @@ std::vector<DTO<T>*> AVL<T>::getAllElements() {
 }
 
 template class AVL<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
+template class AVL<std::wstring>; //Provided for testing purposes DELETE AFTER PRODUCTION
+template class AVL<Book>;
+template class AVL<Patron>;
+template class AVL<Loan>;
