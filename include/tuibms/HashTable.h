@@ -20,13 +20,11 @@ class HashTable {
 
 		size_t hashFunction(int key, int p);
     public:
-        DTO<T>* getFromHashTable(int key);
         int datacount;
         int tblsize;
 
         HashTable(int tablesize);
         ~HashTable();
-        //bool addToTable(DTO<T>* dataobj); Depracated. Use operator() instead
         bool removeFromTable(int key);
 		bool operator()(DTO<T>* dataobj);
         DTO<T>& operator[](int key); 

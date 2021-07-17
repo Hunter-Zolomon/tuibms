@@ -69,33 +69,6 @@ DTO<T>& HashTable<T>::operator[](int key) {
     }
 }
 
-template<class T>
-DTO<T>* HashTable<T>::getFromHashTable(int key){
-    int searchidx = hashFunction(key, HASH_P);
-	if ((hashtable + searchidx)->data->id == key) {
-        //searchidx = NULL; Needs to nullify
-        return (hashtable + searchidx)->data;
-    }
-    else {
-        try{
-            DTO<T>* searchobj = (hashtable + searchidx)->treeptr->searchTree(key);
-            if (searchobj != nullptr) {
-                //searchidx = NULL;
-                return searchobj;
-            }
-            else {
-                //searchidx = NULL;
-                delete searchobj;
-                return nullptr;
-            } 
-        }
-        catch(...){
-            return nullptr;
-        }
-        
-    }
-}
-
 /**
  * Returns a vector containing all DTO pointers contained within the hashtable and collision resolution trees.
  */
@@ -135,26 +108,6 @@ bool HashTable<T>::operator()(DTO<T>* dataobj) {
     }
     return false;
 }
-
-/* Depracated Method Call (Use operator () instead)
-template<class T>
-bool HashTable<T>::addToTable(DTO<T>* dataobj) {
-    int inputindx = hashFunction(dataobj->id, HASH_P);
-    if ((hashtable + inputindx)->data != nullptr) {
-        if ((hashtable + inputindx)->treeptr->insertIntoTree(dataobj)){
-            datacount++;
-            return true;
-        }
-        else return false;
-        //return (hashtable + inputindx)->treeptr->insertIntoTree(dataobj);
-    } else {
-        (hashtable + inputindx)->data = dataobj;
-        datacount++;
-        return true;
-    }
-    return false;
-}
-*/
 
 /**
  * Takes the integer key value to be used for a unique table search and deletion.
