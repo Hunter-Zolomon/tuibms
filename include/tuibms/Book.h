@@ -17,7 +17,7 @@ class Book{
         std::wstring getCategory();
         std::wstring getGenre();
         
-        std::wstring getBookMenuEntry();
+        std::wstring getMenuEntry();
 
         void setIsAvailable(bool isAvailable);
         void setIsbn(std::wstring isbn);

@@ -1,10 +1,9 @@
 #include <string>
 #include <Book.h>
 
-Book::Book( int id, std::wstring isbn, 
+Book::Book( std::wstring isbn, 
             std::wstring title, std::wstring author, std::wstring year, 
             std::wstring category, std::wstring genre,bool isAvailable) {
-                setId(id);
                 setIsAvailable(isAvailable);
                 setIsbn(isbn);
                 setTitle(title);
@@ -15,9 +14,6 @@ Book::Book( int id, std::wstring isbn,
             }
 
 // Book - Getters
-int Book::getId(){
-    return book_id;
-}
 
 bool Book::getIsAvailable(){
     return book_isAvailable;
@@ -47,9 +43,8 @@ std::wstring Book::getGenre(){
     return book_genre;
 }
 
-std::wstring Book::getBookMenuEntry(){
-    return  std::to_wstring(book_id)     + L" - " + 
-            book_isbn   + L" - " + 
+std::wstring Book::getMenuEntry(){
+    return  book_isbn   + L" - " + 
             book_title  + L" - " + 
             book_author + L" - " + 
             book_year   + L" - " + 
@@ -59,9 +54,7 @@ std::wstring Book::getBookMenuEntry(){
 }
 
 // Book - Setters
-void Book::setId(int id){
-    book_id = id;
-}
+
 void Book::setIsAvailable(bool isAvailable){
     book_isAvailable = isAvailable;
 }

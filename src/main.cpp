@@ -22,6 +22,7 @@
 #include <AVLTree.h>
 #include <DTO.h>
 #include <Book.h>
+#include <UI_Helper.h>
 
 
 using namespace ftxui;
@@ -30,9 +31,30 @@ std::vector<std::wstring> book_populate_menu(); // todo
 std::vector<std::wstring> patron_populate_menu();
 std::vector<std::wstring> loan_populate_menu();
 
+
 int main(int argc, char* argv[]) {
 
-	HashTable<std::wstring>* table1 = new HashTable<std::wstring>(5);
+	Book bk1(L"ISBN", L"Title", L"Author", L"Year", L"Category", L"Genre", true);
+	Book bk2(L"ISBN", L"Title", L"Author", L"Year", L"Category", L"Genre", true);
+
+
+
+	//DTO<Book> dto_bk1(bk1);
+	//DTO<Book> dto_bk2(bk2);
+
+
+	HashTable<Book> hash_table_book(10);
+	/*if (hash_table_book.addToTable(&dto_bk1)){
+		std::cout << "1 added";
+	};
+	
+	if (hash_table_book.addToTable(&dto_bk2)){
+		std::cout << "2 added";
+	};*/
+
+
+	std::vector<Book> book_table = {bk1, bk2};
+
 
 	const char* title = R"(
 	######## ##     ## #### ########  ##     ##  ######  
@@ -59,12 +81,7 @@ int main(int argc, char* argv[]) {
 	std::vector<Book> book_objects = {};
 
 	// Book Menu
-	std::vector<std::wstring> book_menu_entries = 	{	
-		L"11 - 978-3-640123-07-8 - The C Programming Language - Keninghan, B.  - 1978 - Non-Fiction - Reference - 1", 
-		L"12 - 978-3-452323-08-8 - Requirements Engineering - Wiegers, K. & Beatty, J.  - 2013 - Non-Fiction - Reference - 1",
-		L"13 - 978-3-640123-05-8 - The Da Vinci Code - Brown, D.  - 2003 - Fiction - Mystery - 1",
-
-													};
+	std::vector<std::wstring> book_menu_entries = {L""}; //ui display vector
 	int book_menu_entries_selectedidx = 0;
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx);
 
@@ -119,13 +136,17 @@ int main(int argc, char* argv[]) {
 		Book book_line_content(input_book_isbn_content, input_book_title_content,
 								input_book_author_content, input_book_year_content,
 								input_book_category_content, input_book_genre_content,true);
-		std::wstring book_line_content_menu_entry = book_line_content.getBookMenuEntry();
+		std::wstring book_line_content_menu_entry = book_line_content.getMenuEntry();
 		book_menu_entries.push_back(book_line_content_menu_entry);
 
 	}, true);
 
-	auto book_button_save 	= Button(L"Save Changes",[](){
-		// 
+	auto book_button_save 	= Button(L"Save Changes",[&](){
+		std::thread do_thread(UI_Helper<Book>::grab_all_populate, book_table, std::ref(book_menu_entries));
+		do_thread.detach();
+		
+		//UI_Helper<Book>::grab_all_populate(book_table, book_menu_entries)
+		
 	}, true);
 
 	auto book_button_cancel = Button(L"Cancel", [](){
@@ -164,25 +185,25 @@ int main(int argc, char* argv[]) {
 
 	auto book_dialog_container = Container::Horizontal({
 		Button(&book_dialog_entries[0], [&] {
-			DTO<std::wstring>* DTO_Insert = new DTO<std::wstring>(book_menu_entries[book_menu_entries_selectedidx]);
-			table1->addToTable(DTO_Insert);
-			int insertId = DTO_Insert->id;
-			DTO<std::wstring>* DTO_Result = table1->getFromHashTable(insertId);
-			book_user_search_text = DTO_Result->dataobj;
-			dialog_to_show = 0;
-			user_search_input = L"";
-			//delete table1;
+			int book_id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+			input_book_id_content = std::to_wstring(book_id);
+			//UI_Helper<Book>::populate_book_editor();
 		}),
 		Button(&book_dialog_entries[1], [&] {
-				book_menu_entries.erase(book_menu_entries.begin() + book_menu_entries_selectedidx);
-				//delete somewhere else
-				dialog_to_show = 0;
+			/*int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+			if (hash.removeFromTable(id)){
+				book_table.erase(book_table.begin()+book_menu_entries_selectedidx);
+				book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
+			}
+			else{
+				UI_Helper.error();
+			}*/
+			
 			
 		}),
 
 		Button(&book_dialog_entries[2], [&] {
-			// LOAN BOOK BTN DIALOG CODE
-			// Grab the book details, tab user into Loan & Fill the Editor ??
+
 		}),
 
 		Button(&book_dialog_entries[3], [&] {
@@ -212,7 +233,7 @@ int main(int argc, char* argv[]) {
 						window(	text(right_window_text) 	| color(Color::GreenLight), 
 								vbox({
 									book_editor_section()	| color(Color::GreenLight)
-								})), 
+								}))							| color(Color::GreenLight), 
 							hbox({
 								book_button_add->	Render()| flex,
 								book_button_save->	Render()| flex,
@@ -365,7 +386,7 @@ int main(int argc, char* argv[]) {
 						window(	text(right_window_text)	| 	color(Color::BlueLight), 
 							vbox({
 								patron_editor_section() | 	color(Color::BlueLight)
-							})),
+							}))							|	color(Color::BlueLight),
 							hbox({
 								patron_button_add->		Render() | flex,
 								patron_button_save->	Render() | flex,
@@ -526,7 +547,7 @@ int main(int argc, char* argv[]) {
 					window(text(right_window_text) 		| color(Color::CyanLight),
 						vbox({
 							loan_editor_section()  		| color(Color::CyanLight),
-						})),
+						}))								| color(Color::CyanLight),
 						hbox({
 							loan_button_loan->	Render()| flex,
 							loan_button_extend->Render()| flex,

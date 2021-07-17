@@ -1,10 +1,9 @@
 #include <string>
 #include <Loan.h>
 
-Loan::Loan(int loan_id, int book_id, int patron_id, 
+Loan::Loan(int book_id, int patron_id, 
              std::wstring book_isbn,std::wstring book_title,
              std::wstring patron_name,std::wstring loan_day, std::wstring loan_month){
-                setLoanId(loan_id);
                 setBookId(book_id);
                 setPatronId(patron_id);
                 setBookIsbn(book_isbn);
@@ -15,9 +14,6 @@ Loan::Loan(int loan_id, int book_id, int patron_id,
 }
 
 // Loan - Getters
-int Loan::getLoanId(){
-    return loan_id;
-}
 
 int Loan::getBookId(){
     return book_id;
@@ -47,9 +43,8 @@ std::wstring Loan::getLoanMonth(){
     return loan_month;
 }
 
-std::wstring Loan::getLoanMenuEntry(){
-    return  std::to_wstring(loan_id)    + L" - " + 
-            std::to_wstring(book_id)    + L" - " + 
+std::wstring Loan::getMenuEntry(){
+    return  std::to_wstring(book_id)    + L" - " + 
             std::to_wstring(patron_id)  + L" - " + 
             book_isbn   + L" - " + 
             book_title  + L" - " + 
@@ -59,9 +54,6 @@ std::wstring Loan::getLoanMenuEntry(){
 }
 
 // Loan - Setters
-void Loan::setLoanId(int loan_id){
-    loan_id = loan_id;
-}
 
 void Loan::setBookId(int book_id){
     book_id = book_id;

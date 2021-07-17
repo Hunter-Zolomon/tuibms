@@ -1,10 +1,9 @@
 #include <string>
 #include <Patron.h>
 
-Patron::Patron(int id, bool is_active, std::wstring fname, std::wstring lname, 
+Patron::Patron(bool is_active, std::wstring fname, std::wstring lname, 
                 std::wstring address, std::wstring postcode, 
                 std::wstring contact, int num_borrowed){  
-                    setId(id);
                     setIsActive(is_active);
                     setFname(fname);
                     setLname(lname);
@@ -15,9 +14,6 @@ Patron::Patron(int id, bool is_active, std::wstring fname, std::wstring lname,
                 }
 
 // Patron - Getters
-int Patron::getId(){
-    return patron_id;
-}
 
 bool Patron::getIsActive(){
     return patron_is_active;
@@ -47,9 +43,8 @@ int Patron::getNumBorrowed(){
     return patron_num_borrowed;
 }
 
-std::wstring Patron::getPatronMenuEntry(){
-    return  std::to_wstring(patron_id) + L" - " + 
-            std::to_wstring(patron_is_active) + L" - " + 
+std::wstring Patron::getMenuEntry(){
+    return  std::to_wstring(patron_is_active) + L" - " + 
             patron_fname  + L" - " + 
             patron_lname + L" - " + 
             patron_address   + L" - " + 
@@ -59,9 +54,6 @@ std::wstring Patron::getPatronMenuEntry(){
 }
 
 // Patron - Setters
-void Patron::setId(int id){
-    patron_id = id;
-}
 
 void Patron::setIsActive(bool is_active){
     patron_is_active = is_active;

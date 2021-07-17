@@ -1,7 +1,7 @@
 #include <string>
 
 class Patron{
-    int patron_id;
+
     int patron_num_borrowed;
     
     std::wstring    patron_fname,   patron_lname,   
@@ -12,11 +12,11 @@ class Patron{
     int last_borrowed_book_id[10];
 
     public:
-        Patron(int id, bool is_active, std::wstring fname, std::wstring lname, 
+        Patron(bool is_active, std::wstring fname, std::wstring lname, 
                 std::wstring address, std::wstring postcode, 
                 std::wstring contact, int num_borrowed);
 
-        int getId();
+
         bool getIsActive();
         std::wstring getFname();
         std::wstring getLname();
@@ -25,9 +25,9 @@ class Patron{
         std::wstring getContact();
         int getNumBorrowed();
 
-        std::wstring getPatronMenuEntry();
+        std::wstring getMenuEntry();
 
-        void setId(int id);
+ 
         void setIsActive(bool is_active);
         void setFname(std::wstring fname);
         void setLname(std::wstring lname);

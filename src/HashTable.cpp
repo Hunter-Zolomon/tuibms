@@ -2,6 +2,9 @@
 #include <cmath>
 #include <string>
 #include <HashTable.h>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 #define HASH_P 14
 
@@ -154,3 +157,6 @@ bool HashTable<T>::removeFromTable(int key) {
 
 template class HashTable<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
 template class HashTable<std::wstring>;
+template class HashTable<Book>;
+template class HashTable<Patron>;
+template class HashTable<Loan>;

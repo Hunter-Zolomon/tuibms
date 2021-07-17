@@ -1,6 +1,9 @@
 #include <string>
 #include <AVLNode.h>
 #include <AVLTree.h>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 /**
  * AVL tree constructor. Creates root node with no left/right pointers and an empty container.
@@ -219,3 +222,6 @@ bool AVL<T>::updateTree(DTO<T>* datatochange, DTO<T>* newdata) {
 
 template class AVL<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
 template class AVL<std::wstring>; //Provided for testing purposes DELETE AFTER PRODUCTION
+template class AVL<Book>;
+template class AVL<Patron>;
+template class AVL<Loan>;
