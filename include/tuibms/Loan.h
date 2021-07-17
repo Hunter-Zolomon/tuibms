@@ -5,6 +5,7 @@ class Loan{
     std::wstring book_isbn,book_title,patron_name,loan_day,loan_month;
 
     public:
+        Loan();
         Loan(int book_id, int patron_id, 
              std::wstring book_isbn,std::wstring book_title,
              std::wstring patron_name,std::wstring loan_day, 

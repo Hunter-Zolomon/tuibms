@@ -1,22 +1,20 @@
-#include <array>       // for array
-#include <chrono>      // for operator""s, chrono_literals
 #include <cmath>       // for sin
 #include <functional>  // for ref, reference_wrapper, function
-#include <memory>      // for allocator, shared_ptr, __shared_ptr_access
 #include <string>      // for wstring, basic_string, operator+, to_wstring
 #include <thread>      // for sleep_for, thread
-#include <utility>     // for move
 #include <vector>      // for vector
 
 #include <ftxui/component/captured_mouse.hpp>  // for ftxui
 #include <ftxui/component/component.hpp>  // for Checkbox, Renderer, Horizontal, Vertical, Input, Menu, Radiobox, Tab, Toggle
 #include <ftxui/component/component_base.hpp>  // for ComponentBase
+#include <ftxui/component/component_options.hpp> //for MenuOption
 #include <ftxui/component/event.hpp>           // for Event, Event::Custom
-#include <ftxui/component/input.hpp>           // for InputBase
+#include <ftxui/component/mouse.hpp> // for Mouse
+#include <ftxui/component/receiver.hpp> // for Receivers
 #include <ftxui/component/screen_interactive.hpp>  // for Component, ScreenInteractive
 #include <ftxui/dom/elements.hpp>  // for text, operator|, color, bgcolor, Element, filler, size, vbox, flex, hbox, graph, separator, EQUAL, WIDTH, hcenter, bold, border, window, HEIGHT, Elements, hflow, flex_grow, frame, gauge, LESS_THAN, spinner, dim, GREATER_THAN
 #include <ftxui/screen/color.hpp>  // for Color, Color::BlueLight, Color::RedLight, Color::Black, Color::Blue, Color::Cyan, Color::CyanLight, Color::GrayDark, Color::GrayLight, Color::Green, Color::GreenLight, Color::Magenta, Color::MagentaLight, Color::Red, Color::White, Color::Yellow, Color::YellowLight, Color::Default
-#include <ftxui/component/menu.hpp>
+
 
 #include <HashTable.h>
 #include <AVLTree.h>
@@ -24,37 +22,16 @@
 #include <Book.h>
 #include <UI_Helper.h>
 
-
 using namespace ftxui;
-
-std::vector<std::wstring> book_populate_menu(); // todo
-std::vector<std::wstring> patron_populate_menu();
-std::vector<std::wstring> loan_populate_menu();
-
 
 int main(int argc, char* argv[]) {
 
-	Book bk1(L"ISBN", L"Title", L"Author", L"Year", L"Category", L"Genre", true);
-	Book bk2(L"ISBN", L"Title", L"Author", L"Year", L"Category", L"Genre", true);
-
-
-
-	//DTO<Book> dto_bk1(bk1);
-	//DTO<Book> dto_bk2(bk2);
-
-
 	HashTable<Book> hash_table_book(10);
-	/*if (hash_table_book.addToTable(&dto_bk1)){
-		std::cout << "1 added";
-	};
-	
-	if (hash_table_book.addToTable(&dto_bk2)){
-		std::cout << "2 added";
-	};*/
+	Book bk1(L"45-548", L"C++ Intro", L"Dover, Ben", L"1996", L"Fiction", L"Spirituality", true);
+	Book bk2(L"66-892", L"FXTUI Intro", L"Hawk, Mike", L"2005", L"Fiction", L"Self-Improvement", true);
 
-
-	std::vector<Book> book_table = {bk1, bk2};
-
+	hash_table_book(new DTO<Book>(bk1));
+	hash_table_book(new DTO<Book>(bk2));
 
 	const char* title = R"(
 	######## ##     ## #### ########  ##     ##  ######  
@@ -75,35 +52,33 @@ int main(int argc, char* argv[]) {
 	#pragma region Book Tab
 	// ---------------------------------------- Book Tab ---------------------------------------- 
 	//Book Search
-	std::wstring book_user_search_text = L""; // Used for all tabs
-	auto book_user_search_input = Input(&book_user_search_text, L"Search books");
-
-	std::vector<Book> book_objects = {};
+	std::wstring book_user_search_text = L""; //Book search string text
+	InputOption book_user_search_input_option;
+	auto book_user_search_input = Input(&book_user_search_text, L"Search books", &book_user_search_input_option); //Input for Book Search 
 
 	// Book Menu
-	std::vector<std::wstring> book_menu_entries = {L""}; //ui display vector
-	int book_menu_entries_selectedidx = 0;
-	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx);
+	std::vector<std::wstring> book_menu_entries = {L""}; //UI Display Vector that displays Books
+	int book_menu_entries_selectedidx = 0; //Selected book 
+	MenuOption book_menu_option;
+	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx, &book_menu_option); //Menu containing books
 
-
-	MenuBase::From(book_menu)->on_enter = [&](){
-		dialog_to_show = 1;
-	};
+	book_menu_option.on_enter = [&](){ dialog_to_show = 1; }; //Triggered when Enter is pressed on a selected menu entry 
 
 	// Book Editor - Inputs
 	std::wstring 	input_book_id_content, 		input_book_isbn_content, 
 					input_book_title_content,	input_book_author_content, 
 					input_book_year_content,	input_book_category_content, 
 					input_book_genre_content, 	input_book_available_content;
-					
-	auto input_book_id = 		Input(&input_book_id_content, 		L"");
-	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"");
-	auto input_book_title = 	Input(&input_book_title_content, 	L"");
-	auto input_book_author = 	Input(&input_book_author_content, 	L"");
-	auto input_book_year = 		Input(&input_book_year_content, 	L"");
-	auto input_book_category = 	Input(&input_book_category_content, L"");
-	auto input_book_genre = 	Input(&input_book_genre_content, 	L"");
-	auto input_book_available = Input(&input_book_available_content,L"");
+
+	InputOption input_book_editor_option; //Options for inputs in Book Editor
+	auto input_book_id = 		Input(&input_book_id_content, 		L"", &input_book_editor_option);
+	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"", &input_book_editor_option);
+	auto input_book_title = 	Input(&input_book_title_content, 	L"", &input_book_editor_option);
+	auto input_book_author = 	Input(&input_book_author_content, 	L"", &input_book_editor_option);
+	auto input_book_year = 		Input(&input_book_year_content, 	L"", &input_book_editor_option);
+	auto input_book_category = 	Input(&input_book_category_content, L"", &input_book_editor_option);
+	auto input_book_genre = 	Input(&input_book_genre_content, 	L"", &input_book_editor_option);
+	auto input_book_available = Input(&input_book_available_content,L"", &input_book_editor_option);
 	
 	// Book Editor - Container
 	auto book_editor_section_input = Container::Vertical({
@@ -132,26 +107,27 @@ int main(int argc, char* argv[]) {
 	};
 
 	// Book Editor - Buttons
-	auto book_button_add 	= Button(L"Add New",[&](){
-		Book book_line_content(input_book_isbn_content, input_book_title_content,
-								input_book_author_content, input_book_year_content,
-								input_book_category_content, input_book_genre_content,true);
-		std::wstring book_line_content_menu_entry = book_line_content.getMenuEntry();
-		book_menu_entries.push_back(book_line_content_menu_entry);
+	ButtonOption book_button_editor_option;
 
-	}, true);
+	auto book_button_add 	= Button(L"Add New",[&](){
+		Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
+		DTO<Book> dto_temp_new(book_line_content);
+		hash_table_book(&dto_temp_new);
+		std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_book_entry_string(&dto_temp_new);
+		book_menu_entries.push_back(book_line_content_menu_entry);
+	}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
-		std::thread do_thread(UI_Helper<Book>::grab_all_populate, book_table, std::ref(book_menu_entries));
-		do_thread.detach();
-		
+		std::vector<DTO<Book>*> all_books = hash_table_book.getAllElements();
+		//std::thread do_thread(UI_Helper<Book>::grab_all_populate, all_books, std::ref(book_menu_entries));
+		UI_Helper<Book>::grab_all_populate(all_books, book_menu_entries);
+		//do_thread.detach();
 		//UI_Helper<Book>::grab_all_populate(book_table, book_menu_entries)
-		
-	}, true);
+	}, &book_button_editor_option);
 
-	auto book_button_cancel = Button(L"Cancel", [](){
-		//
-	}, true);
+	auto book_button_cancel = Button(L"Cancel", [&](){
+		//TODO
+	}, &book_button_editor_option);
 
 	// Book Editor - Button Container
 	auto book_button_container = Container::Horizontal({
@@ -183,32 +159,32 @@ int main(int argc, char* argv[]) {
 		L"Edit Book", L"Delete Book", L"Loan", L"Exit",
 	};
 
-	auto book_dialog_container = Container::Horizontal({
-		Button(&book_dialog_entries[0], [&] {
-			int book_id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
-			input_book_id_content = std::to_wstring(book_id);
-			//UI_Helper<Book>::populate_book_editor();
-		}),
-		Button(&book_dialog_entries[1], [&] {
-			/*int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
-			if (hash.removeFromTable(id)){
-				book_table.erase(book_table.begin()+book_menu_entries_selectedidx);
-				book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
-			}
-			else{
-				UI_Helper.error();
-			}*/
-			
-			
-		}),
+	ButtonOption book_dialog_button_option;
 
-		Button(&book_dialog_entries[2], [&] {
+	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
+		
+	}, &book_dialog_button_option);
 
-		}),
-
-		Button(&book_dialog_entries[3], [&] {
+	auto book_dialog_button_delete = Button(&book_dialog_entries[1], [&] {
+		int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		if (hash_table_book.removeFromTable(id)){
 			dialog_to_show = 0;
-		}),
+			book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
+		}
+		else{
+			book_user_search_text = L"U done fucked up";
+		}
+			
+	}, &book_dialog_button_option);
+
+	auto book_dialog_button_loan = Button(&book_dialog_entries[2], [&] {}, &book_dialog_button_option);
+	auto book_dialog_button_exit = Button(&book_dialog_entries[3], [&] {dialog_to_show = 0;}, &book_dialog_button_option);
+
+	auto book_dialog_container = Container::Horizontal({
+		book_dialog_button_edit,
+		book_dialog_button_delete,
+		book_dialog_button_loan,
+		book_dialog_button_exit
 	});
 
 	auto book_dialog_renderer = Renderer(book_dialog_container, [&]{
@@ -256,24 +232,23 @@ int main(int argc, char* argv[]) {
 	#pragma region Patron Tab
 
 	// ---------------------------------------- Patron Tab ---------------------------------------- 
-
 	// Patron Search
 	std::wstring patron_user_search_text = L"";
-	auto patron_user_search_input = Input(&patron_user_search_text, L"Search patrons");
+	InputOption patron_user_search_input_option;
+	auto patron_user_search_input = Input(&patron_user_search_text, L"Search patrons", &patron_user_search_input_option);
 
 	// Patron Menu
 	std::vector<std::wstring> patron_menu_entries = { 
 		L"56 - Active - John Doe - Bukit Jalil  - 50430 - 0126985741 - 1", 
 		L"87 - Barred - Bruce Wayne - Sri Petaling  - 69420 - 0178547963 - 3",
 		L"69 - Active - Phillip Fry - Chow Kit  - 50480 - 0143369852 - 2",
-		};
+	};
 
 	int patron_menu_entries_selectedidx = 0;
-	auto patron_menu = Menu(&patron_menu_entries, &patron_menu_entries_selectedidx);
+	MenuOption patron_menu_option;
+	auto patron_menu = Menu(&patron_menu_entries, &patron_menu_entries_selectedidx, &patron_menu_option);
 
-	MenuBase::From(patron_menu)->on_enter = [&](){
-		dialog_to_show = 2;
-	};
+	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
 
 	// Patron Editor - Inputs
 	std::wstring 	input_patron_id_content, 		input_patron_status_content, 
@@ -281,14 +256,15 @@ int main(int argc, char* argv[]) {
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_contact_content, 	input_patron_num_borrowed_content;
 					
-	auto input_patron_id = 			Input(&input_patron_id_content, 			L"");
-	auto input_patron_status = 		Input(&input_patron_status_content, 		L"");
-	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"");
-	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"");
-	auto input_patron_address = 	Input(&input_patron_address_content, 		L"");
-	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"");
-	auto input_patron_contact = 	Input(&input_patron_contact_content, 		L"");
-	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"");
+	InputOption input_patron_editor_option;
+	auto input_patron_id = 			Input(&input_patron_id_content, 			L"", &input_patron_editor_option);
+	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_editor_option);
+	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"", &input_patron_editor_option);
+	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"", &input_patron_editor_option);
+	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_editor_option);
+	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_editor_option);
+	auto input_patron_contact 	= 	Input(&input_patron_contact_content, 		L"", &input_patron_editor_option);
+	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"", &input_patron_editor_option);
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
@@ -317,11 +293,10 @@ int main(int argc, char* argv[]) {
 	};
 
 	// Patron Editor - Buttons
-	auto patron_button_add = 	Button(L"Add New", 		[&](){
-		// 
-	}, true);
-	auto patron_button_save = 	Button(L"Save Changes", [](){}, true);
-	auto patron_button_cancel = Button(L"Cancel", 		[](){}, true);
+	ButtonOption patron_button_editor_option;
+	auto patron_button_add = 	Button(L"Add New", 		[&](){}, &patron_button_editor_option);
+	auto patron_button_save = 	Button(L"Save Changes", [&](){}, &patron_button_editor_option);
+	auto patron_button_cancel = Button(L"Cancel", 		[&](){}, &patron_button_editor_option);
 
 	// Patron Editor - Button Container
 	auto patron_button_container = Container::Horizontal({
@@ -330,37 +305,39 @@ int main(int argc, char* argv[]) {
 		patron_button_cancel
 	});
 
-	// Patron - Search & Menu Container
-	auto patron_patrons_container = Container::Vertical({
-		patron_user_search_input,
-		patron_menu
-	});
-
-	// Patron - Main Content Container 
-	auto patron_content_container = Container::Horizontal({
-		patron_patrons_container,
+	// Patron - Editor & Button Container
+	auto patron_editor_button_container = Container::Vertical({
 		patron_editor_section_input,
 		patron_button_container
 	});
 
+	// Patron - Patron Section Stuff
+	auto patron_patrons_container = Container::Horizontal({
+		patron_menu,
+		patron_editor_button_container
+	});
+
+	// Patron - Patron Section Stuff & Search Field
+	auto patron_tab_container = Container::Vertical({
+		patron_user_search_input,
+		patron_patrons_container
+	});
+
 	// Patron - Dialog Box
-	std::vector<std::wstring> patron_dialog_entries = {
-		L"Edit Patron", L"Delete Patron", L"View Borrows", L"Cancel"
-	};
+	std::vector<std::wstring> patron_dialog_entries = { L"Edit Patron", L"Delete Patron", L"View Borrows", L"Cancel" };
+
+	ButtonOption patron_dialog_button_option;
+
+	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{}, &patron_dialog_button_option);
+	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[1], [&]{}, &patron_dialog_button_option);
+	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{}, &patron_dialog_button_option);
+	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
 
 	auto patron_dialog_container = Container::Horizontal({
-		Button(&patron_dialog_entries[0], [&]{
-			// Edit Patron
-		}),
-		Button(&patron_dialog_entries[1], [&]{
-			// Delete Patron 
-		}),
-		Button(&patron_dialog_entries[2], [&]{
-			// View Borrows
-		}),
-		Button(&patron_dialog_entries[3], [&]{
-			dialog_to_show = 0;
-		}),
+		patron_dialog_button_edit,
+		patron_dialog_button_delete,
+		patron_dialog_button_view,
+		patron_dialog_button_exit
 	});
 
 	auto patron_dialog_renderer = Renderer(patron_dialog_container, [&]{
@@ -398,7 +375,7 @@ int main(int argc, char* argv[]) {
 	};
 
 	// Patron - Main Renderer 
-	auto patron_tab_renderer = Renderer(patron_content_container, [&]() { 
+	auto patron_tab_renderer = Renderer(patron_tab_container, [&]() { 
 			return patron_tab(L"PATRONS", L"PATRON EDITOR");
 		}
 	);
@@ -409,10 +386,10 @@ int main(int argc, char* argv[]) {
 	#pragma region Loan Tab
 
 	// ---------------------------------------- Loan Tab ---------------------------------------- 
-
 	// Loan Search
 	std::wstring loan_user_seach_text = L"";
-	auto loan_user_search_input = Input(&loan_user_seach_text, L"Search loans");
+	InputOption loan_user_search_input_option;
+	auto loan_user_search_input = Input(&loan_user_seach_text, L"Search loans", &loan_user_search_input_option);
 	
 	// Loan Menu
 	std::vector<std::wstring> loan_menu_entries = 	{	
@@ -422,12 +399,10 @@ int main(int argc, char* argv[]) {
 													};	
 
 	int loan_menu_entries_selectedidx = 0;
+	MenuOption loan_menu_option;
+	auto loan_menu = Menu(&loan_menu_entries, &loan_menu_entries_selectedidx, &loan_menu_option);
 
-	auto loan_menu = Menu(&loan_menu_entries, &loan_menu_entries_selectedidx);
-
-	MenuBase::From(loan_menu)->on_enter = [&](){
-		dialog_to_show = 3;
-	};
+	loan_menu_option.on_enter = [&](){ dialog_to_show = 3; };
 
 	// Loan Editor - Inputs
 	std::wstring 	input_loan_id_content, 			input_loan_book_id_content, 
@@ -435,14 +410,16 @@ int main(int argc, char* argv[]) {
 					input_loan_patron_id_content, 	input_loan_patron_name_content,
 					input_loan_day_content, 		input_loan_month_content;
 
-	auto input_loan_id 		  = 	Input(&input_loan_id_content, 			L"");
-	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"");
-	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"");
-	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"");
-	auto input_loan_patron_id=		Input(&input_loan_patron_id_content,	L"");
-	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"");
-	auto input_loan_day  	  =		Input(&input_loan_day_content, 			L"");
-	auto input_loan_month 	  =		Input(&input_loan_month_content, 		L"");
+	InputOption input_loan_editor_option;
+
+	auto input_loan_id 		  = 	Input(&input_loan_id_content, 			L"", &input_loan_editor_option);
+	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"", &input_loan_editor_option);
+	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"", &input_loan_editor_option);
+	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"", &input_loan_editor_option);
+	auto input_loan_patron_id=		Input(&input_loan_patron_id_content,	L"", &input_loan_editor_option);
+	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_editor_option);
+	auto input_loan_day  	  =		Input(&input_loan_day_content, 			L"", &input_loan_editor_option);
+	auto input_loan_month 	  =		Input(&input_loan_month_content, 		L"", &input_loan_editor_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
@@ -471,17 +448,11 @@ int main(int argc, char* argv[]) {
 	};
 
 	// Loan Editor - Buttons
-	auto loan_button_loan 	= Button(L"Add New", [&](){
-		//
-	}, true);
+	ButtonOption loan_button_editor_option;
 
-	auto loan_button_extend = Button(L"Save Changes", [](){
-			
-	}, true);
-
-	auto loan_button_return = Button(L"Cancel", [](){
-
-	}, true);
+	auto loan_button_loan 	= Button(L"Add New", 		[&](){}, &loan_button_editor_option);
+	auto loan_button_extend = Button(L"Save Changes", 	[&](){}, &loan_button_editor_option);
+	auto loan_button_return = Button(L"Cancel", 		[&](){}, &loan_button_editor_option);
 
 	// Loan Editor - Button Container
 	auto loan_button_container = Container::Horizontal({
@@ -490,17 +461,22 @@ int main(int argc, char* argv[]) {
 		loan_button_return
 	});
 
-	// Loan - Search & Menu Container
-	auto loan_loans_container = Container::Vertical({
-		loan_user_search_input,
-		loan_menu
-	});
-
-	// Loan - Main Content Container
-	auto loan_content_container = Container::Horizontal({
-		loan_loans_container,
+	// Loan Editor- Editor & Button Container
+	auto loan_editor_button_container = Container::Vertical({
 		loan_editor_section_input,
 		loan_button_container
+	});
+
+	// Loan Editor - Loan Section Stuff
+	auto loan_content_container = Container::Horizontal({
+		loan_menu,
+		loan_editor_button_container
+	});
+
+	// Loan Editor - Loan Section Stuff & Search Field
+	auto loan_tab_container = Container::Vertical({
+		loan_user_search_input,
+		loan_content_container
 	});
 
 	// Loan - Dialog Box
@@ -508,19 +484,18 @@ int main(int argc, char* argv[]) {
 		L"Edit Loan", L"Extend Loan", L"Return Loan", L"Cancel",
 	};
 
+	ButtonOption loan_button_dialog_option;
+
+	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{}, &loan_button_dialog_option);
+	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{}, &loan_button_dialog_option);
+	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{}, &loan_button_dialog_option);
+	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{}, &loan_button_dialog_option);
+
 	auto loan_dialog_container = Container::Horizontal({
-		Button(&loan_dialog_entries[0], [&]{
-			// Edit Loan functionality
-		}),
-		Button(&loan_dialog_entries[1], [&]{
-			// Extend Loan functionality
-		}),
-		Button(&loan_dialog_entries[2], [&]{
-			// Return Loan functionality
-		}),
-		Button(&loan_dialog_entries[3], [&]{
-			dialog_to_show = 0;
-		}),
+		loan_button_dialog_edit,
+		loan_button_dialog_extend,
+		loan_button_dialog_return,
+		loan_button_dialog_exit
 	});
 
 	auto loan_dialog_renderer = Renderer(loan_dialog_container, [&]{
@@ -559,7 +534,7 @@ int main(int argc, char* argv[]) {
 	};
 
 	//Loan - Main Renderer
-	auto loan_tab_renderer = Renderer(loan_content_container, [&]() { 
+	auto loan_tab_renderer = Renderer(loan_tab_container, [&]() { 
 				return loan_tab(L"LOANS", L"LOAN EDITOR");
 			}
 		);
@@ -575,7 +550,9 @@ int main(int argc, char* argv[]) {
 	};
 
 	int selected_tab = 0;
-	auto tab_toggle = ftxui::Toggle(&tab_values, &selected_tab);
+
+	ToggleOption tab_toggle_option;
+	auto tab_toggle = ftxui::Toggle(&tab_values, &selected_tab, &tab_toggle_option);
 
 	auto tab_container = ftxui::Container::Tab(
 		{

@@ -1,6 +1,10 @@
 #include <string>
 #include <Book.h>
 
+Book::Book(){
+    int a = 3;
+};
+
 Book::Book( std::wstring isbn, 
             std::wstring title, std::wstring author, std::wstring year, 
             std::wstring category, std::wstring genre,bool isAvailable) {
@@ -11,7 +15,7 @@ Book::Book( std::wstring isbn,
                 setYear(year);
                 setCategory(category);
                 setGenre(genre);
-            }
+}
 
 // Book - Getters
 

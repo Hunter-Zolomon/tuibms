@@ -6,6 +6,7 @@ class Book{
                     book_category,  book_genre;
     bool book_isAvailable;
     public:
+        Book();
         Book(std::wstring isbn, std::wstring title, std::wstring author,
              std::wstring year, std::wstring category,std::wstring genre, bool isAvailable);
 

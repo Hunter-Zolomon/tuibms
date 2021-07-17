@@ -1,6 +1,10 @@
 #include <string>
 #include <Loan.h>
 
+Loan::Loan(){
+    int a = 3;
+}
+
 Loan::Loan(int book_id, int patron_id, 
              std::wstring book_isbn,std::wstring book_title,
              std::wstring patron_name,std::wstring loan_day, std::wstring loan_month){

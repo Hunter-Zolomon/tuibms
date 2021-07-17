@@ -12,6 +12,7 @@ class Patron{
     int last_borrowed_book_id[10];
 
     public:
+        Patron();
         Patron(bool is_active, std::wstring fname, std::wstring lname, 
                 std::wstring address, std::wstring postcode, 
                 std::wstring contact, int num_borrowed);

@@ -4,13 +4,14 @@
 #include <Book.h>
 #include <Patron.h>
 #include <Loan.h>
+#include <DTO.h>
 
 template<class T>
-void UI_Helper<T>::grab_all_populate(std::vector<T> instance_vector, std::vector<std::wstring>& display_vector){
+void UI_Helper<T>::grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector){
     display_vector.clear();
-    for (T instance: instance_vector){
-        display_vector.push_back(instance.getMenuEntry());
-        // (std::wstring)instance.id + instance.dataobj.getMenuEntry
+    for (DTO<T>* instance: dto_vector){
+        std::wstring line = ui_book_entry_string(instance);
+        display_vector.push_back(line);
     }
 }
 
@@ -32,7 +33,11 @@ template<class T>
 bool UI_Helper<T>::populate_book_editor(int instance_id, std::vector<T> instance_vector, std::vector<std::wstring> input_book_content_vector){
     return true;
 }
-            
+
+template<class T>
+std::wstring UI_Helper<T>::ui_book_entry_string(DTO<T>* dto_book){
+    return std::to_wstring(dto_book->id) + L" - " + dto_book->dataobj.getMenuEntry();
+}
 
 
 
@@ -40,3 +45,6 @@ bool UI_Helper<T>::populate_book_editor(int instance_id, std::vector<T> instance
 template class UI_Helper<Book>;
 template class UI_Helper<Patron>;
 template class UI_Helper<Loan>;
+//template class UI_Helper<DTO<Book>*>;
+//template class UI_Helper<DTO<Patron>*>;
+//template class UI_Helper<DTO<Loan>*>;
