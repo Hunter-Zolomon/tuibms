@@ -39,10 +39,10 @@ template<class T>
 void AVL<T>::clearTree() { deleteTree(rootNode); };
 
 template<class T>
-int AVL<T>::getHeight(AVLNode<T>* node) { return node == nullptr ? -1 : node->height; }
+unsigned int AVL<T>::getHeight(AVLNode<T>* node) { return node == nullptr ? -1 : node->height; }
 
 template<class T>
-AVLNode<T>* AVL<T>::search(int key, AVLNode<T>* node) {
+AVLNode<T>* AVL<T>::search(unsigned int key, AVLNode<T>* node) {
     if (node == nullptr)
         return nullptr;
     else if (key == node->data->id)
@@ -61,7 +61,7 @@ AVLNode<T>* AVL<T>::search(int key, AVLNode<T>* node) {
  */
 
 template<class T>
-DTO<T>* AVL<T>::searchTree(int key) {
+DTO<T>* AVL<T>::searchTree(unsigned int key) {
     AVLNode<T>* searchresult = search(key, rootNode);
 	if (nullptr == searchresult)
         return nullptr;
@@ -146,7 +146,7 @@ bool AVL<T>::insertIntoTree(DTO<T>* data) {
 }
 
 template<class T>
-AVLNode<T>* AVL<T>::deleteFrom(int key, AVLNode<T>* node) {
+AVLNode<T>* AVL<T>::deleteFrom(unsigned int key, AVLNode<T>* node) {
 	if (nullptr == node)
         return nullptr;
     else {
@@ -194,7 +194,7 @@ AVLNode<T>* AVL<T>::deleteFrom(int key, AVLNode<T>* node) {
  */
 
 template<class T>
-bool AVL<T>::deleteFromTree(int key) {
+bool AVL<T>::deleteFromTree(unsigned int key) {
     if (rootNode->data->id == key && rootNode->height==0){
         deleteFrom(key, rootNode);
         rootNode = nullptr;
@@ -212,7 +212,7 @@ bool AVL<T>::deleteFromTree(int key) {
  */
 
 template<class T>
-bool AVL<T>::updateTree(int id_of_dto_tochange, T newdata) {
+bool AVL<T>::updateTree(unsigned int id_of_dto_tochange, T newdata) {
     //if (deleteFromTree(datatochange)) { Changed
 	AVLNode<T>* tobeswapped = search(id_of_dto_tochange, rootNode);
 	if (nullptr == tobeswapped)

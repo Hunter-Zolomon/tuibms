@@ -154,9 +154,10 @@ int main(int argc, char* argv[]) {
 	auto book_button_add 	= Button(L"Add New",[&](){
 		Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
 		DTO<Book> dto_temp_new(book_line_content);
-		hash_table_book(&dto_temp_new);
-		std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(&dto_temp_new);
-		book_menu_entries.push_back(book_line_content_menu_entry);
+		if (hash_table_book(&dto_temp_new)) {
+			std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(&dto_temp_new);
+			book_menu_entries.push_back(book_line_content_menu_entry);
+		}
 	}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
@@ -204,7 +205,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption book_dialog_button_option;
 
 	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
-		int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		DTO<Book> temp_selected_book = hash_table_book[id];
 		UI_Helper<Book>::populate_book_editor(temp_selected_book, book_editor_input_vector);
 		dialog_to_show = 0;
@@ -212,7 +213,7 @@ int main(int argc, char* argv[]) {
 	}, &book_dialog_button_option);
 
 	auto book_dialog_button_delete = Button(&book_dialog_entries[1], [&] {
-		int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		if (hash_table_book.removeFromTable(id)){
 			dialog_to_show = 0;
 			book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
@@ -381,7 +382,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption patron_dialog_button_option;
 
 	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{
-		int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		unsigned int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
 		DTO<Patron> temp_selected_patron = hash_table_patron[id];
 		UI_Helper<Book>::populate_patron_editor(temp_selected_patron, patron_editor_input_vector);
 		dialog_to_show = 0;
@@ -550,7 +551,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption loan_button_dialog_option;
 
 	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{
-		int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
 		DTO<Loan> temp_selected_loan = hash_table_loan[id];
 		UI_Helper<Loan>::populate_loan_editor(temp_selected_loan, loan_editor_input_vector);
 		dialog_to_show = 0;

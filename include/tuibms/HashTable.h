@@ -14,20 +14,19 @@ struct HTO {
 
 template<class T>
 class HashTable {
-    //static_assert(std::is_base_of<std::string, T>::value && std::is_base_of<int, T>::value, "T must inherit from string or int");
     private:
         HTO<T>* hashtable;
 
-		size_t hashFunction(int key, int p);
+		size_t hashFunction(unsigned int key, unsigned int p);
     public:
-        int datacount;
-        int tblsize;
+        unsigned int datacount;
+        unsigned int tblsize;
 
-        HashTable(int tablesize);
+        HashTable(unsigned int tablesize);
         ~HashTable();
-        bool removeFromTable(int key);
+        bool removeFromTable(unsigned int key);
 		bool operator()(DTO<T>* dataobj);
-        DTO<T>& operator[](int key); 
+        DTO<T>& operator[](unsigned int key); 
 		std::vector<DTO<T>*> getAllElements();
 };
 

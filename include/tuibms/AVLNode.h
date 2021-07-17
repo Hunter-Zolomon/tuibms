@@ -8,7 +8,7 @@ struct AVLNode {
     DTO<T>* data;
     AVLNode* left;
     AVLNode* right;
-    int height;
+    unsigned int height;
     
     AVLNode(DTO<T>* data) {
         this->height = 0;

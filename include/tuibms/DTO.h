@@ -5,11 +5,10 @@
 
 template<class T>
 struct DTO {
-    int id; 
+    unsigned int id; // 32 bit with max 4,294,967,295. Can be increased to u_int64_t
     T dataobj;
 	
-	DTO(T datobj) : id(rand() % 1000) { 
-		//Change+Increase ID Generation THIS IS A PLACEHOLDER
+	DTO(T datobj) : id(rand() % 4294967295) { 
 		dataobj = datobj; 
 	} 
 };

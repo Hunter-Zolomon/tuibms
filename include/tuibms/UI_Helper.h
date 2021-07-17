@@ -15,7 +15,7 @@ class UI_Helper{
         static void search_vector(std::vector<std::wstring>* vec, std::wstring search_string);
         static void add_to_vector(std::vector<std::wstring>* vec, std::wstring search_string);
         static bool del_from_vector(std::vector<std::wstring>* vec);
-        static int  get_id_from_wstring(std::wstring menu_entry);
+        static unsigned int  get_id_from_wstring(std::wstring menu_entry);
         static std::wstring ui_dto_entry_string(DTO<T>* dto);
         static bool populate_book_editor(DTO<Book> dto_book, std::vector<std::wstring*> input_book_content_vector);
         static bool populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector);

@@ -7,7 +7,7 @@ Patron::Patron(){
 
 Patron::Patron(bool is_active, std::wstring fname, std::wstring lname, 
                 std::wstring address, std::wstring postcode, 
-                std::wstring contact, int num_borrowed){  
+                std::wstring contact, unsigned int num_borrowed){  
                     setIsActive(is_active);
                     setFname(fname);
                     setLname(lname);
@@ -43,7 +43,7 @@ std::wstring Patron::getContact(){
     return patron_contact;
 }
 
-int Patron::getNumBorrowed(){
+unsigned int Patron::getNumBorrowed(){
     return patron_num_borrowed;
 }
 
@@ -83,7 +83,7 @@ void Patron::setContact(std::wstring contact){
     patron_contact = contact;
 }
 
-void Patron::setNumBorrowed(int num_borrowed){
+void Patron::setNumBorrowed(unsigned int num_borrowed){
     patron_num_borrowed = num_borrowed;
 }
 

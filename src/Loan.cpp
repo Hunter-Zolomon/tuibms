@@ -5,7 +5,7 @@ Loan::Loan(){
     int a = 3;
 }
 
-Loan::Loan(int book_id, int patron_id, 
+Loan::Loan(unsigned int book_id, unsigned int patron_id, 
              std::wstring book_isbn,std::wstring book_title,
              std::wstring patron_name,std::wstring loan_day, std::wstring loan_month){
                 setBookId(book_id);
@@ -19,11 +19,11 @@ Loan::Loan(int book_id, int patron_id,
 
 // Loan - Getters
 
-int Loan::getBookId(){
+unsigned int Loan::getBookId(){
     return book_id;
 }
 
-int Loan::getPatronId(){
+unsigned int Loan::getPatronId(){
     return patron_id;
 }
 
@@ -59,11 +59,11 @@ std::wstring Loan::getMenuEntry(){
 
 // Loan - Setters
 
-void Loan::setBookId(int book_id){
+void Loan::setBookId(unsigned int book_id){
     book_id = book_id;
 }
 
-void Loan::setPatronId(int patron_id){
+void Loan::setPatronId(unsigned int patron_id){
     patron_id = patron_id;
 }
 

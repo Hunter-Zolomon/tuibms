@@ -14,7 +14,7 @@
  */
 
 template<class T>
-HashTable<T>::HashTable(int tablesize) {
+HashTable<T>::HashTable(unsigned int tablesize) {
 	this->tblsize = tablesize;
 	this->datacount = 0;
     this->hashtable = new HTO<T>[tablesize];
@@ -35,7 +35,7 @@ HashTable<T>::~HashTable() {
 }
 
 template<class T>
-size_t HashTable<T>::hashFunction(int key, int p) {
+size_t HashTable<T>::hashFunction(unsigned int key, unsigned int p) {
 	// Change Hash Function If Required
 	short mach_word_bit_size = sizeof(size_t) * 5; // Using half of machine's word size
 	long double A = (sqrt(5) - 1) / 2;
@@ -48,8 +48,8 @@ size_t HashTable<T>::hashFunction(int key, int p) {
  */
 
 template<class T>
-DTO<T>& HashTable<T>::operator[](int key) {
-    int searchidx = hashFunction(key, HASH_P);
+DTO<T>& HashTable<T>::operator[](unsigned int key) {
+    unsigned int searchidx = hashFunction(key, HASH_P);
 	if ((this->hashtable + searchidx)->data->id == key) {
         //searchidx = NULL; Needs to nullify
         return *((this->hashtable + searchidx)->data);
@@ -95,7 +95,7 @@ std::vector<DTO<T>*> HashTable<T>::getAllElements() {
 
 template<class T>
 bool HashTable<T>::operator()(DTO<T>* dataobj) {
-	int inputindx = hashFunction(dataobj->id, HASH_P);
+	unsigned int inputindx = hashFunction(dataobj->id, HASH_P);
 	if (nullptr != (this->hashtable + inputindx)->data) {
 		if ((this->hashtable + inputindx)->treeptr->insertIntoTree(dataobj)) {
 			this->datacount++;
@@ -116,8 +116,8 @@ bool HashTable<T>::operator()(DTO<T>* dataobj) {
  */
 
 template<class T>
-bool HashTable<T>::removeFromTable(int key) {
-    int searchidx = hashFunction(key, HASH_P);
+bool HashTable<T>::removeFromTable(unsigned int key) {
+    unsigned int searchidx = hashFunction(key, HASH_P);
 	if (nullptr != (this->hashtable + searchidx)->data) {
         //searchidx = NULL; Needs to nullify
 		if ((this->hashtable + searchidx)->data->id == key) {

@@ -24,8 +24,8 @@ void UI_Helper<T>::search_vector(std::vector<std::wstring>* vec, std::wstring se
 }
 
 template<class T>
-int UI_Helper<T>::get_id_from_wstring(std::wstring menu_entry){
-    int id = std::stoi(menu_entry.substr(0,3));
+unsigned int UI_Helper<T>::get_id_from_wstring(std::wstring menu_entry){
+    unsigned int id = std::stoi(menu_entry.substr(0,10));
     return id;
 }
 
