@@ -67,17 +67,18 @@ int main(int argc, char* argv[]) {
 	hash_table_loan(&dto_ln2);
 	hash_table_loan(&dto_ln3);
 
-	const char* title = R"(
-	######## ##     ## #### ########  ##     ##  ######  
-	   ##    ##     ##  ##  ##     ## ###   ### ##    ## 
-	   ##    ##     ##  ##  ##     ## #### #### ##       
-	   ##    ##     ##  ##  ########  ## ### ##  ######  
-	   ##    ##     ##  ##  ##     ## ##     ##       ## 
-	   ##    ##     ##  ##  ##     ## ##     ## ##    ## 
-	   ##     #######  #### ########  ##     ##  ######                       
-	)"; 
-
-	std::cout << title << std::endl; 
+	// Perhaps a better way of doing this?
+	const auto title = [&] () {
+		return vbox({
+			text(L"######## ##     ## #### ########  ##     ##  ###### ") | bold | hcenter,
+			text(L"   ##    ##     ##  ##  ##     ## ###   ### ##    ##") | bold | hcenter,
+			text(L"   ##    ##     ##  ##  ##     ## #### #### ##      ") | bold | hcenter,
+			text(L"   ##    ##     ##  ##  ########  ## ### ##  ###### ") | bold | hcenter,
+			text(L"   ##    ##     ##  ##  ##     ## ##     ##       ##") | bold | hcenter,
+			text(L"   ##    ##     ##  ##  ##     ## ##     ## ##    ##") | bold | hcenter,
+			text(L"   ##     #######  #### ########  ##     ##  ###### ") | bold | hcenter
+		});
+	};
 
 	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
 	int dialog_to_show = 0; 
@@ -90,7 +91,7 @@ int main(int argc, char* argv[]) {
 	auto book_user_search_input = Input(&book_user_search_text, L"Search books", &book_user_search_input_option); //Input for Book Search 
 
 	// Book Menu
-	std::vector<std::wstring> book_menu_entries = {L""}; //UI Display Vector that displays Books
+	std::vector<std::wstring> book_menu_entries = {}; //UI Display Vector that displays Books
 	int book_menu_entries_selectedidx = 0; //Selected book 
 	MenuOption book_menu_option;
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx, &book_menu_option); //Menu containing books
@@ -248,7 +249,7 @@ int main(int argc, char* argv[]) {
 				hbox({
 					window(	text(left_window_text) 			| color(Color::GreenLight), 
 							vbox({
-								book_menu->Render()
+								book_menu->Render()			| frame | size(HEIGHT, LESS_THAN, 11)
 						})) | flex 							| color(Color::GreenLight),
 					vbox({ 
 						window(	text(right_window_text) 	| color(Color::GreenLight), 
@@ -414,7 +415,7 @@ int main(int argc, char* argv[]) {
 				hbox({
 					window(	text(left_window_text) 		|	color(Color::BlueLight), 
 							vbox({
-								patron_menu->Render() 
+								patron_menu->Render()	| frame | size(HEIGHT, LESS_THAN, 11)
 							})) | flex 					| 	color(Color::BlueLight),
 					vbox({ 
 						window(	text(right_window_text)	| 	color(Color::BlueLight), 
@@ -583,7 +584,7 @@ int main(int argc, char* argv[]) {
 			hbox({
 				window(text(left_window_text) 			| color(Color::CyanLight), 
 					vbox({
-						loan_menu -> Render() 
+						loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 11)
 					})) | flex 							| color(Color::CyanLight),
 
 				vbox({
@@ -641,7 +642,7 @@ int main(int argc, char* argv[]) {
 
 	auto main_renderer = ftxui::Renderer(main_container, [&] {
 		return vbox({
-					tab_toggle->Render(),
+					tab_toggle->Render() | hcenter,
 					ftxui::separator(),
 					tab_container->Render() 
 					}) |
@@ -677,7 +678,10 @@ int main(int argc, char* argv[]) {
 				loan_dialog_renderer->Render() | clear_under | center,
 			});
 		}
-		return document;
+		return vbox({
+			title(),
+			document
+		});
 	});
 
 
