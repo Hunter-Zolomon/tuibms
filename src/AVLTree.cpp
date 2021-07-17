@@ -1,6 +1,7 @@
 #include <string>
 #include <AVLNode.h>
 #include <AVLTree.h>
+#include <vector>
 
 /**
  * AVL tree constructor. Creates root node with no left/right pointers and an empty container.
@@ -213,6 +214,32 @@ bool AVL<T>::updateTree(int id_of_dto_tochange, T newdata) {
     }
     else return false;
 	*/
+}
+
+template<class T>
+std::vector<DTO<T>*> AVL<T>::getAllInorder(AVLNode<T>* node) {
+	std::vector<DTO<T>*> returnvector;
+
+	if (nullptr == node)
+		return returnvector;
+
+	std::vector<DTO<T>*> returnvector2;
+ 
+	if (nullptr != node->left) {
+		returnvector2 = getAllInorder(node->left);
+		returnvector.insert(returnvector.end(), returnvector2.begin(), returnvector2.end());
+	}
+	returnvector.push_back(node->data);
+	if (nullptr != node->right) {
+		returnvector2 = getAllInorder(node->right);
+		returnvector.insert(returnvector.end(), returnvector2.begin(), returnvector2.end());
+	}
+	return returnvector;
+}
+
+template<class T>
+std::vector<DTO<T>*> AVL<T>::getAllElements() {
+	return this->getAllInorder(this->rootNode);
 }
 
 template class AVL<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION

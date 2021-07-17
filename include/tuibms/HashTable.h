@@ -1,4 +1,5 @@
 //#include <string>
+#include <vector>
 #include "DTO.h"
 #include "AVLTree.h"
 
@@ -28,6 +29,7 @@ class HashTable {
         bool removeFromTable(int key);
 		bool operator()(DTO<T>* dataobj);
         DTO<T>& operator[](int key); 
+		std::vector<DTO<T>*> getAllElements();
 };
 
 #endif

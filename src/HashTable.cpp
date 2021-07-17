@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <cmath>
 #include <string>
+#include <vector>
 #include <HashTable.h>
 
 #define HASH_P 14
@@ -63,6 +64,24 @@ DTO<T>& HashTable<T>::operator[](int key) {
             //return nullptr;
         } 
     }
+}
+
+/**
+ * Returns a vector containing all DTO pointers contained within the hashtable and collision resolution trees.
+ */
+
+template<class T>
+std::vector<DTO<T>*> HashTable<T>::getAllElements() {
+	std::vector<DTO<T>*> returnvector;
+	for (int i = 0; i < this->tblsize; i++) {
+		if (nullptr != (this->hashtable + i)->data)
+			returnvector.push_back((this->hashtable + i)->data);
+		if (nullptr != (this->hashtable + i)->treeptr) {
+			std::vector<DTO<T>*> avlreturnvector = (this->hashtable + i)->treeptr->getAllElements();
+			returnvector.insert(returnvector.end(), avlreturnvector.begin(), avlreturnvector.end()); 
+		}
+	}
+	return returnvector;
 }
 
 /**

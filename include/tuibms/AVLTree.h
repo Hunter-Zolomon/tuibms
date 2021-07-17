@@ -1,4 +1,5 @@
 #include "AVLNode.h"
+#include <vector>
 
 #ifndef AVLTREE_H_
 #define AVLTREE_H_
@@ -16,6 +17,7 @@ class AVL {
         bool deleteFromTree(int key);
         //bool updateTree(DTO<T>* datatochange, DTO<T>* newdata); Changed
 		bool updateTree(int id_of_dto_tochange, T newdata);
+		std::vector<DTO<T>*> getAllElements();
         void clearTree();
     private:
         AVLNode<T>* rootNode;
@@ -31,6 +33,7 @@ class AVL {
         AVLNode<T>* deleteFrom(int key, AVLNode<T>* node);
 		void deleteTree(AVLNode<T>* node);
         int getHeight(AVLNode<T>* node);
+		std::vector<DTO<T>*> getAllInorder(AVLNode<T>* node);
 };
 
 #endif
