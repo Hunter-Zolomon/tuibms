@@ -1,5 +1,8 @@
 #include <string>
 
+#ifndef BOOK_H_
+#define BOOK_H_
+
 class Book{
     std::wstring    book_isbn,      book_title, 
                     book_author,    book_year, 
@@ -10,13 +13,13 @@ class Book{
         Book(std::wstring isbn, std::wstring title, std::wstring author,
              std::wstring year, std::wstring category,std::wstring genre, bool isAvailable);
 
-        bool getIsAvailable();
         std::wstring getIsbn();
         std::wstring getTitle();
         std::wstring getAuthor();
         std::wstring getYear();
         std::wstring getCategory();
         std::wstring getGenre();
+        bool getIsAvailable();
         
         std::wstring getMenuEntry();
 
@@ -29,3 +32,5 @@ class Book{
         void setGenre(std::wstring genre);
 
 };
+
+#endif

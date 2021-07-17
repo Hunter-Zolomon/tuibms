@@ -1,7 +1,12 @@
 #include <vector>
 #include <string>
-#include <algorithm>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 #include <DTO.h>
+
+#ifndef UI_HELPER_H_
+#define UI_HELPER_H_
 
 template<class T>
 class UI_Helper{
@@ -11,6 +16,10 @@ class UI_Helper{
         static void add_to_vector(std::vector<std::wstring>* vec, std::wstring search_string);
         static bool del_from_vector(std::vector<std::wstring>* vec);
         static int  get_id_from_wstring(std::wstring menu_entry);
-        static bool populate_book_editor(int instance_id, std::vector<T> instance_vector, std::vector<std::wstring> input_book_content_vector);
-        static std::wstring ui_book_entry_string(DTO<T>* dto_book);
+        static std::wstring ui_dto_entry_string(DTO<T>* dto);
+        static bool populate_book_editor(DTO<Book> dto_book, std::vector<std::wstring*> input_book_content_vector);
+        static bool populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector);
+        static bool populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wstring*> input_loan_content_vector);
 };
+
+#endif

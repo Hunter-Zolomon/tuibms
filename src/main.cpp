@@ -26,12 +26,46 @@ using namespace ftxui;
 
 int main(int argc, char* argv[]) {
 
-	HashTable<Book> hash_table_book(10);
+	HashTable<Book> hash_table_book(1000);
+	HashTable<Patron> hash_table_patron(1000);
+	HashTable<Loan> hash_table_loan(1000);
+
 	Book bk1(L"45-548", L"C++ Intro", L"Dover, Ben", L"1996", L"Fiction", L"Spirituality", true);
 	Book bk2(L"66-892", L"FXTUI Intro", L"Hawk, Mike", L"2005", L"Fiction", L"Self-Improvement", true);
+	Book bk3(L"66-892", L"Kamasutra", L"Hawk, Mike", L"2005", L"Fiction", L"Self-Improvement", true);
 
-	hash_table_book(new DTO<Book>(bk1));
-	hash_table_book(new DTO<Book>(bk2));
+	DTO<Book> dto_bk1(bk1);
+	DTO<Book> dto_bk2(bk2);
+	DTO<Book> dto_bk3(bk3);
+
+	hash_table_book(&dto_bk1);
+	hash_table_book(&dto_bk2);
+	hash_table_book(&dto_bk3);
+
+
+	Patron pt1(true, L"John", L"Doe", L"Bukit Jalil", L"50430", L"0126985741", 1);
+	Patron pt2(false, L"Bruce", L"Wayne", L"Sri Petaling", L"69420", L"017854613", 3);
+	Patron pt3(true, L"Phillip", L"Fry", L"Chow Kit", L"50480", L"0143369852", 2);
+
+	DTO<Patron> dto_pt1(pt1);
+	DTO<Patron> dto_pt2(pt2);
+	DTO<Patron> dto_pt3(pt3);
+
+	hash_table_patron(&dto_pt1);
+	hash_table_patron(&dto_pt2);
+	hash_table_patron(&dto_pt3);
+
+	Loan ln1(dto_bk1.id, dto_pt1.id, bk1.getIsbn(), bk1.getTitle(), pt1.getFname()+ L" " + pt1.getLname(), L"27", L"Jan");
+	Loan ln2(dto_bk2.id, dto_pt2.id, bk2.getIsbn(), bk2.getTitle(), pt2.getFname()+ L" " + pt2.getLname(), L"16", L"Mar");
+	Loan ln3(dto_bk3.id, dto_pt3.id, bk3.getIsbn(), bk3.getTitle(), pt3.getFname()+ L" " + pt3.getLname(), L"32", L"Nov");
+
+	DTO<Loan> dto_ln1(ln1);
+	DTO<Loan> dto_ln2(ln2);
+	DTO<Loan> dto_ln3(ln3);
+
+	hash_table_loan(&dto_ln1);
+	hash_table_loan(&dto_ln2);
+	hash_table_loan(&dto_ln3);
 
 	const char* title = R"(
 	######## ##     ## #### ########  ##     ##  ######  
@@ -44,7 +78,6 @@ int main(int argc, char* argv[]) {
 	)"; 
 
 	std::cout << title << std::endl; 
-	
 
 	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
 	int dialog_to_show = 0; 
@@ -80,6 +113,7 @@ int main(int argc, char* argv[]) {
 	auto input_book_genre = 	Input(&input_book_genre_content, 	L"", &input_book_editor_option);
 	auto input_book_available = Input(&input_book_available_content,L"", &input_book_editor_option);
 	
+
 	// Book Editor - Container
 	auto book_editor_section_input = Container::Vertical({
 		input_book_id,
@@ -91,6 +125,13 @@ int main(int argc, char* argv[]) {
 		input_book_genre,
 		input_book_available
 	});
+
+	// Book Editor - Vector of Input Strings
+	std::vector<std::wstring*> book_editor_input_vector{	&input_book_id_content,		&input_book_isbn_content, 
+															&input_book_title_content,	&input_book_author_content, 
+															&input_book_year_content,	&input_book_category_content, 
+															&input_book_genre_content, 	&input_book_available_content};
+
 
 	// Book Editor - Render Function
 	auto book_editor_section = [&]() {
@@ -113,7 +154,7 @@ int main(int argc, char* argv[]) {
 		Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
 		DTO<Book> dto_temp_new(book_line_content);
 		hash_table_book(&dto_temp_new);
-		std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_book_entry_string(&dto_temp_new);
+		std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(&dto_temp_new);
 		book_menu_entries.push_back(book_line_content_menu_entry);
 	}, &book_button_editor_option);
 
@@ -162,6 +203,10 @@ int main(int argc, char* argv[]) {
 	ButtonOption book_dialog_button_option;
 
 	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
+		int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		DTO<Book> temp_selected_book = hash_table_book[id];
+		UI_Helper<Book>::populate_book_editor(temp_selected_book, book_editor_input_vector);
+		dialog_to_show = 0;
 		
 	}, &book_dialog_button_option);
 
@@ -238,11 +283,7 @@ int main(int argc, char* argv[]) {
 	auto patron_user_search_input = Input(&patron_user_search_text, L"Search patrons", &patron_user_search_input_option);
 
 	// Patron Menu
-	std::vector<std::wstring> patron_menu_entries = { 
-		L"56 - Active - John Doe - Bukit Jalil  - 50430 - 0126985741 - 1", 
-		L"87 - Barred - Bruce Wayne - Sri Petaling  - 69420 - 0178547963 - 3",
-		L"69 - Active - Phillip Fry - Chow Kit  - 50480 - 0143369852 - 2",
-	};
+	std::vector<std::wstring> patron_menu_entries = {};
 
 	int patron_menu_entries_selectedidx = 0;
 	MenuOption patron_menu_option;
@@ -277,6 +318,13 @@ int main(int argc, char* argv[]) {
 		input_patron_contact,
 		input_patron_num_borrowed
 	});
+
+	// Patron Editor - Vector of Input Strings
+	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_id_content, 		&input_patron_status_content, 
+															&input_patron_fname_content, 	&input_patron_lname_content, 
+															&input_patron_address_content, 	&input_patron_postcode_content,  
+															&input_patron_contact_content, 	&input_patron_num_borrowed_content};
+
 	
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
@@ -295,7 +343,10 @@ int main(int argc, char* argv[]) {
 	// Patron Editor - Buttons
 	ButtonOption patron_button_editor_option;
 	auto patron_button_add = 	Button(L"Add New", 		[&](){}, &patron_button_editor_option);
-	auto patron_button_save = 	Button(L"Save Changes", [&](){}, &patron_button_editor_option);
+	auto patron_button_save = 	Button(L"Save Changes", [&](){
+		std::vector<DTO<Patron>*> all_patrons = hash_table_patron.getAllElements();
+		UI_Helper<Patron>::grab_all_populate(all_patrons, patron_menu_entries);
+	}, &patron_button_editor_option);
 	auto patron_button_cancel = Button(L"Cancel", 		[&](){}, &patron_button_editor_option);
 
 	// Patron Editor - Button Container
@@ -328,7 +379,13 @@ int main(int argc, char* argv[]) {
 
 	ButtonOption patron_dialog_button_option;
 
-	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{}, &patron_dialog_button_option);
+	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{
+		int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		DTO<Patron> temp_selected_patron = hash_table_patron[id];
+		UI_Helper<Book>::populate_patron_editor(temp_selected_patron, patron_editor_input_vector);
+		dialog_to_show = 0;
+	}, &patron_dialog_button_option);
+
 	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[1], [&]{}, &patron_dialog_button_option);
 	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{}, &patron_dialog_button_option);
 	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
@@ -392,11 +449,7 @@ int main(int argc, char* argv[]) {
 	auto loan_user_search_input = Input(&loan_user_seach_text, L"Search loans", &loan_user_search_input_option);
 	
 	// Loan Menu
-	std::vector<std::wstring> loan_menu_entries = 	{	
-		L"69 - 42 - Mein Kampf  01 - Julie Doe - 978-3-640123-07-8 - April 20", 
-		L"74 - 18 - Science of Sleep - 03 - Beff Jazos - 978-3-452323-08-8 - April 03",
-		L"51 - 79 - Animal Farm - 54  - Norman Bates - 978-3-640123-05-8 - March 21",
-													};	
+	std::vector<std::wstring> loan_menu_entries = 	{};	
 
 	int loan_menu_entries_selectedidx = 0;
 	MenuOption loan_menu_option;
@@ -433,6 +486,12 @@ int main(int argc, char* argv[]) {
 		input_loan_month
 	});
 
+	// Loan Editor - Vector of Input Strings
+	std::vector<std::wstring*> loan_editor_input_vector{	&input_loan_id_content, 		&input_loan_book_id_content, 
+															&input_loan_book_isbn_content, 	&input_loan_book_name_content,
+															&input_loan_patron_id_content, 	&input_loan_patron_name_content,
+															&input_loan_day_content, 		&input_loan_month_content};
+
 	// Loan Editor - Render Function
 	auto loan_editor_section = [&](){
 		return vbox({
@@ -450,15 +509,18 @@ int main(int argc, char* argv[]) {
 	// Loan Editor - Buttons
 	ButtonOption loan_button_editor_option;
 
-	auto loan_button_loan 	= Button(L"Add New", 		[&](){}, &loan_button_editor_option);
-	auto loan_button_extend = Button(L"Save Changes", 	[&](){}, &loan_button_editor_option);
-	auto loan_button_return = Button(L"Cancel", 		[&](){}, &loan_button_editor_option);
+	auto loan_button_add 	= Button(L"Add New", 		[&](){}, &loan_button_editor_option);
+	auto loan_button_save 	= Button(L"Save Changes", 	[&](){
+		std::vector<DTO<Loan>*> all_loans = hash_table_loan.getAllElements();
+		UI_Helper<Loan>::grab_all_populate(all_loans, loan_menu_entries);
+	}, &loan_button_editor_option);
+	auto loan_button_cancel = Button(L"Cancel", 		[&](){}, &loan_button_editor_option);
 
 	// Loan Editor - Button Container
 	auto loan_button_container = Container::Horizontal({
-		loan_button_loan,
-		loan_button_extend,
-		loan_button_return
+		loan_button_add,
+		loan_button_save,
+		loan_button_cancel
 	});
 
 	// Loan Editor- Editor & Button Container
@@ -486,7 +548,13 @@ int main(int argc, char* argv[]) {
 
 	ButtonOption loan_button_dialog_option;
 
-	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{}, &loan_button_dialog_option);
+	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{
+		int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		DTO<Loan> temp_selected_loan = hash_table_loan[id];
+		UI_Helper<Loan>::populate_loan_editor(temp_selected_loan, loan_editor_input_vector);
+		dialog_to_show = 0;
+	}, &loan_button_dialog_option);
+
 	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{}, &loan_button_dialog_option);
 	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{}, &loan_button_dialog_option);
 	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{}, &loan_button_dialog_option);
@@ -524,9 +592,9 @@ int main(int argc, char* argv[]) {
 							loan_editor_section()  		| color(Color::CyanLight),
 						}))								| color(Color::CyanLight),
 						hbox({
-							loan_button_loan->	Render()| flex,
-							loan_button_extend->Render()| flex,
-							loan_button_return->Render()| flex
+							loan_button_add->Render()| flex,
+							loan_button_save->Render()| flex,
+							loan_button_cancel->Render()| flex
 						}) 								| color(Color::CyanLight)
 				})
 			})

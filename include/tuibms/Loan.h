@@ -1,5 +1,9 @@
 #include <string>
 
+#ifndef LOAN_H_
+#define LOAN_H_
+
+
 class Loan{
     int book_id, patron_id;
     std::wstring book_isbn,book_title,patron_name,loan_day,loan_month;
@@ -30,3 +34,5 @@ class Loan{
         void setLoanDay(std::wstring loan_day);
         void setLoanMonth(std::wstring loan_month);
 };
+
+#endif

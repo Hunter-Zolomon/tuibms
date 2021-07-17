@@ -1,5 +1,9 @@
 #include <string>
 
+#ifndef PATRON_H_
+#define PATRON_H_
+
+
 class Patron{
 
     int patron_num_borrowed;
@@ -40,3 +44,5 @@ class Patron{
         void incrementNumBorrowed();
         void decrementNumBorrowed();
 };
+
+#endif
