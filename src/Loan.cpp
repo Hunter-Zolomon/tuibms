@@ -1,9 +1,7 @@
 #include <string>
 #include <Loan.h>
 
-Loan::Loan(){
-    int a = 3;
-}
+Loan::Loan(){}
 
 Loan::Loan(unsigned int book_id, unsigned int patron_id, 
              std::wstring book_isbn,std::wstring book_title,

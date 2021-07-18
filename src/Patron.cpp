@@ -1,9 +1,7 @@
 #include <string>
 #include <Patron.h>
 
-Patron::Patron(){
-    int a = 3;
-}
+Patron::Patron(){}
 
 Patron::Patron(bool is_active, std::wstring fname, std::wstring lname, 
                 std::wstring address, std::wstring postcode, 

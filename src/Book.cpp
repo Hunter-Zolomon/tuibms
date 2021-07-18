@@ -1,9 +1,7 @@
 #include <string>
 #include <Book.h>
 
-Book::Book(){
-    int a = 3;
-};
+Book::Book(){};
 
 Book::Book( std::wstring isbn, 
             std::wstring title, std::wstring author, std::wstring year, 
