@@ -1,4 +1,3 @@
-#include <cmath>       // for sin
 #include <functional>  // for ref, reference_wrapper, function
 #include <string>      // for wstring, basic_string, operator+, to_wstring
 #include <thread>      // for sleep_for, thread
@@ -15,57 +14,21 @@
 #include <ftxui/dom/elements.hpp>  // for text, operator|, color, bgcolor, Element, filler, size, vbox, flex, hbox, graph, separator, EQUAL, WIDTH, hcenter, bold, border, window, HEIGHT, Elements, hflow, flex_grow, frame, gauge, LESS_THAN, spinner, dim, GREATER_THAN
 #include <ftxui/screen/color.hpp>  // for Color, Color::BlueLight, Color::RedLight, Color::Black, Color::Blue, Color::Cyan, Color::CyanLight, Color::GrayDark, Color::GrayLight, Color::Green, Color::GreenLight, Color::Magenta, Color::MagentaLight, Color::Red, Color::White, Color::Yellow, Color::YellowLight, Color::Default
 
-
-#include <HashTable.h>
-#include <AVLTree.h>
-#include <DTO.h>
-#include <Book.h>
-#include <UI_Helper.h>
+#include <HashTable.h> //for HashTable<T> & HTO<T>
+#include <AVLTree.h> //for AVL<T>
+#include <DTO.h> //for DTO<T>
+#include <Book.h> //for Book class
+#include <Patron.h> //for Patron class
+#include <Loan.h> //for Loan class
+#include <UI_Helper.h> //for UI assist functionality
 
 using namespace ftxui;
 
 int main(int argc, char* argv[]) {
 
-	HashTable<Book> hash_table_book(1000);
-	HashTable<Patron> hash_table_patron(1000);
-	HashTable<Loan> hash_table_loan(1000);
-
-	Book bk1(L"45-548", L"C++ Intro", L"Dover, Ben", L"1996", L"Fiction", L"Spirituality", true);
-	Book bk2(L"66-892", L"FXTUI Intro", L"Hawk, Mike", L"2005", L"Fiction", L"Self-Improvement", true);
-	Book bk3(L"66-892", L"Kamasutra", L"Hawk, Mike", L"2005", L"Fiction", L"Self-Improvement", true);
-
-	DTO<Book> dto_bk1(bk1);
-	DTO<Book> dto_bk2(bk2);
-	DTO<Book> dto_bk3(bk3);
-
-	hash_table_book(&dto_bk1);
-	hash_table_book(&dto_bk2);
-	hash_table_book(&dto_bk3);
-
-
-	Patron pt1(true, L"John", L"Doe", L"Bukit Jalil", L"50430", L"0126985741", 1);
-	Patron pt2(false, L"Bruce", L"Wayne", L"Sri Petaling", L"69420", L"017854613", 3);
-	Patron pt3(true, L"Phillip", L"Fry", L"Chow Kit", L"50480", L"0143369852", 2);
-
-	DTO<Patron> dto_pt1(pt1);
-	DTO<Patron> dto_pt2(pt2);
-	DTO<Patron> dto_pt3(pt3);
-
-	hash_table_patron(&dto_pt1);
-	hash_table_patron(&dto_pt2);
-	hash_table_patron(&dto_pt3);
-
-	Loan ln1(dto_bk1.id, dto_pt1.id, bk1.getIsbn(), bk1.getTitle(), pt1.getFname()+ L" " + pt1.getLname(), L"27", L"Jan");
-	Loan ln2(dto_bk2.id, dto_pt2.id, bk2.getIsbn(), bk2.getTitle(), pt2.getFname()+ L" " + pt2.getLname(), L"16", L"Mar");
-	Loan ln3(dto_bk3.id, dto_pt3.id, bk3.getIsbn(), bk3.getTitle(), pt3.getFname()+ L" " + pt3.getLname(), L"32", L"Nov");
-
-	DTO<Loan> dto_ln1(ln1);
-	DTO<Loan> dto_ln2(ln2);
-	DTO<Loan> dto_ln3(ln3);
-
-	hash_table_loan(&dto_ln1);
-	hash_table_loan(&dto_ln2);
-	hash_table_loan(&dto_ln3);
+	HashTable<Book> hash_table_book(1000); //For testing
+	HashTable<Patron> hash_table_patron(1000); //For testing
+	HashTable<Loan> hash_table_loan(1000); //For testing
 
 	// Perhaps a better way of doing this?
 	const auto title = [&] () {
@@ -622,9 +585,9 @@ int main(int argc, char* argv[]) {
 	int selected_tab = 0;
 
 	ToggleOption tab_toggle_option;
-	auto tab_toggle = ftxui::Toggle(&tab_values, &selected_tab, &tab_toggle_option);
+	auto tab_toggle = Toggle(&tab_values, &selected_tab, &tab_toggle_option);
 
-	auto tab_container = ftxui::Container::Tab(
+	auto tab_container = Container::Tab(
 		{
 			book_tab_renderer,
 			patron_tab_renderer,
@@ -636,18 +599,18 @@ int main(int argc, char* argv[]) {
 
 	#pragma region Main Container
 
-	auto main_container = ftxui::Container::Vertical({
+	auto main_container = Container::Vertical({
 		tab_toggle,
 		tab_container
 	});
 
-	auto main_renderer = ftxui::Renderer(main_container, [&] {
+	auto main_renderer = Renderer(main_container, [&] {
 		return vbox({
 					tab_toggle->Render() | hcenter,
-					ftxui::separator(),
+					separator(),
 					tab_container->Render() 
 					}) |
-			ftxui::border;
+			border;
 	});
 
 	// Gotta be a better way
@@ -686,7 +649,7 @@ int main(int argc, char* argv[]) {
 	});
 
 
-	auto screen = ftxui::ScreenInteractive::TerminalOutput();
+	auto screen = ScreenInteractive::TerminalOutput();
 	screen.Loop(final_renderer);
 	#pragma endregion
 
