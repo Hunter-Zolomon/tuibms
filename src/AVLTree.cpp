@@ -162,7 +162,6 @@ AVLNode<T>* AVL<T>::deleteFrom(unsigned int key, AVLNode<T>* node) {
 				while (nullptr != currentnode->left)
                     currentnode = currentnode->left;
                 node->data = currentnode->data;
-                //node->right = deleteFrom(currentnode->data, node->right); Changed
                 node->right = deleteFrom(currentnode->data->id, node->right);
             }
         }
@@ -213,19 +212,11 @@ bool AVL<T>::deleteFromTree(unsigned int key) {
 
 template<class T>
 bool AVL<T>::updateTree(unsigned int id_of_dto_tochange, T newdata) {
-    //if (deleteFromTree(datatochange)) { Changed
 	AVLNode<T>* tobeswapped = search(id_of_dto_tochange, rootNode);
 	if (nullptr == tobeswapped)
 		return false;
 	tobeswapped->data->dataobj = newdata;
 	return true;
-	/* Changed
-    if (deleteFromTree(datatochange->id)) {
-        insertIntoTree(newdata);
-        return true;
-    }
-    else return false;
-	*/
 }
 
 template<class T>

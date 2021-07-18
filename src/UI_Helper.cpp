@@ -79,6 +79,3 @@ std::wstring UI_Helper<T>::ui_dto_entry_string(DTO<T>* dto){
 template class UI_Helper<Book>;
 template class UI_Helper<Patron>;
 template class UI_Helper<Loan>;
-//template class UI_Helper<DTO<Book>*>;
-//template class UI_Helper<DTO<Patron>*>;
-//template class UI_Helper<DTO<Loan>*>;

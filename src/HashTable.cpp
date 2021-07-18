@@ -48,23 +48,18 @@ size_t HashTable<T>::hashFunction(unsigned int key, unsigned int p) {
  */
 
 template<class T>
-DTO<T>& HashTable<T>::operator[](unsigned int key) {
+DTO<T>* HashTable<T>::operator[](unsigned int key) {
     unsigned int searchidx = hashFunction(key, HASH_P);
 	if ((this->hashtable + searchidx)->data->id == key) {
-        //searchidx = NULL; Needs to nullify
-        return *((this->hashtable + searchidx)->data);
+        return (this->hashtable + searchidx)->data;
     }
     else {
         DTO<T>* searchobj = (this->hashtable + searchidx)->treeptr->searchTree(key);
 		if (nullptr != searchobj) {
-            //searchidx = NULL;
-            return *searchobj;
+            return searchobj;
         }
         else {
-			return *searchobj;
-            //searchidx = NULL;
-            //delete searchobj;
-            //return nullptr;
+			return searchobj;
         } 
     }
 }
@@ -94,19 +89,19 @@ std::vector<DTO<T>*> HashTable<T>::getAllElements() {
  */
 
 template<class T>
-bool HashTable<T>::operator()(DTO<T>* dataobj) {
+DTO<T>* HashTable<T>::operator()(DTO<T>* dataobj) {
 	unsigned int inputindx = hashFunction(dataobj->id, HASH_P);
 	if (nullptr != (this->hashtable + inputindx)->data) {
 		if ((this->hashtable + inputindx)->treeptr->insertIntoTree(dataobj)) {
 			this->datacount++;
-			return true;
+			return dataobj;
 		}
     } else {
         (this->hashtable + inputindx)->data = dataobj;
 		this->datacount++;
-        return true;
+		return dataobj;
     }
-    return false;
+    return nullptr;
 }
 
 /**
@@ -119,7 +114,6 @@ template<class T>
 bool HashTable<T>::removeFromTable(unsigned int key) {
     unsigned int searchidx = hashFunction(key, HASH_P);
 	if (nullptr != (this->hashtable + searchidx)->data) {
-        //searchidx = NULL; Needs to nullify
 		if ((this->hashtable + searchidx)->data->id == key) {
 			delete (hashtable + searchidx)->data;
 			this->datacount--;
@@ -133,7 +127,6 @@ bool HashTable<T>::removeFromTable(unsigned int key) {
 		} 
     }
     else {
-        //return (*(hashtable + searchidx))->treeptr->deleteFromTree(key); // delete function argument RECHECK after AVL implementation
         if ((this->hashtable + searchidx)->treeptr->deleteFromTree(key)) {
 			this->datacount--;
 			return true;
