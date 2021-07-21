@@ -33,13 +33,15 @@ int main(int argc, char* argv[]) {
 	// Perhaps a better way of doing this?
 	const auto title = [&] () {
 		return vbox({
+			text(L" "),
 			text(L"######## ##     ## #### ########  ##     ##  ###### ") | bold | hcenter,
 			text(L"   ##    ##     ##  ##  ##     ## ###   ### ##    ##") | bold | hcenter,
 			text(L"   ##    ##     ##  ##  ##     ## #### #### ##      ") | bold | hcenter,
 			text(L"   ##    ##     ##  ##  ########  ## ### ##  ###### ") | bold | hcenter,
 			text(L"   ##    ##     ##  ##  ##     ## ##     ##       ##") | bold | hcenter,
 			text(L"   ##    ##     ##  ##  ##     ## ##     ## ##    ##") | bold | hcenter,
-			text(L"   ##     #######  #### ########  ##     ##  ###### ") | bold | hcenter
+			text(L"   ##     #######  #### ########  ##     ##  ###### ") | bold | hcenter,
+			text(L" ")
 		});
 	};
 
@@ -67,15 +69,22 @@ int main(int argc, char* argv[]) {
 					input_book_year_content,	input_book_category_content, 
 					input_book_genre_content, 	input_book_available_content;
 
-	InputOption input_book_editor_option; //Options for inputs in Book Editor
-	auto input_book_id = 		Input(&input_book_id_content, 		L"", &input_book_editor_option);
-	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"", &input_book_editor_option);
-	auto input_book_title = 	Input(&input_book_title_content, 	L"", &input_book_editor_option);
-	auto input_book_author = 	Input(&input_book_author_content, 	L"", &input_book_editor_option);
-	auto input_book_year = 		Input(&input_book_year_content, 	L"", &input_book_editor_option);
-	auto input_book_category = 	Input(&input_book_category_content, L"", &input_book_editor_option);
-	auto input_book_genre = 	Input(&input_book_genre_content, 	L"", &input_book_editor_option);
-	auto input_book_available = Input(&input_book_available_content,L"", &input_book_editor_option);
+
+	// Book Editor - InputOptions
+	InputOption input_book_id_content_option, 		input_book_isbn_content_option,	
+				input_book_title_content_option, 	input_book_author_content_option,	
+				input_book_year_content_option, 	input_book_category_content_option,
+				input_book_genre_content_option, 	input_book_available_content_option;
+
+
+	auto input_book_id = 		Input(&input_book_id_content, 		L"", &input_book_id_content_option);
+	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"", &input_book_isbn_content_option);
+	auto input_book_title = 	Input(&input_book_title_content, 	L"", &input_book_title_content_option);
+	auto input_book_author = 	Input(&input_book_author_content, 	L"", &input_book_author_content_option);
+	auto input_book_year = 		Input(&input_book_year_content, 	L"", &input_book_year_content_option);
+	auto input_book_category = 	Input(&input_book_category_content, L"", &input_book_category_content_option);
+	auto input_book_genre = 	Input(&input_book_genre_content, 	L"", &input_book_genre_content_option);
+	auto input_book_available = Input(&input_book_available_content,L"", &input_book_available_content_option);
 	
 
 	// Book Editor - Container
@@ -262,15 +271,20 @@ int main(int argc, char* argv[]) {
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_contact_content, 	input_patron_num_borrowed_content;
 					
-	InputOption input_patron_editor_option;
-	auto input_patron_id = 			Input(&input_patron_id_content, 			L"", &input_patron_editor_option);
-	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_editor_option);
-	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"", &input_patron_editor_option);
-	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"", &input_patron_editor_option);
-	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_editor_option);
-	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_editor_option);
-	auto input_patron_contact 	= 	Input(&input_patron_contact_content, 		L"", &input_patron_editor_option);
-	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"", &input_patron_editor_option);
+	// Patron Editor - InputOptions
+	InputOption	 	input_patron_id_content_option, 		input_patron_status_content_option,
+					input_patron_fname_content_option, 		input_patron_lname_content_option,
+					input_patron_address_content_option, 	input_patron_postcode_content_option, 
+					input_patron_contact_content_option, 	input_patron_num_borrowed_content_option;
+
+	auto input_patron_id = 			Input(&input_patron_id_content, 			L"", &input_patron_id_content_option);
+	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_status_content_option);
+	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"", &input_patron_fname_content_option);
+	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"", &input_patron_lname_content_option);
+	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_address_content_option);
+	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_postcode_content_option);
+	auto input_patron_contact 	= 	Input(&input_patron_contact_content, 		L"", &input_patron_contact_content_option);
+	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"", &input_patron_num_borrowed_content_option);
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
@@ -427,17 +441,21 @@ int main(int argc, char* argv[]) {
 					input_loan_book_isbn_content, 	input_loan_book_name_content,
 					input_loan_patron_id_content, 	input_loan_patron_name_content,
 					input_loan_day_content, 		input_loan_month_content;
+					
+	// Loan Editor - InputOptions
+	InputOption		input_loan_id_content_option, 			input_loan_book_id_content_option, 
+					input_loan_book_isbn_content_option, 	input_loan_book_name_content_option,
+					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
+					input_loan_day_content_option, 			input_loan_month_content_option;
 
-	InputOption input_loan_editor_option;
-
-	auto input_loan_id 		  = 	Input(&input_loan_id_content, 			L"", &input_loan_editor_option);
-	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"", &input_loan_editor_option);
-	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"", &input_loan_editor_option);
-	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"", &input_loan_editor_option);
-	auto input_loan_patron_id=		Input(&input_loan_patron_id_content,	L"", &input_loan_editor_option);
-	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_editor_option);
-	auto input_loan_day  	  =		Input(&input_loan_day_content, 			L"", &input_loan_editor_option);
-	auto input_loan_month 	  =		Input(&input_loan_month_content, 		L"", &input_loan_editor_option);
+	auto input_loan_id 		  = 	Input(&input_loan_id_content, 			L"", &input_loan_id_content_option);
+	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
+	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
+	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
+	auto input_loan_patron_id=		Input(&input_loan_patron_id_content,	L"", &input_loan_patron_id_content_option);
+	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_patron_name_content_option);
+	auto input_loan_day  	  =		Input(&input_loan_day_content, 			L"", &input_loan_day_content_option);
+	auto input_loan_month 	  =		Input(&input_loan_month_content, 		L"", &input_loan_month_content_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
