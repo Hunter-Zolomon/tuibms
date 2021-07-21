@@ -81,6 +81,18 @@ void UI_Helper<T>::clear_editor(std::vector<std::wstring*> input_editor_vector){
     }
 }
 
+template<class T>
+bool UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstring*> input_book_content_vector){
+    dto_book->dataobj.setIsbn(*(input_book_content_vector[0]));
+    dto_book->dataobj.setTitle(*(input_book_content_vector[1]));
+    dto_book->dataobj.setAuthor(*(input_book_content_vector[2]));
+    dto_book->dataobj.setYear(*(input_book_content_vector[3]));
+    dto_book->dataobj.setCategory(*(input_book_content_vector[4]));
+    dto_book->dataobj.setGenre(*(input_book_content_vector[5]));
+    //dto_book.dataobj.setIsAvailable(*(input_book_content_vector[6]));
+    return true;
+}
+
 
 
 

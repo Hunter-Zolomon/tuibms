@@ -12,7 +12,7 @@
 #include <ftxui/component/receiver.hpp> // for Receivers
 #include <ftxui/component/screen_interactive.hpp>  // for Component, ScreenInteractive
 #include <ftxui/dom/elements.hpp>  // for text, operator|, color, bgcolor, Element, filler, size, vbox, flex, hbox, graph, separator, EQUAL, WIDTH, hcenter, bold, border, window, HEIGHT, Elements, hflow, flex_grow, frame, gauge, LESS_THAN, spinner, dim, GREATER_THAN
-#include <ftxui/screen/color.hpp>  // for Color, Color::BlueLight, Color::RedLight, Color::Black, Color::Blue, Color::Cyan, Color::CyanLight, Color::GrayDark, Color::GrayLight, Color::Green, Color::GreenLight, Color::Magenta, Color::MagentaLight, Color::Red, Color::White, Color::Yellow, Color::YellowLight, Color::Default
+#include <ftxui/screen/color.hpp>  // for Color, Color::BlueLight, Color::RedLight, Color::Black, Color::Blue, Color::Cyan, Color::CyanLight, Color::GrayDark, Color::Ggg, Color::Green, Color::GreenLight, Color::Magenta, Color::MagentaLight, Color::Red, Color::White, Color::Yellow, Color::YellowLight, Color::Default
 
 #include <HashTable.h> //for HashTable<T> & HTO<T>
 #include <AVLTree.h> //for AVL<T>
@@ -141,11 +141,11 @@ int main(int argc, char* argv[]) {
 	}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		DTO<Book>* temp_selected_book = hash_table_book[id];
+		UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
 		std::vector<DTO<Book>*> all_books = hash_table_book.getAllElements();
-		//std::thread do_thread(UI_Helper<Book>::grab_all_populate, all_books, std::ref(book_menu_entries));
 		UI_Helper<Book>::grab_all_populate(all_books, book_menu_entries);
-		//do_thread.detach();
-		//UI_Helper<Book>::grab_all_populate(book_table, book_menu_entries)
 	}, &book_button_editor_option);
 
 	auto book_button_cancel = Button(L"Cancel", [&](){
@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
 	// Book - Tab Render Function
 	auto book_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
 		return vbox({
-				book_user_search_input->Render() | flex,
+				book_user_search_input->Render() | flex 	| color(Color::GrayLight),
 				separator(),
 				hbox({
 					window(	text(left_window_text) 			| color(Color::GreenLight), 
