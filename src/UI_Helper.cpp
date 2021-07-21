@@ -76,7 +76,7 @@ std::wstring UI_Helper<T>::ui_dto_entry_string(DTO<T>* dto){
 template<class T>
 void UI_Helper<T>::clear_editor(std::vector<std::wstring*> input_editor_vector){
     for (std::wstring* entry: input_editor_vector){
-        *instance=L"";
+        *entry=L"";
     }
 }
 

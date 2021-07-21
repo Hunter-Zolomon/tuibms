@@ -64,20 +64,19 @@ int main(int argc, char* argv[]) {
 	book_menu_option.on_enter = [&](){ dialog_to_show = 1; }; //Triggered when Enter is pressed on a selected menu entry 
 
 	// Book Editor - Inputs
-	std::wstring 	input_book_id_content, 		input_book_isbn_content, 
+	std::wstring 	input_book_isbn_content, 
 					input_book_title_content,	input_book_author_content, 
 					input_book_year_content,	input_book_category_content, 
 					input_book_genre_content, 	input_book_available_content;
 
 
 	// Book Editor - InputOptions
-	InputOption input_book_id_content_option, 		input_book_isbn_content_option,	
+	InputOption input_book_isbn_content_option,	
 				input_book_title_content_option, 	input_book_author_content_option,	
 				input_book_year_content_option, 	input_book_category_content_option,
 				input_book_genre_content_option, 	input_book_available_content_option;
 
 
-	auto input_book_id = 		Input(&input_book_id_content, 		L"", &input_book_id_content_option);
 	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"", &input_book_isbn_content_option);
 	auto input_book_title = 	Input(&input_book_title_content, 	L"", &input_book_title_content_option);
 	auto input_book_author = 	Input(&input_book_author_content, 	L"", &input_book_author_content_option);
@@ -89,7 +88,6 @@ int main(int argc, char* argv[]) {
 
 	// Book Editor - Container
 	auto book_editor_section_input = Container::Vertical({
-		input_book_id,
 		input_book_isbn,
 		input_book_title,
 		input_book_author,
@@ -100,7 +98,7 @@ int main(int argc, char* argv[]) {
 	});
 
 	// Book Editor - Vector of Input Strings
-	std::vector<std::wstring*> book_editor_input_vector{	&input_book_id_content,		&input_book_isbn_content, 
+	std::vector<std::wstring*> book_editor_input_vector{	&input_book_isbn_content, 
 															&input_book_title_content,	&input_book_author_content, 
 															&input_book_year_content,	&input_book_category_content, 
 															&input_book_genre_content, 	&input_book_available_content};
@@ -109,7 +107,6 @@ int main(int argc, char* argv[]) {
 	// Book Editor - Render Function
 	auto book_editor_section = [&]() {
 		return vbox({
-				hbox({ text(L"BOOK ID   :")  | bold, input_book_id->Render() }),
 				hbox({ text(L"ISBN      :")	 | bold, input_book_isbn->Render() }),
 				hbox({ text(L"TITLE     :")  | bold, input_book_title->Render() }),
 				hbox({ text(L"AUTHOR    :")  | bold, input_book_author->Render() }),
@@ -266,18 +263,17 @@ int main(int argc, char* argv[]) {
 	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
 
 	// Patron Editor - Inputs
-	std::wstring 	input_patron_id_content, 		input_patron_status_content, 
+	std::wstring 	input_patron_status_content, 
 					input_patron_fname_content, 	input_patron_lname_content, 
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_contact_content, 	input_patron_num_borrowed_content;
 					
 	// Patron Editor - InputOptions
-	InputOption	 	input_patron_id_content_option, 		input_patron_status_content_option,
+	InputOption	 	input_patron_status_content_option,
 					input_patron_fname_content_option, 		input_patron_lname_content_option,
 					input_patron_address_content_option, 	input_patron_postcode_content_option, 
 					input_patron_contact_content_option, 	input_patron_num_borrowed_content_option;
 
-	auto input_patron_id = 			Input(&input_patron_id_content, 			L"", &input_patron_id_content_option);
 	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_status_content_option);
 	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"", &input_patron_fname_content_option);
 	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"", &input_patron_lname_content_option);
@@ -288,7 +284,6 @@ int main(int argc, char* argv[]) {
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
-		input_patron_id,
 		input_patron_status,
 		input_patron_fname,
 		input_patron_lname,
@@ -299,7 +294,7 @@ int main(int argc, char* argv[]) {
 	});
 
 	// Patron Editor - Vector of Input Strings
-	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_id_content, 		&input_patron_status_content, 
+	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_status_content, 
 															&input_patron_fname_content, 	&input_patron_lname_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
 															&input_patron_contact_content, 	&input_patron_num_borrowed_content};
@@ -308,7 +303,6 @@ int main(int argc, char* argv[]) {
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
 		return vbox({
-				hbox({ text(L"PATRON ID :") | bold, input_patron_id->Render() }),
 				hbox({ text(L"STATUS    :") | bold, input_patron_status->Render() }),
 				hbox({ text(L"FIRST NAME:") | bold, input_patron_fname->Render() }),
 				hbox({ text(L"LAST NAME :") | bold, input_patron_lname->Render() }),
@@ -437,18 +431,17 @@ int main(int argc, char* argv[]) {
 	loan_menu_option.on_enter = [&](){ dialog_to_show = 3; };
 
 	// Loan Editor - Inputs
-	std::wstring 	input_loan_id_content, 			input_loan_book_id_content, 
+	std::wstring 	input_loan_book_id_content, 
 					input_loan_book_isbn_content, 	input_loan_book_name_content,
 					input_loan_patron_id_content, 	input_loan_patron_name_content,
 					input_loan_day_content, 		input_loan_month_content;
-					
+
 	// Loan Editor - InputOptions
-	InputOption		input_loan_id_content_option, 			input_loan_book_id_content_option, 
+	InputOption		input_loan_book_id_content_option, 
 					input_loan_book_isbn_content_option, 	input_loan_book_name_content_option,
 					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
 					input_loan_day_content_option, 			input_loan_month_content_option;
 
-	auto input_loan_id 		  = 	Input(&input_loan_id_content, 			L"", &input_loan_id_content_option);
 	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
 	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
 	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
@@ -459,7 +452,6 @@ int main(int argc, char* argv[]) {
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
-		input_loan_id,
 		input_loan_book_id,
 		input_loan_book_isbn,
 		input_loan_book_name,
@@ -470,7 +462,7 @@ int main(int argc, char* argv[]) {
 	});
 
 	// Loan Editor - Vector of Input Strings
-	std::vector<std::wstring*> loan_editor_input_vector{	&input_loan_id_content, 		&input_loan_book_id_content, 
+	std::vector<std::wstring*> loan_editor_input_vector{	&input_loan_book_id_content, 
 															&input_loan_book_isbn_content, 	&input_loan_book_name_content,
 															&input_loan_patron_id_content, 	&input_loan_patron_name_content,
 															&input_loan_day_content, 		&input_loan_month_content};
@@ -478,7 +470,6 @@ int main(int argc, char* argv[]) {
 	// Loan Editor - Render Function
 	auto loan_editor_section = [&](){
 		return vbox({
-				hbox({ text(L"LOAN ID    :") 	| bold, input_loan_id->	Render()}),
 				hbox({ text(L"BOOK ID    :") 	| bold, input_loan_book_id->Render()}),
 				hbox({ text(L"BOOK ISBN  :") 	| bold, input_loan_book_isbn->Render()}),
 				hbox({ text(L"BOOK NAME  :") 	| bold, input_loan_book_name->Render()}),
