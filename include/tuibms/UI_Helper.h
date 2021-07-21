@@ -20,6 +20,7 @@ class UI_Helper{
         static bool populate_book_editor(DTO<Book> dto_book, std::vector<std::wstring*> input_book_content_vector);
         static bool populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector);
         static bool populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wstring*> input_loan_content_vector);
+        static void clear_editor(std::vector<std::wstring*> input_editor_vector)
 };
 
 #endif
