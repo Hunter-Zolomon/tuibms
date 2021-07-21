@@ -34,13 +34,13 @@ int main(int argc, char* argv[]) {
 	const auto title = [&] () {
 		return vbox({
 			text(L" "),
-			text(L"######## ##     ## #### ########  ##     ##  ###### ") | bold | hcenter,
-			text(L"   ##    ##     ##  ##  ##     ## ###   ### ##    ##") | bold | hcenter,
-			text(L"   ##    ##     ##  ##  ##     ## #### #### ##      ") | bold | hcenter,
-			text(L"   ##    ##     ##  ##  ########  ## ### ##  ###### ") | bold | hcenter,
-			text(L"   ##    ##     ##  ##  ##     ## ##     ##       ##") | bold | hcenter,
-			text(L"   ##    ##     ##  ##  ##     ## ##     ## ##    ##") | bold | hcenter,
-			text(L"   ##     #######  #### ########  ##     ##  ###### ") | bold | hcenter,
+			text(L"######## ##     ## #### ########  ##     ##  ###### ") | bold | hcenter | color(Color::GreenLight),
+			text(L"   ##    ##     ##  ##  ##     ## ###   ### ##    ##") | bold | hcenter | color(Color::Cyan),
+			text(L"   ##    ##     ##  ##  ##     ## #### #### ##      ") | bold | hcenter | color(Color::YellowLight),
+			text(L"   ##    ##     ##  ##  ########  ## ### ##  ###### ") | bold | hcenter | color(Color::Magenta),
+			text(L"   ##    ##     ##  ##  ##     ## ##     ##       ##") | bold | hcenter | color(Color::MagentaLight),
+			text(L"   ##    ##     ##  ##  ##     ## ##     ## ##    ##") | bold | hcenter | color(Color::BlueLight),
+			text(L"   ##     #######  #### ########  ##     ##  ###### ") | bold | hcenter | color(Color::Green),
 			text(L" ")
 		});
 	};
@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
 	//Book Search
 	std::wstring book_user_search_text = L""; //Book search string text
 	InputOption book_user_search_input_option;
+	book_user_search_input_option;
 	auto book_user_search_input = Input(&book_user_search_text, L"Search books", &book_user_search_input_option); //Input for Book Search 
 
 	// Book Menu
@@ -97,7 +98,7 @@ int main(int argc, char* argv[]) {
 		input_book_available
 	});
 
-	// Book Editor - Vector of Input Strings
+	// Book Editor - Vector of Input Strings. TODO - Implement for Patron & Loan
 	std::vector<std::wstring*> book_editor_input_vector{	&input_book_isbn_content, 
 															&input_book_title_content,	&input_book_author_content, 
 															&input_book_year_content,	&input_book_category_content, 
@@ -126,6 +127,7 @@ int main(int argc, char* argv[]) {
 		if (nullptr != temp_dto_book) {
 			std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
 			book_menu_entries.push_back(book_line_content_menu_entry);
+			UI_Helper<Book>::clear_editor(book_editor_input_vector);
 		}
 	}, &book_button_editor_option);
 
@@ -138,7 +140,7 @@ int main(int argc, char* argv[]) {
 	}, &book_button_editor_option);
 
 	auto book_button_cancel = Button(L"Cancel", [&](){
-		//TODO
+		UI_Helper<Book>::clear_editor(book_editor_input_vector);
 	}, &book_button_editor_option);
 
 	// Book Editor - Button Container
@@ -188,7 +190,7 @@ int main(int argc, char* argv[]) {
 			book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
 		}
 		else{
-			book_user_search_text = L"U done fucked up";
+			book_user_search_text = L"Failed to delete!";
 		}
 			
 	}, &book_dialog_button_option);
