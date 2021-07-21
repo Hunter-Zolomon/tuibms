@@ -53,7 +53,8 @@ int main(int argc, char* argv[]) {
 	//Book Search
 	std::wstring book_user_search_text = L""; //Book search string text
 	InputOption book_user_search_input_option;
-	book_user_search_input_option;
+
+
 	auto book_user_search_input = Input(&book_user_search_text, L"Search books", &book_user_search_input_option); //Input for Book Search 
 
 	// Book Menu
@@ -61,6 +62,14 @@ int main(int argc, char* argv[]) {
 	int book_menu_entries_selectedidx = 0; //Selected book 
 	MenuOption book_menu_option;
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx, &book_menu_option); //Menu containing books
+
+	//Searching Functionality
+	book_user_search_input_option.on_change = [&](){
+		std::vector<DTO<Book>*> all_books = hash_table_book.getAllElements();
+		UI_Helper<Book>::grab_all_populate(all_books, book_menu_entries);
+		UI_Helper<Book>::search_vector(book_user_search_text, book_menu_entries);
+	};
+
 
 	book_menu_option.on_enter = [&](){ dialog_to_show = 1; }; //Triggered when Enter is pressed on a selected menu entry 
 

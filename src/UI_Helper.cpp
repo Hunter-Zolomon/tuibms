@@ -17,10 +17,14 @@ void UI_Helper<T>::grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vecto
 
 
 template<class T>
-void UI_Helper<T>::search_vector(std::vector<std::wstring>* vec, std::wstring search_string){
-    //vec.clear();
-    // loop thru each menu element
-    // if substring match, push to vec
+void UI_Helper<T>::search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector){
+    std::vector<std::wstring> search_display_vector;
+    for (std::wstring line: display_vector){
+        if (line.find(search_string) != std::wstring::npos){
+            search_display_vector.push_back(line);
+        }       
+    }
+    display_vector = search_display_vector;
 }
 
 template<class T>

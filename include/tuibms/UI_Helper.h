@@ -12,7 +12,7 @@ template<class T>
 class UI_Helper{
     public:
         static void grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector);
-        static void search_vector(std::vector<std::wstring>* vec, std::wstring search_string);
+        static void search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector);
         static void add_to_vector(std::vector<std::wstring>* vec, std::wstring search_string);
         static bool del_from_vector(std::vector<std::wstring>* vec);
         static unsigned int  get_id_from_wstring(std::wstring menu_entry);
