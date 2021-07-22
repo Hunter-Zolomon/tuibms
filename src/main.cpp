@@ -51,6 +51,8 @@ int main(int argc, char* argv[]) {
 	#pragma region Book Tab
 	// ---------------------------------------- Book Tab ---------------------------------------- 
 	//Book Search
+	int book_editing_id = -1;
+	int book_editing_index = -1;
 	std::wstring book_user_search_text = L""; //Book search string text
 	InputOption book_user_search_input_option;
 
@@ -141,15 +143,20 @@ int main(int argc, char* argv[]) {
 	}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
-		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
-		DTO<Book>* temp_selected_book = hash_table_book[id];
-		UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
-		std::vector<DTO<Book>*> all_books = hash_table_book.getAllElements();
-		UI_Helper<Book>::grab_all_populate(all_books, book_menu_entries);
+		if (book_editing_id >= 0 && book_editing_index >= 0){
+			DTO<Book>* temp_selected_book = hash_table_book[book_editing_id];
+			UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
+			book_menu_entries[book_editing_index] = UI_Helper<Book>::ui_dto_entry_string(temp_selected_book);
+			UI_Helper<Book>::clear_editor(book_editor_input_vector);
+			book_editing_id = -1;
+			book_editing_index = -1;
+		}
 	}, &book_button_editor_option);
 
 	auto book_button_cancel = Button(L"Cancel", [&](){
 		UI_Helper<Book>::clear_editor(book_editor_input_vector);
+		book_editing_id = -1;
+		book_editing_index = -1;
 	}, &book_button_editor_option);
 
 	// Book Editor - Button Container
@@ -186,6 +193,8 @@ int main(int argc, char* argv[]) {
 
 	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		book_editing_id = id;
+		book_editing_index = book_menu_entries_selectedidx;
 		DTO<Book>* temp_selected_book = hash_table_book[id];
 		UI_Helper<Book>::populate_book_editor(*temp_selected_book, book_editor_input_vector);
 		dialog_to_show = 0;
