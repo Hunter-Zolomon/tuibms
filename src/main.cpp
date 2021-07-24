@@ -50,9 +50,15 @@ int main(int argc, char* argv[]) {
 
 	#pragma region Book Tab
 	// ---------------------------------------- Book Tab ---------------------------------------- 
-	//Book Search
+	//Book Editing
 	int book_editing_id = -1;
 	int book_editing_index = -1;
+
+	//Book Loaning Variables
+	int book_loaning_id = -1;
+	int patron_loaning_id = -1;
+
+	//Book Search
 	std::wstring book_user_search_text = L""; //Book search string text
 	InputOption book_user_search_input_option;
 
@@ -213,7 +219,13 @@ int main(int argc, char* argv[]) {
 			
 	}, &book_dialog_button_option);
 
-	auto book_dialog_button_loan = Button(&book_dialog_entries[2], [&] {}, &book_dialog_button_option);
+	auto book_dialog_button_loan = Button(&book_dialog_entries[2], [&] {
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		book_loaning_id = id;
+		dialog_to_show = 0;
+	}, &book_dialog_button_option);
+
+
 	auto book_dialog_button_exit = Button(&book_dialog_entries[3], [&] {dialog_to_show = 0;}, &book_dialog_button_option);
 
 	auto book_dialog_container = Container::Horizontal({
@@ -335,7 +347,15 @@ int main(int argc, char* argv[]) {
 
 	// Patron Editor - Buttons
 	ButtonOption patron_button_editor_option;
-	auto patron_button_add = 	Button(L"Add New", 		[&](){}, &patron_button_editor_option);
+	auto patron_button_add = 	Button(L"Add New", 		[&](){
+		Patron patron_line_content(true, input_patron_fname_content, input_patron_lname_content,input_patron_address_content,input_patron_postcode_content,input_patron_contact_content,0);
+		DTO<Patron>* temp_dto_patron = hash_table_patron(new DTO<Patron>(patron_line_content));
+		if (nullptr != temp_dto_patron){
+			std::wstring patron_line_content_menu_entry = UI_Helper<Patron>::ui_dto_entry_string(temp_dto_patron);
+			patron_menu_entries.push_back(patron_line_content_menu_entry);
+			UI_Helper<Patron>::clear_editor(patron_editor_input_vector);
+		}
+	}, &patron_button_editor_option);
 	auto patron_button_save = 	Button(L"Save Changes", [&](){
 		std::vector<DTO<Patron>*> all_patrons = hash_table_patron.getAllElements();
 		UI_Helper<Patron>::grab_all_populate(all_patrons, patron_menu_entries);
@@ -368,7 +388,7 @@ int main(int argc, char* argv[]) {
 	});
 
 	// Patron - Dialog Box
-	std::vector<std::wstring> patron_dialog_entries = { L"Edit Patron", L"Delete Patron", L"View Borrows", L"Cancel" };
+	std::vector<std::wstring> patron_dialog_entries = { L"Edit Patron", L"Delete Patron", L"View Borrows", L"Loan", L"Cancel" };
 
 	ButtonOption patron_dialog_button_option;
 
@@ -381,12 +401,18 @@ int main(int argc, char* argv[]) {
 
 	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[1], [&]{}, &patron_dialog_button_option);
 	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{}, &patron_dialog_button_option);
-	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
+	auto patron_dialog_button_loan = 	Button(	&patron_dialog_entries[3], [&]{
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		patron_loaning_id = id;
+		dialog_to_show = 0;
+	}, &patron_dialog_button_option);
+	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
 
 	auto patron_dialog_container = Container::Horizontal({
 		patron_dialog_button_edit,
 		patron_dialog_button_delete,
 		patron_dialog_button_view,
+		patron_dialog_button_loan,
 		patron_dialog_button_exit
 	});
 
@@ -615,6 +641,22 @@ int main(int argc, char* argv[]) {
 
 	ToggleOption tab_toggle_option;
 	auto tab_toggle = Toggle(&tab_values, &selected_tab, &tab_toggle_option);
+
+	tab_toggle_option.on_change = [&](){
+		if (2==selected_tab){
+			UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+			if (book_loaning_id>-1){
+				DTO<Book>* temp_dto_book = hash_table_book[book_loaning_id];
+				if (nullptr != temp_dto_book)
+					UI_Helper<Loan>::populate_loan_editor_book_info(temp_dto_book, loan_editor_input_vector);
+			}
+			if (patron_loaning_id>-1){
+				DTO<Patron>* temp_dto_patron = hash_table_patron[patron_loaning_id];
+				if (nullptr != temp_dto_patron)
+					UI_Helper<Loan>::populate_loan_editor_patron_info(temp_dto_patron, loan_editor_input_vector);
+			}
+		}
+	};
 
 	auto tab_container = Container::Tab(
 		{

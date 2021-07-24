@@ -34,7 +34,7 @@ unsigned int UI_Helper<T>::get_id_from_wstring(std::wstring menu_entry){
 }
 
 template<class T>
-bool UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wstring*> input_book_content_vector){
+void UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wstring*> input_book_content_vector){
     *(input_book_content_vector[0]) = dto_book.dataobj.getIsbn();
     *(input_book_content_vector[1]) = dto_book.dataobj.getTitle();
     *(input_book_content_vector[2]) = dto_book.dataobj.getAuthor();
@@ -42,11 +42,10 @@ bool UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wst
     *(input_book_content_vector[4]) = dto_book.dataobj.getCategory();
     *(input_book_content_vector[5]) = dto_book.dataobj.getGenre();
     *(input_book_content_vector[6]) = dto_book.dataobj.getIsAvailable() ? L"True" : L"False";
-    return true;
 }
 
 template<class T>
-bool UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector){
+void UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector){
     *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsActive() ? L"True" : L"False";
     *(input_patron_content_vector[1]) = dto_patron.dataobj.getFname();
     *(input_patron_content_vector[2]) = dto_patron.dataobj.getLname();
@@ -54,11 +53,10 @@ bool UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<st
     *(input_patron_content_vector[4]) = dto_patron.dataobj.getPostcode();
     *(input_patron_content_vector[5]) = dto_patron.dataobj.getContact();
     *(input_patron_content_vector[6]) = std::to_wstring(dto_patron.dataobj.getNumBorrowed());
-    return true;
 }
 
 template<class T>
-bool UI_Helper<T>::populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wstring*> input_loan_content_vector){
+void UI_Helper<T>::populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wstring*> input_loan_content_vector){
     *(input_loan_content_vector[0]) = std::to_wstring(dto_loan.dataobj.getBookId());
     *(input_loan_content_vector[1]) = dto_loan.dataobj.getBookIsbn();
     *(input_loan_content_vector[2]) = dto_loan.dataobj.getBookName();
@@ -66,7 +64,19 @@ bool UI_Helper<T>::populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wst
     *(input_loan_content_vector[4]) = dto_loan.dataobj.getPatronName();
     *(input_loan_content_vector[5]) = dto_loan.dataobj.getLoanDay();
     *(input_loan_content_vector[6]) = dto_loan.dataobj.getLoanMonth();
-    return true;
+}
+
+template<class T>
+void UI_Helper<T>::populate_loan_editor_book_info(DTO<Book>* dto_book, std::vector<std::wstring*> input_loan_content_vector){
+    *(input_loan_content_vector[0]) = std::to_wstring(dto_book->id);
+    *(input_loan_content_vector[1]) = dto_book->dataobj.getIsbn();
+    *(input_loan_content_vector[2]) = dto_book->dataobj.getTitle();
+}
+
+template<class T>
+void UI_Helper<T>::populate_loan_editor_patron_info(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_loan_content_vector){
+    *(input_loan_content_vector[3]) = std::to_wstring(dto_patron->id);
+    *(input_loan_content_vector[4]) = dto_patron->dataobj.getFname() + L" " + dto_patron->dataobj.getLname();
 }
 
 template<class T>
@@ -82,7 +92,7 @@ void UI_Helper<T>::clear_editor(std::vector<std::wstring*> input_editor_vector){
 }
 
 template<class T>
-bool UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstring*> input_book_content_vector){
+void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstring*> input_book_content_vector){
     dto_book->dataobj.setIsbn(*(input_book_content_vector[0]));
     dto_book->dataobj.setTitle(*(input_book_content_vector[1]));
     dto_book->dataobj.setAuthor(*(input_book_content_vector[2]));
@@ -90,11 +100,7 @@ bool UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
     dto_book->dataobj.setCategory(*(input_book_content_vector[4]));
     dto_book->dataobj.setGenre(*(input_book_content_vector[5]));
     //dto_book.dataobj.setIsAvailable(*(input_book_content_vector[6]));
-    return true;
 }
-
-
-
 
 template class UI_Helper<Book>;
 template class UI_Helper<Patron>;
