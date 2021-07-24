@@ -99,7 +99,18 @@ void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
     dto_book->dataobj.setYear(*(input_book_content_vector[3]));
     dto_book->dataobj.setCategory(*(input_book_content_vector[4]));
     dto_book->dataobj.setGenre(*(input_book_content_vector[5]));
-    //dto_book.dataobj.setIsAvailable(*(input_book_content_vector[6]));
+    dto_book->dataobj.setIsAvailable(true); //TODO - Fix
+}
+
+template<class T>
+void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector){
+    dto_patron->dataobj.setIsActive(true); //TODO - Fix
+    dto_patron->dataobj.setFname(*(input_patron_content_vector[1])); 
+    dto_patron->dataobj.setLname(*(input_patron_content_vector[2])); 
+    dto_patron->dataobj.setAddress(*(input_patron_content_vector[3])); 
+    dto_patron->dataobj.setPostcode(*(input_patron_content_vector[4]));
+    dto_patron->dataobj.setContact(*(input_patron_content_vector[5])); 
+    dto_patron->dataobj.setNumBorrowed(0); //TODO - Fix
 }
 
 template class UI_Helper<Book>;
