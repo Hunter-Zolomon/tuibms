@@ -119,6 +119,15 @@ void UI_Helper<T>::save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstri
     dto_loan->dataobj.setLoanMonth(*(input_loan_content_vector[6]));
 }
 
+template<class T>
+bool UI_Helper<T>::is_editor_empty(std::vector<std::wstring*> input_loan_content_vector){
+    for (std::wstring* line: input_loan_content_vector){
+        if (line->empty())
+            return true;
+    }
+    return false;
+}
+
 template class UI_Helper<Book>;
 template class UI_Helper<Patron>;
 template class UI_Helper<Loan>;

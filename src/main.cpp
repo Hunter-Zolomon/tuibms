@@ -48,6 +48,21 @@ int main(int argc, char* argv[]) {
 	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
 	int dialog_to_show = 0; 
 
+	// ---------------------------------------- Error Dialog ---------------------------------------- 
+	std::wstring error_dialog_error_string;
+	ButtonOption error_dialog_button_ok_option;
+	auto error_dialog_button_ok = Button(L"Continue", [&]{ 
+		dialog_to_show = 0; 
+	}, &error_dialog_button_ok_option);
+
+
+	auto error_dialog_renderer = Renderer(error_dialog_button_ok, [&]{
+		return vbox({
+			vbox({ 	text(error_dialog_error_string), separator(),	}),
+			error_dialog_button_ok->Render() | center
+		}) | border | color(Color::Red);
+	});
+	
 	#pragma region Book Tab
 	// ---------------------------------------- Book Tab ---------------------------------------- 
 	//Book Editing
@@ -137,15 +152,24 @@ int main(int argc, char* argv[]) {
 	ButtonOption book_button_editor_option;
 
 	auto book_button_add 	= Button(L"Add New",[&](){
-		Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
-		DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
-		if (nullptr != temp_dto_book) {
-			std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
-			book_menu_entries.push_back(book_line_content_menu_entry);
-			UI_Helper<Book>::clear_editor(book_editor_input_vector);
+		if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
+			Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
+			DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
+			if (nullptr != temp_dto_book) {
+				std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
+				book_menu_entries.push_back(book_line_content_menu_entry);
+				UI_Helper<Book>::clear_editor(book_editor_input_vector);
+			}
+			book_editing_id = -1;
+			book_editing_index = -1;
+		} 
+		//TEMPORARY - TESTING ERROR DIALOG
+		else{
+			dialog_to_show = 4;
+			error_dialog_error_string = L"Operation failed! No empty values allowed.";
+			// Instead, pass error code to UI_Helper to assign wstring?
 		}
-		book_editing_id = -1;
-		book_editing_index = -1;
+
 	}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
@@ -782,6 +806,7 @@ int main(int argc, char* argv[]) {
 		book_dialog_renderer, //1
 		patron_dialog_renderer, //2
 		loan_dialog_renderer, //3
+		error_dialog_renderer
 	}, &dialog_to_show);
 
 	auto final_renderer = Renderer(final_container, [&]{
@@ -803,6 +828,12 @@ int main(int argc, char* argv[]) {
 			document = dbox({
 				document, 
 				loan_dialog_renderer->Render() | clear_under | center,
+			});
+		}
+		if (dialog_to_show==4){
+			document = dbox({
+				document,
+				error_dialog_renderer->Render() | clear_under | center,
 			});
 		}
 		return vbox({
