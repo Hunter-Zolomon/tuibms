@@ -113,6 +113,12 @@ void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std:
     dto_patron->dataobj.setNumBorrowed(0); //TODO - Fix
 }
 
+template<class T>
+void UI_Helper<T>::save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstring*> input_loan_content_vector){
+    dto_loan->dataobj.setLoanDay(*(input_loan_content_vector[5]));
+    dto_loan->dataobj.setLoanMonth(*(input_loan_content_vector[6]));
+}
+
 template class UI_Helper<Book>;
 template class UI_Helper<Patron>;
 template class UI_Helper<Loan>;

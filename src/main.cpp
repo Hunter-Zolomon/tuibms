@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 	HashTable<Patron> hash_table_patron(1000); //For testing
 	HashTable<Loan> hash_table_loan(1000); //For testing
 
-	// Perhaps a better way of doing this?
+	// Title
 	const auto title = [&] () {
 		return vbox({
 			text(L" "),
@@ -281,7 +281,6 @@ int main(int argc, char* argv[]) {
 	int patron_editing_id = -1;
 	int patron_editing_index = -1;
 	
-	
 	// Patron Search
 	std::wstring patron_user_search_text = L"";
 	InputOption patron_user_search_input_option;
@@ -501,6 +500,10 @@ int main(int argc, char* argv[]) {
 	#pragma region Loan Tab
 
 	// ---------------------------------------- Loan Tab ---------------------------------------- 
+	//Patron Editing 
+	int loan_editing_id = -1;
+	int loan_editing_index = -1;
+	
 	// Loan Search
 	std::wstring loan_user_seach_text = L"";
 	InputOption loan_user_search_input_option;
@@ -508,6 +511,13 @@ int main(int argc, char* argv[]) {
 	
 	// Loan Menu
 	std::vector<std::wstring> loan_menu_entries = 	{};	
+
+	// Loan Menu - Searching Functionality
+	loan_user_search_input_option.on_change = [&](){
+		std::vector<DTO<Loan>*> all_loans = hash_table_loan.getAllElements();
+		UI_Helper<Loan>::grab_all_populate(all_loans, loan_menu_entries);
+		UI_Helper<Loan>::search_vector(loan_user_search_text, loan_menu_entries);
+	};
 
 	int loan_menu_entries_selectedidx = 0;
 	MenuOption loan_menu_option;
@@ -568,13 +578,41 @@ int main(int argc, char* argv[]) {
 	// Loan Editor - Buttons
 	ButtonOption loan_button_editor_option;
 
-	auto loan_button_add 	= Button(L"Add New", 		[&](){}, &loan_button_editor_option);
+	auto loan_button_add 	= Button(L"Add New", 		[&](){
+		if (book_loaning_id >=0 && patron_loaning_id >=0 ){
+			DTO<Book>* temp_selected_book = hash_table_book[book_loaning_id];
+			DTO<Patron>* temp_selected_patron = hash_table_patron[patron_loaning_id];
+			if (nullptr!=temp_selected_book && nullptr!=temp_selected_patron){
+				Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_day_content, input_loan_month_content);
+				DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));
+				std::wstring loan_line_content_menu_entry = UI_Helper<Loan>::ui_dto_entry_string(temp_dto_loan);
+				loan_menu_entries.push_back(loan_line_content_menu_entry);
+				UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+			}
+			book_loaning_id = -1;
+			patron_loaning_id = -1; 
+		}
+
+
+	}, &loan_button_editor_option);
 	auto loan_button_save 	= Button(L"Save Changes", 	[&](){
+		if (loan_editing_id  >=0 && loan_editing_index >= 0){
+			DTO<Loan>* temp_selected_loan = hash_table_loan[loan_editing_id];
+			UI_Helper<Loan>::save_loan_changes(temp_selected_loan, loan_editor_input_vector);
+			loan_menu_entries[loan_editing_index] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
+			UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+			loan_editing_id = -1;
+			loan_editing_index = -1;
+		}
 		std::vector<DTO<Loan>*> all_loans = hash_table_loan.getAllElements();
 		UI_Helper<Loan>::grab_all_populate(all_loans, loan_menu_entries);
 	}, &loan_button_editor_option);
-	auto loan_button_cancel = Button(L"Cancel", 		[&](){
 
+
+	auto loan_button_cancel = Button(L"Cancel", 		[&](){
+		UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+		book_loaning_id = -1;
+		patron_loaning_id = -1;
 	}, &loan_button_editor_option);
 
 	// Loan Editor - Button Container
@@ -611,14 +649,27 @@ int main(int argc, char* argv[]) {
 
 	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		loan_editing_id = id;
+		loan_editing_index = loan_menu_entries_selectedidx;
 		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
-		UI_Helper<Loan>::populate_loan_editor(*temp_selected_loan, loan_editor_input_vector);
+		if (nullptr!=temp_selected_loan)
+			UI_Helper<Loan>::populate_loan_editor(*temp_selected_loan, loan_editor_input_vector);
 		dialog_to_show = 0;
 	}, &loan_button_dialog_option);
 
-	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{}, &loan_button_dialog_option);
-	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{}, &loan_button_dialog_option);
-	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{}, &loan_button_dialog_option);
+	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{
+		//TODO
+	}, &loan_button_dialog_option);
+
+
+	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		if (hash_table_loan.removeFromTable(id))
+			loan_menu_entries.erase(loan_menu_entries.begin()+loan_menu_entries_selectedidx);
+		dialog_to_show = 0;
+	}, &loan_button_dialog_option);
+
+	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{ dialog_to_show = 0; }, &loan_button_dialog_option);
 
 	auto loan_dialog_container = Container::Horizontal({
 		loan_button_dialog_edit,

@@ -1,19 +1,20 @@
 #include <string>
+#include <DTO.h>
+#include <Book.h>
+#include <Patron.h>
 
 #ifndef LOAN_H_
 #define LOAN_H_
 
 
 class Loan{
-    unsigned int book_id, patron_id;
-    std::wstring book_isbn,book_title,patron_name,loan_day,loan_month;
+    DTO<Book>* book_dto;
+    DTO<Patron>* patron_dto;
+    std::wstring loan_day,loan_month;
 
     public:
         Loan();
-        Loan(unsigned int book_id, unsigned int patron_id, 
-             std::wstring book_isbn,std::wstring book_title,
-             std::wstring patron_name,std::wstring loan_day, 
-             std::wstring loan_month);
+        Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_day, std::wstring loan_month);
 
         unsigned int getBookId();
         unsigned int getPatronId();
@@ -26,13 +27,10 @@ class Loan{
 
         std::wstring getMenuEntry();
 
-        void setBookId(unsigned int book_id);
-        void setPatronId(unsigned int patron_id);
-        void setBookIsbn(std::wstring book_isbn);
-        void setBookTitle(std::wstring book_title);
-        void setPatronName(std::wstring patron_name);
-        void setLoanDay(std::wstring loan_day);
-        void setLoanMonth(std::wstring loan_month);
+        void setBook(DTO<Book>* book);
+        void setPatron(DTO<Patron>* patron);
+        void setLoanDay(std::wstring day);
+        void setLoanMonth(std::wstring month);
 };
 
 #endif

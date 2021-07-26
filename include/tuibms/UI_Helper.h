@@ -25,6 +25,7 @@ class UI_Helper{
         static void clear_editor(std::vector<std::wstring*> input_editor_vector);
         static void save_book_changes(DTO<Book>* dto_book, std::vector<std::wstring*> input_book_content_vector);
         static void save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector);
+        static void save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstring*> input_loan_content_vector);
 };
 
 #endif
