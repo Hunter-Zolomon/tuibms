@@ -29,8 +29,7 @@ std::wstring Loan::getBookName(){
 }
 
 std::wstring Loan::getPatronName(){
-    return  patron_dto->dataobj.getFname() + L" " + 
-            patron_dto->dataobj.getLname(); 
+    return  patron_dto->dataobj.getName();
 }
 
 std::wstring Loan::getLoanDay(){
@@ -42,11 +41,9 @@ std::wstring Loan::getLoanMonth(){
 }
 
 
-
 std::wstring Loan::getMenuEntry(){
     return  book_dto->dataobj.getTitle() + L" - " + 
-            patron_dto->dataobj.getFname() + L" " + 
-            patron_dto->dataobj.getLname() + L" - " +
+            patron_dto->dataobj.getName() + L" " + 
             loan_month + L" - " + 
             loan_day; 
 }

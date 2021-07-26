@@ -3,12 +3,12 @@
 
 Patron::Patron(){}
 
-Patron::Patron(bool is_active, std::wstring fname, std::wstring lname, 
+Patron::Patron(bool is_active, std::wstring name,  std::wstring email,
                 std::wstring address, std::wstring postcode, 
                 std::wstring contact, unsigned int num_borrowed){  
                     setIsActive(is_active);
-                    setFname(fname);
-                    setLname(lname);
+                    setName(name);
+                    setEmail(email);
                     setAddress(address);
                     setPostcode(postcode);
                     setContact(contact);
@@ -21,12 +21,12 @@ bool Patron::getIsActive(){
     return patron_is_active;
 }
 
-std::wstring Patron::getFname(){
-    return patron_fname;
+std::wstring Patron::getName(){
+    return patron_name;
 }
 
-std::wstring Patron::getLname(){
-    return patron_lname;
+std::wstring Patron::getEmail(){
+    return patron_email;
 }
 
 std::wstring Patron::getAddress(){
@@ -47,8 +47,8 @@ unsigned int Patron::getNumBorrowed(){
 
 std::wstring Patron::getMenuEntry(){
     return  std::to_wstring(patron_is_active) + L" - " + 
-            patron_fname  + L" - " + 
-            patron_lname + L" - " + 
+            patron_name  + L" - " + 
+            patron_email  + L" - " + 
             patron_address   + L" - " + 
             patron_postcode+ L" - " + 
             patron_contact  + L" - " + 
@@ -61,12 +61,12 @@ void Patron::setIsActive(bool is_active){
     patron_is_active = is_active;
 }
 
-void Patron::setFname(std::wstring fname){
-    patron_fname = fname;
+void Patron::setName(std::wstring name){
+    patron_name = name;
 }
 
-void Patron::setLname(std::wstring lname){
-    patron_lname = lname;
+void Patron::setEmail(std::wstring email){
+    patron_email = email;
 }
 
 void Patron::setAddress(std::wstring address){

@@ -47,8 +47,8 @@ void UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wst
 template<class T>
 void UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector){
     *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsActive() ? L"True" : L"False";
-    *(input_patron_content_vector[1]) = dto_patron.dataobj.getFname();
-    *(input_patron_content_vector[2]) = dto_patron.dataobj.getLname();
+    *(input_patron_content_vector[1]) = dto_patron.dataobj.getName();
+    *(input_patron_content_vector[2]) = dto_patron.dataobj.getEmail();
     *(input_patron_content_vector[3]) = dto_patron.dataobj.getAddress();
     *(input_patron_content_vector[4]) = dto_patron.dataobj.getPostcode();
     *(input_patron_content_vector[5]) = dto_patron.dataobj.getContact();
@@ -76,7 +76,7 @@ void UI_Helper<T>::populate_loan_editor_book_info(DTO<Book>* dto_book, std::vect
 template<class T>
 void UI_Helper<T>::populate_loan_editor_patron_info(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_loan_content_vector){
     *(input_loan_content_vector[3]) = std::to_wstring(dto_patron->id);
-    *(input_loan_content_vector[4]) = dto_patron->dataobj.getFname() + L" " + dto_patron->dataobj.getLname();
+    *(input_loan_content_vector[4]) = dto_patron->dataobj.getName();
 }
 
 template<class T>
@@ -105,8 +105,8 @@ void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
 template<class T>
 void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector){
     dto_patron->dataobj.setIsActive(true); //TODO - Fix
-    dto_patron->dataobj.setFname(*(input_patron_content_vector[1])); 
-    dto_patron->dataobj.setLname(*(input_patron_content_vector[2])); 
+    dto_patron->dataobj.setName(*(input_patron_content_vector[1])); 
+    dto_patron->dataobj.setEmail(*(input_patron_content_vector[2])); 
     dto_patron->dataobj.setAddress(*(input_patron_content_vector[3])); 
     dto_patron->dataobj.setPostcode(*(input_patron_content_vector[4]));
     dto_patron->dataobj.setContact(*(input_patron_content_vector[5])); 

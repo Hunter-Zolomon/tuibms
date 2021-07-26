@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 	//Book Loaning Variables
 	int book_loaning_id = -1;
-	int patron_loaning_id = -1;
+	int patron_loaning_id = -1; // Move this line down to patron/ Bring all global stuff above Book Tab pragma
 
 	//Book Search
 	std::wstring book_user_search_text = L""; //Book search string text
@@ -87,10 +87,10 @@ int main(int argc, char* argv[]) {
 
 
 	// Book Editor - InputOptions
-	InputOption input_book_isbn_content_option,	
-				input_book_title_content_option, 	input_book_author_content_option,	
-				input_book_year_content_option, 	input_book_category_content_option,
-				input_book_genre_content_option, 	input_book_available_content_option;
+	InputOption 	input_book_isbn_content_option,	
+					input_book_title_content_option, 	input_book_author_content_option,	
+					input_book_year_content_option, 	input_book_category_content_option,
+					input_book_genre_content_option, 	input_book_available_content_option;
 
 
 	auto input_book_isbn = 		Input(&input_book_isbn_content, 	L"", &input_book_isbn_content_option);
@@ -302,20 +302,20 @@ int main(int argc, char* argv[]) {
 	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
 
 	// Patron Editor - Inputs
-	std::wstring 	input_patron_status_content, 
-					input_patron_fname_content, 	input_patron_lname_content, 
+	std::wstring 	input_patron_status_content, 	
+					input_patron_name_content, 		input_patron_email_content,
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_contact_content, 	input_patron_num_borrowed_content;
 					
 	// Patron Editor - InputOptions
-	InputOption	 	input_patron_status_content_option,
-					input_patron_fname_content_option, 		input_patron_lname_content_option,
+	InputOption	 	input_patron_status_content_option,		
+					input_patron_name_content_option, 		input_patron_email_content_option,
 					input_patron_address_content_option, 	input_patron_postcode_content_option, 
 					input_patron_contact_content_option, 	input_patron_num_borrowed_content_option;
 
 	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_status_content_option);
-	auto input_patron_fname = 		Input(&input_patron_fname_content, 			L"", &input_patron_fname_content_option);
-	auto input_patron_lname = 		Input(&input_patron_lname_content, 			L"", &input_patron_lname_content_option);
+	auto input_patron_name = 		Input(&input_patron_name_content, 			L"", &input_patron_name_content_option);
+	auto input_patron_email = 		Input(&input_patron_email_content, 			L"", &input_patron_email_content_option);
 	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_address_content_option);
 	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_postcode_content_option);
 	auto input_patron_contact 	= 	Input(&input_patron_contact_content, 		L"", &input_patron_contact_content_option);
@@ -324,8 +324,8 @@ int main(int argc, char* argv[]) {
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
 		input_patron_status,
-		input_patron_fname,
-		input_patron_lname,
+		input_patron_name,
+		input_patron_email,
 		input_patron_address,
 		input_patron_postcode,
 		input_patron_contact,
@@ -334,7 +334,7 @@ int main(int argc, char* argv[]) {
 
 	// Patron Editor - Vector of Input Strings
 	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_status_content, 
-															&input_patron_fname_content, 	&input_patron_lname_content, 
+															&input_patron_name_content, 	&input_patron_email_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
 															&input_patron_contact_content, 	&input_patron_num_borrowed_content};
 
@@ -342,20 +342,20 @@ int main(int argc, char* argv[]) {
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
 		return vbox({
-				hbox({ text(L"STATUS    :") | bold, input_patron_status->Render() }),
-				hbox({ text(L"FIRST NAME:") | bold, input_patron_fname->Render() }),
-				hbox({ text(L"LAST NAME :") | bold, input_patron_lname->Render() }),
-				hbox({ text(L"ADDRESS   :") | bold, input_patron_address->Render() }),
-				hbox({ text(L"POST CODE :") | bold, input_patron_postcode->Render() }),
-				hbox({ text(L"CONTACT NO:") | bold, input_patron_contact->Render() }),
-				hbox({ text(L"BORROWING :") | bold, input_patron_num_borrowed->Render() })
+				hbox({ text(L"STATUS     :") | bold, input_patron_status->Render() }),
+				hbox({ text(L"NAME       :") | bold, input_patron_name->Render() }),
+				hbox({ text(L"EMAIL      :") | bold, input_patron_email->Render() }),
+				hbox({ text(L"ADDRESS    :") | bold, input_patron_address->Render() }),
+				hbox({ text(L"POST CODE  :") | bold, input_patron_postcode->Render() }),
+				hbox({ text(L"CONTACT NO :") | bold, input_patron_contact->Render() }),
+				hbox({ text(L"BORROWING  :") | bold, input_patron_num_borrowed->Render() })
 				});
 	};
 
 	// Patron Editor - Buttons
 	ButtonOption patron_button_editor_option;
-	auto patron_button_add = 	Button(L"Add New", 		[&](){
-		Patron patron_line_content(true, input_patron_fname_content, input_patron_lname_content,input_patron_address_content,input_patron_postcode_content,input_patron_contact_content,0);
+	auto patron_button_add = 	Button(L"Add New",[&](){
+		Patron patron_line_content(true, input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_contact_content,0);
 		DTO<Patron>* temp_dto_patron = hash_table_patron(new DTO<Patron>(patron_line_content));
 		if (nullptr != temp_dto_patron){
 			std::wstring patron_line_content_menu_entry = UI_Helper<Patron>::ui_dto_entry_string(temp_dto_patron);
@@ -505,9 +505,9 @@ int main(int argc, char* argv[]) {
 	int loan_editing_index = -1;
 	
 	// Loan Search
-	std::wstring loan_user_seach_text = L"";
+	std::wstring loan_user_search_text = L"";
 	InputOption loan_user_search_input_option;
-	auto loan_user_search_input = Input(&loan_user_seach_text, L"Search loans", &loan_user_search_input_option);
+	auto loan_user_search_input = Input(&loan_user_search_text, L"Search loans", &loan_user_search_input_option);
 	
 	// Loan Menu
 	std::vector<std::wstring> loan_menu_entries = 	{};	
@@ -537,13 +537,13 @@ int main(int argc, char* argv[]) {
 					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
 					input_loan_day_content_option, 			input_loan_month_content_option;
 
-	auto input_loan_book_id   = 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
-	auto input_loan_book_isbn =		Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
-	auto input_loan_book_name = 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
-	auto input_loan_patron_id=		Input(&input_loan_patron_id_content,	L"", &input_loan_patron_id_content_option);
+	auto input_loan_book_id   	= 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
+	auto input_loan_book_isbn 	=	Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
+	auto input_loan_book_name 	= 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
+	auto input_loan_patron_id	=	Input(&input_loan_patron_id_content,	L"", &input_loan_patron_id_content_option);
 	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_patron_name_content_option);
-	auto input_loan_day  	  =		Input(&input_loan_day_content, 			L"", &input_loan_day_content_option);
-	auto input_loan_month 	  =		Input(&input_loan_month_content, 		L"", &input_loan_month_content_option);
+	auto input_loan_day  	 	=	Input(&input_loan_day_content, 			L"", &input_loan_day_content_option);
+	auto input_loan_month 	  	=	Input(&input_loan_month_content, 		L"", &input_loan_month_content_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
@@ -565,13 +565,13 @@ int main(int argc, char* argv[]) {
 	// Loan Editor - Render Function
 	auto loan_editor_section = [&](){
 		return vbox({
-				hbox({ text(L"BOOK ID    :") 	| bold, input_loan_book_id->Render()}),
-				hbox({ text(L"BOOK ISBN  :") 	| bold, input_loan_book_isbn->Render()}),
-				hbox({ text(L"BOOK NAME  :") 	| bold, input_loan_book_name->Render()}),
-				hbox({ text(L"PATRON ID  :") 	| bold, input_loan_patron_id->Render()}),
-				hbox({ text(L"PATRON NAME:") 	| bold, input_loan_patron_name->Render()}),				
-				hbox({ text(L"LOAN DAY   :") 	| bold, input_loan_day->Render()}),
-				hbox({ text(L"LOAN MONTH :") 	| bold,	input_loan_month->Render()}),
+				hbox({ text(L"BOOK ID     :") 	| bold, input_loan_book_id->Render()}),
+				hbox({ text(L"BOOK ISBN   :") 	| bold, input_loan_book_isbn->Render()}),
+				hbox({ text(L"BOOK NAME   :") 	| bold, input_loan_book_name->Render()}),
+				hbox({ text(L"PATRON ID   :") 	| bold, input_loan_patron_id->Render()}),
+				hbox({ text(L"PATRON NAME :") 	| bold, input_loan_patron_name->Render()}),				
+				hbox({ text(L"LOAN DAY    :") 	| bold, input_loan_day->Render()}),
+				hbox({ text(L"LOAN MONTH  :") 	| bold,	input_loan_month->Render()}),
 				});
 	};
 
