@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include <string>
 #include <UI_Helper.h>
 #include <Book.h>
@@ -126,6 +127,26 @@ bool UI_Helper<T>::is_editor_empty(std::vector<std::wstring*> input_loan_content
             return true;
     }
     return false;
+}
+
+template<class T>
+void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* message, int error_code){
+    std::map<int, std::wstring> error_codes {
+        {100, L"All fields must be filled. Please try again"},
+        {101, L"Failed to add. Please try again"},
+        {102, L"Nothing to save. Please select an entry to edit"},
+        {103, L"Failed to save changes. Please try again"},
+        {104, L"Failed to locate object(s). Please try again"},
+        {105, L"Failed to delete object. Please try again"},
+
+        {201, L"Can't delete a book with an existing loan"},
+        {202, L"Can't delete a patron with an existing loan"},
+        {203, L"Failed to create loan. Book is already loaned"},
+        {204, L"Failed to create loan. Patron is borrowing maximum books"},
+        {205, L"Failed to return loan. Please try again"}
+    };
+    *dialog_to_show = 4;
+    *message = error_codes[error_code];
 }
 
 template class UI_Helper<Book>;

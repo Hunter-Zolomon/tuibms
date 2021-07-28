@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include <string>
 #include <Book.h>
 #include <Patron.h>
@@ -27,6 +28,7 @@ class UI_Helper{
         static void save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector);
         static void save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstring*> input_loan_content_vector);
         static bool is_editor_empty(std::vector<std::wstring*> input_loan_content_vector);
+        static void display_dialog_message(int* dialog_to_show, std::wstring* message, int error_code);
 };
 
 #endif
