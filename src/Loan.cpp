@@ -42,11 +42,14 @@ std::wstring Loan::getLoanDateDue(){
 
 
 std::wstring Loan::getMenuEntry(){
-    return  book_dto->dataobj.getTitle() + L" - " + 
-            patron_dto->dataobj.getName() + L" - " + 
+    return  book_dto->dataobj.getIsbn()     + L" - " +
+            book_dto->dataobj.getTitle()    + L" - " + 
+            book_dto->dataobj.getAuthor()   + L" - " + 
+            patron_dto->dataobj.getName()   + L" - " + 
             loan_date_issue + L" - " + 
             loan_date_due; 
 }
+
 
 // Loan - Setters 
 void Loan::setBook(DTO<Book>* book){
@@ -63,3 +66,4 @@ void Loan::setLoanDateIssue(std::wstring date_issue){
 void Loan::setLoanDateDue(std::wstring date_due){
     loan_date_due = date_due;
 }
+

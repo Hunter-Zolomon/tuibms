@@ -47,12 +47,12 @@ void UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wst
 
 template<class T>
 void UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector){
-    *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsActive() ? L"True" : L"False";
+    *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsBorrowing() ? L"True" : L"False";
     *(input_patron_content_vector[1]) = dto_patron.dataobj.getName();
     *(input_patron_content_vector[2]) = dto_patron.dataobj.getEmail();
     *(input_patron_content_vector[3]) = dto_patron.dataobj.getAddress();
     *(input_patron_content_vector[4]) = dto_patron.dataobj.getPostcode();
-    *(input_patron_content_vector[5]) = dto_patron.dataobj.getContact();
+    *(input_patron_content_vector[5]) = dto_patron.dataobj.getPhone();
     *(input_patron_content_vector[6]) = std::to_wstring(dto_patron.dataobj.getNumBorrowed());
 }
 
@@ -105,13 +105,11 @@ void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
 
 template<class T>
 void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector){
-    dto_patron->dataobj.setIsActive(true); //TODO - Fix
     dto_patron->dataobj.setName(*(input_patron_content_vector[1])); 
     dto_patron->dataobj.setEmail(*(input_patron_content_vector[2])); 
     dto_patron->dataobj.setAddress(*(input_patron_content_vector[3])); 
     dto_patron->dataobj.setPostcode(*(input_patron_content_vector[4]));
-    dto_patron->dataobj.setContact(*(input_patron_content_vector[5])); 
-    dto_patron->dataobj.setNumBorrowed(0); //TODO - Fix
+    dto_patron->dataobj.setPhone(*(input_patron_content_vector[5])); 
 }
 
 template<class T>
@@ -132,13 +130,14 @@ bool UI_Helper<T>::is_editor_empty(std::vector<std::wstring*> input_loan_content
 template<class T>
 void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* message, int error_code){
     std::map<int, std::wstring> error_codes {
+        //General
         {100, L"All fields must be filled. Please try again"},
         {101, L"Failed to add. Please try again"},
         {102, L"Nothing to save. Please select an entry to edit"},
         {103, L"Failed to save changes. Please try again"},
         {104, L"Failed to locate object(s). Please try again"},
         {105, L"Failed to delete object. Please try again"},
-
+        //Loan related
         {201, L"Can't delete a book with an existing loan"},
         {202, L"Can't delete a patron with an existing loan"},
         {203, L"Failed to create loan. Book is already loaned"},
@@ -147,6 +146,14 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
     };
     *dialog_to_show = 4;
     *message = error_codes[error_code];
+}
+
+template<class T>
+void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector){
+    display_vector.clear();
+    for (std::wstring line: last_borrowed){
+        display_vector.push_back(line);
+    }
 }
 
 template class UI_Helper<Book>;

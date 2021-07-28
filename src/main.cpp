@@ -48,6 +48,12 @@ int main(int argc, char* argv[]) {
 	//0 - None		1 - Book Dialog		2 - Patron Dialog		3 - Loan Dialog
 	int dialog_to_show = 0; 
 
+	// Need to force a tab switch when viewing last 10 borrows
+		int selected_tab = 0;
+
+		// Loan Menu
+		std::vector<std::wstring> loan_menu_entries = 	{};	
+
 	// ---------------------------------------- Error Dialog ---------------------------------------- 
 	std::wstring error_dialog_error_string;
 	ButtonOption error_dialog_button_ok_option;
@@ -153,7 +159,7 @@ int main(int argc, char* argv[]) {
 
 	auto book_button_add 	= Button(L"Add New",[&](){
 		if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
-			Book book_line_content(input_book_isbn_content,input_book_title_content,input_book_author_content, input_book_year_content,input_book_category_content, input_book_genre_content,true);
+			Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, input_book_year_content, input_book_category_content, input_book_genre_content,true); 
 			DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
 			if (nullptr != temp_dto_book) {
 				std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
@@ -226,6 +232,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption book_dialog_button_option;
 
 	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
+		dialog_to_show = 0;
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		book_editing_id = id;
 		book_editing_index = book_menu_entries_selectedidx;
@@ -234,17 +241,25 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Book>::populate_book_editor(*temp_selected_book, book_editor_input_vector);
 		else
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-		dialog_to_show = 0;
+
 		
 	}, &book_dialog_button_option);
 
 	auto book_dialog_button_delete = Button(&book_dialog_entries[1], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
-		if (hash_table_book.removeFromTable(id))
-			book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
-		else
-			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 105);
-		dialog_to_show = 0;
+		DTO<Book>* temp_selected_book = hash_table_book[id];
+		if (temp_selected_book->dataobj.getIsAvailable()){
+			if (hash_table_book.removeFromTable(id)){
+				book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
+				dialog_to_show = 0;
+			}
+			else
+				UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 105);			
+		}
+		else{
+			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 201);
+		}
+
 			
 	}, &book_dialog_button_option);
 
@@ -337,20 +352,20 @@ int main(int argc, char* argv[]) {
 	std::wstring 	input_patron_status_content, 	
 					input_patron_name_content, 		input_patron_email_content,
 					input_patron_address_content, 	input_patron_postcode_content, 
-					input_patron_contact_content, 	input_patron_num_borrowed_content;
+					input_patron_phone_content, 	input_patron_num_borrowed_content;
 					
 	// Patron Editor - InputOptions
 	InputOption	 	input_patron_status_content_option,		
 					input_patron_name_content_option, 		input_patron_email_content_option,
 					input_patron_address_content_option, 	input_patron_postcode_content_option, 
-					input_patron_contact_content_option, 	input_patron_num_borrowed_content_option;
+					input_patron_phone_content_option, 	input_patron_num_borrowed_content_option;
 
 	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_status_content_option);
 	auto input_patron_name = 		Input(&input_patron_name_content, 			L"", &input_patron_name_content_option);
 	auto input_patron_email = 		Input(&input_patron_email_content, 			L"", &input_patron_email_content_option);
 	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_address_content_option);
 	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_postcode_content_option);
-	auto input_patron_contact 	= 	Input(&input_patron_contact_content, 		L"", &input_patron_contact_content_option);
+	auto input_patron_phone 	= 	Input(&input_patron_phone_content, 			L"", &input_patron_phone_content_option);
 	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"", &input_patron_num_borrowed_content_option);
 
 	// Patron Editor - Container
@@ -360,7 +375,7 @@ int main(int argc, char* argv[]) {
 		input_patron_email,
 		input_patron_address,
 		input_patron_postcode,
-		input_patron_contact,
+		input_patron_phone,
 		input_patron_num_borrowed
 	});
 
@@ -368,7 +383,7 @@ int main(int argc, char* argv[]) {
 	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_status_content, 
 															&input_patron_name_content, 	&input_patron_email_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
-															&input_patron_contact_content, 	&input_patron_num_borrowed_content};
+															&input_patron_phone_content, 	&input_patron_num_borrowed_content};
 
 	
 	// Patron Editor - Render Function
@@ -379,7 +394,7 @@ int main(int argc, char* argv[]) {
 				hbox({ text(L"EMAIL      :") | bold, input_patron_email->Render() }),
 				hbox({ text(L"ADDRESS    :") | bold, input_patron_address->Render() }),
 				hbox({ text(L"POST CODE  :") | bold, input_patron_postcode->Render() }),
-				hbox({ text(L"CONTACT NO :") | bold, input_patron_contact->Render() }),
+				hbox({ text(L"CONTACT NO :") | bold, input_patron_phone->Render() }),
 				hbox({ text(L"BORROWING  :") | bold, input_patron_num_borrowed->Render() })
 				});
 	};
@@ -388,7 +403,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption patron_button_editor_option;
 	auto patron_button_add = 	Button(L"Add New",[&](){
 		if (!UI_Helper<Patron>::is_editor_empty(patron_editor_input_vector)){
-			Patron patron_line_content(true, input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_contact_content,0);
+			Patron patron_line_content(input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_phone_content);
 			DTO<Patron>* temp_dto_patron = hash_table_patron(new DTO<Patron>(patron_line_content));
 			if (nullptr != temp_dto_patron){
 				std::wstring patron_line_content_menu_entry = UI_Helper<Patron>::ui_dto_entry_string(temp_dto_patron);
@@ -458,6 +473,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption patron_dialog_button_option;
 
 	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{
+		dialog_to_show = 0;
 		unsigned int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
 		patron_editing_id = id;
 		patron_editing_index = patron_menu_entries_selectedidx;
@@ -466,22 +482,31 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Book>::populate_patron_editor(*temp_selected_patron, patron_editor_input_vector);
 		else
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-		dialog_to_show = 0;
 	}, &patron_dialog_button_option);
 
 	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[1], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
-		if (hash_table_patron.removeFromTable(id))
-			patron_menu_entries.erase(patron_menu_entries.begin()+patron_menu_entries_selectedidx);
+		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
+		if (!temp_selected_patron->dataobj.getIsBorrowing()){
+			if (hash_table_patron.removeFromTable(id)){
+				patron_menu_entries.erase(patron_menu_entries.begin()+patron_menu_entries_selectedidx);
+				dialog_to_show = 0;
+			}
+			else
+				UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 105);
+		}
 		else
-			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 105);
-		dialog_to_show=0;
+			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 202);
 		patron_editing_id = -1;
 		patron_editing_index = -1;
 	}, &patron_dialog_button_option);
 
 	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{
-		//TODO
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
+		UI_Helper<Patron>::display_last_borrowed(temp_selected_patron->dataobj.getLastBorrowed(), loan_menu_entries);
+		dialog_to_show = 0;
+		selected_tab = 2;
 	}, &patron_dialog_button_option);
 
 
@@ -492,6 +517,7 @@ int main(int argc, char* argv[]) {
 		patron_editing_id = -1;
 		patron_editing_index = -1;
 	}, &patron_dialog_button_option);
+
 	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
 
 	auto patron_dialog_container = Container::Horizontal({
@@ -556,9 +582,7 @@ int main(int argc, char* argv[]) {
 	std::wstring loan_user_search_text = L"";
 	InputOption loan_user_search_input_option;
 	auto loan_user_search_input = Input(&loan_user_search_text, L"Search loans", &loan_user_search_input_option);
-	
-	// Loan Menu
-	std::vector<std::wstring> loan_menu_entries = 	{};	
+
 
 	// Loan Menu - Searching Functionality
 	loan_user_search_input_option.on_change = [&](){
@@ -630,13 +654,22 @@ int main(int argc, char* argv[]) {
 		if (book_loaning_id >=0 && patron_loaning_id >=0 ){
 			DTO<Book>* temp_selected_book = hash_table_book[book_loaning_id];
 			DTO<Patron>* temp_selected_patron = hash_table_patron[patron_loaning_id];
-			// TODO - VALIDATE BOOK (AVAILABILITY) & PATRON (MAX BORROWING)
 			if (nullptr!=temp_selected_book && nullptr!=temp_selected_patron){
-				Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
-				DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));
-				std::wstring loan_line_content_menu_entry = UI_Helper<Loan>::ui_dto_entry_string(temp_dto_loan);
-				loan_menu_entries.push_back(loan_line_content_menu_entry);
-				UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+				if (!temp_selected_book->dataobj.getIsAvailable())
+					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 203);
+				else if (temp_selected_patron->dataobj.getNumBorrowed() > 2)
+					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 204);
+				else{
+					Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
+					DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));
+					temp_selected_book->dataobj.setIsAvailable(false);
+					temp_selected_patron->dataobj.setIsBorrowing(true);
+					temp_selected_patron->dataobj.incrementNumBorrowed();
+					std::wstring loan_line_content_menu_entry = UI_Helper<Loan>::ui_dto_entry_string(temp_dto_loan);
+					temp_selected_patron->dataobj.addToLastBorrowed(loan_line_content_menu_entry);
+					loan_menu_entries.push_back(loan_line_content_menu_entry);
+					UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+				}
 			}
 			else
 				UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
@@ -651,16 +684,18 @@ int main(int argc, char* argv[]) {
 	auto loan_button_save 	= Button(L"Save Changes", 	[&](){
 		if (loan_editing_id  >=0 && loan_editing_index >= 0){
 			DTO<Loan>* temp_selected_loan = hash_table_loan[loan_editing_id];
-			UI_Helper<Loan>::save_loan_changes(temp_selected_loan, loan_editor_input_vector);
-			loan_menu_entries[loan_editing_index] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
-			UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
-			loan_editing_id = -1;
-			loan_editing_index = -1;
+			if (nullptr != temp_selected_loan){
+				UI_Helper<Loan>::save_loan_changes(temp_selected_loan, loan_editor_input_vector);
+				loan_menu_entries[loan_editing_index] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
+				UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+				loan_editing_id = -1;
+				loan_editing_index = -1;
+			}
+			else
+				UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
 		}
 		else
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 102);
-		std::vector<DTO<Loan>*> all_loans = hash_table_loan.getAllElements();
-		UI_Helper<Loan>::grab_all_populate(all_loans, loan_menu_entries);
 	}, &loan_button_editor_option);
 
 
@@ -703,6 +738,7 @@ int main(int argc, char* argv[]) {
 	ButtonOption loan_button_dialog_option;
 
 	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{
+		dialog_to_show = 0;
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
 		loan_editing_id = id;
 		loan_editing_index = loan_menu_entries_selectedidx;
@@ -711,7 +747,6 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Loan>::populate_loan_editor(*temp_selected_loan, loan_editor_input_vector);
 		else
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-		dialog_to_show = 0;
 	}, &loan_button_dialog_option);
 
 	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{
@@ -720,11 +755,18 @@ int main(int argc, char* argv[]) {
 
 
 	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{
-		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
-		if (hash_table_loan.removeFromTable(id))
-			loan_menu_entries.erase(loan_menu_entries.begin()+loan_menu_entries_selectedidx);
-		UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 205);
 		dialog_to_show = 0;
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
+		if (hash_table_loan.removeFromTable(id)){
+			loan_menu_entries.erase(loan_menu_entries.begin()+loan_menu_entries_selectedidx);
+			temp_selected_loan->dataobj.book_dto->dataobj.setIsAvailable(true);
+			temp_selected_loan->dataobj.patron_dto->dataobj.decrementNumBorrowed();
+			if (0==temp_selected_loan->dataobj.patron_dto->dataobj.getNumBorrowed());
+				temp_selected_loan->dataobj.patron_dto->dataobj.setIsBorrowing(false);
+		}
+		else
+			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 205);
 	}, &loan_button_dialog_option);
 
 	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{ dialog_to_show = 0; }, &loan_button_dialog_option);
@@ -787,14 +829,23 @@ int main(int argc, char* argv[]) {
 		L"LOANS"
 	};
 
-	int selected_tab = 0;
+
 
 	ToggleOption tab_toggle_option;
 	auto tab_toggle = Toggle(&tab_values, &selected_tab, &tab_toggle_option);
 
 	tab_toggle_option.on_change = [&](){
+		if (0==selected_tab){
+			std::vector<DTO<Book>*> all_books = hash_table_book.getAllElements();
+			UI_Helper<Book>::grab_all_populate(all_books, book_menu_entries);
+		}
+		if (1==selected_tab){
+			std::vector<DTO<Patron>*> all_patrons = hash_table_patron.getAllElements();
+			UI_Helper<Patron>::grab_all_populate(all_patrons, patron_menu_entries);
+		}
 		if (2==selected_tab){
-			UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
+			std::vector<DTO<Loan>*> all_loans = hash_table_loan.getAllElements();
+			UI_Helper<Loan>::grab_all_populate(all_loans, loan_menu_entries);
 			if (book_loaning_id>=0){
 				DTO<Book>* temp_dto_book = hash_table_book[book_loaning_id];
 				if (nullptr != temp_dto_book)
@@ -805,6 +856,7 @@ int main(int argc, char* argv[]) {
 				if (nullptr != temp_dto_patron)
 					UI_Helper<Loan>::populate_loan_editor_patron_info(temp_dto_patron, loan_editor_input_vector);
 			}
+
 		}
 	};
 

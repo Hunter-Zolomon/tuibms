@@ -6,20 +6,16 @@ Book::Book(){};
 Book::Book( std::wstring isbn, 
             std::wstring title, std::wstring author, std::wstring year, 
             std::wstring category, std::wstring genre,bool isAvailable) {
-                setIsAvailable(isAvailable);
                 setIsbn(isbn);
                 setTitle(title);
                 setAuthor(author);
                 setYear(year);
                 setCategory(category);
                 setGenre(genre);
+                setIsAvailable(isAvailable);
 }
 
 // Book - Getters
-
-bool Book::getIsAvailable(){
-    return book_isAvailable;
-}
 
 std::wstring Book::getIsbn(){
     return book_isbn;
@@ -55,11 +51,11 @@ std::wstring Book::getMenuEntry(){
             std::to_wstring(book_isAvailable);
 }
 
-// Book - Setters
-
-void Book::setIsAvailable(bool isAvailable){
-    book_isAvailable = isAvailable;
+bool Book::getIsAvailable(){
+    return book_isAvailable;
 }
+
+// Book - Setters
 
 void Book::setIsbn(std::wstring isbn){
     book_isbn = isbn;
@@ -82,6 +78,10 @@ void Book::setCategory(std::wstring category){
 
 void Book::setGenre(std::wstring genre){
     book_genre = genre;
+}
+
+void Book::setIsAvailable(bool isAvailable){
+    book_isAvailable = isAvailable;
 }
 
 
