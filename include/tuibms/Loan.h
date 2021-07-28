@@ -10,11 +10,11 @@
 class Loan{
     DTO<Book>* book_dto;
     DTO<Patron>* patron_dto;
-    std::wstring loan_day,loan_month;
+    std::wstring loan_date_issue ,loan_date_due;
 
     public:
         Loan();
-        Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_day, std::wstring loan_month);
+        Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_date_issue, std::wstring loan_date_due);
 
         unsigned int getBookId();
         unsigned int getPatronId();
@@ -22,15 +22,15 @@ class Loan{
         std::wstring getBookIsbn();
         std::wstring getBookName();
         std::wstring getPatronName();
-        std::wstring getLoanDay();
-        std::wstring getLoanMonth();
+        std::wstring getLoanDateIssue();
+        std::wstring getLoanDateDue();
 
         std::wstring getMenuEntry();
 
         void setBook(DTO<Book>* book);
         void setPatron(DTO<Patron>* patron);
-        void setLoanDay(std::wstring day);
-        void setLoanMonth(std::wstring month);
+        void setLoanDateIssue(std::wstring date_issue);
+        void setLoanDateDue(std::wstring date_due);
 };
 
 #endif

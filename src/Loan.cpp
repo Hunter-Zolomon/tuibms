@@ -3,11 +3,11 @@
 
 Loan::Loan(){}
 
-Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_day, std::wstring loan_month){
+Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_date_issue, std::wstring loan_date_due){
     setBook(book_dto);
     setPatron(patron_dto);
-    setLoanDay(loan_day);
-    setLoanMonth(loan_month);
+    setLoanDateIssue(loan_date_issue);
+    setLoanDateDue(loan_date_due);
 }
 
 // Loan - Getters
@@ -32,20 +32,20 @@ std::wstring Loan::getPatronName(){
     return  patron_dto->dataobj.getName();
 }
 
-std::wstring Loan::getLoanDay(){
-    return loan_day;
+std::wstring Loan::getLoanDateIssue(){
+    return loan_date_issue;
 }
 
-std::wstring Loan::getLoanMonth(){
-    return loan_month;
+std::wstring Loan::getLoanDateDue(){
+    return loan_date_due;
 }
 
 
 std::wstring Loan::getMenuEntry(){
     return  book_dto->dataobj.getTitle() + L" - " + 
-            patron_dto->dataobj.getName() + L" " + 
-            loan_month + L" - " + 
-            loan_day; 
+            patron_dto->dataobj.getName() + L" - " + 
+            loan_date_issue + L" - " + 
+            loan_date_due; 
 }
 
 // Loan - Setters 
@@ -56,10 +56,10 @@ void Loan::setPatron(DTO<Patron>* patron){
     patron_dto = patron;
 }
 
-void Loan::setLoanDay(std::wstring day){
-    loan_day = day;
+void Loan::setLoanDateIssue(std::wstring date_issue){
+    loan_date_issue = date_issue;
 }
 
-void Loan::setLoanMonth(std::wstring month){
-    loan_month = month;
+void Loan::setLoanDateDue(std::wstring date_due){
+    loan_date_due = date_due;
 }

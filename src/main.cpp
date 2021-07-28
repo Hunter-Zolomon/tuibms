@@ -577,21 +577,21 @@ int main(int argc, char* argv[]) {
 	std::wstring 	input_loan_book_id_content, 
 					input_loan_book_isbn_content, 	input_loan_book_name_content,
 					input_loan_patron_id_content, 	input_loan_patron_name_content,
-					input_loan_day_content, 		input_loan_month_content;
+					input_loan_date_issue_content,  input_loan_date_due_content;
 
 	// Loan Editor - InputOptions
 	InputOption		input_loan_book_id_content_option, 
 					input_loan_book_isbn_content_option, 	input_loan_book_name_content_option,
 					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
-					input_loan_day_content_option, 			input_loan_month_content_option;
+					input_loan_date_issue_option, 			input_loan_date_due_option;
 
 	auto input_loan_book_id   	= 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
 	auto input_loan_book_isbn 	=	Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
 	auto input_loan_book_name 	= 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
 	auto input_loan_patron_id	=	Input(&input_loan_patron_id_content,	L"", &input_loan_patron_id_content_option);
 	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_patron_name_content_option);
-	auto input_loan_day  	 	=	Input(&input_loan_day_content, 			L"", &input_loan_day_content_option);
-	auto input_loan_month 	  	=	Input(&input_loan_month_content, 		L"", &input_loan_month_content_option);
+	auto input_loan_date_issue  =	Input(&input_loan_date_issue_content, 	L"", &input_loan_date_issue_option);
+	auto input_loan_date_due 	=	Input(&input_loan_date_due_content, 	L"", &input_loan_date_due_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
@@ -600,15 +600,15 @@ int main(int argc, char* argv[]) {
 		input_loan_book_name,
 		input_loan_patron_id,
 		input_loan_patron_name,
-		input_loan_day,
-		input_loan_month
+		input_loan_date_issue,
+		input_loan_date_due
 	});
 
 	// Loan Editor - Vector of Input Strings
 	std::vector<std::wstring*> loan_editor_input_vector{	&input_loan_book_id_content, 
 															&input_loan_book_isbn_content, 	&input_loan_book_name_content,
 															&input_loan_patron_id_content, 	&input_loan_patron_name_content,
-															&input_loan_day_content, 		&input_loan_month_content};
+															&input_loan_date_issue_content, &input_loan_date_due_content};
 
 	// Loan Editor - Render Function
 	auto loan_editor_section = [&](){
@@ -618,8 +618,8 @@ int main(int argc, char* argv[]) {
 				hbox({ text(L"BOOK NAME   :") 	| bold, input_loan_book_name->Render()}),
 				hbox({ text(L"PATRON ID   :") 	| bold, input_loan_patron_id->Render()}),
 				hbox({ text(L"PATRON NAME :") 	| bold, input_loan_patron_name->Render()}),				
-				hbox({ text(L"LOAN DAY    :") 	| bold, input_loan_day->Render()}),
-				hbox({ text(L"LOAN MONTH  :") 	| bold,	input_loan_month->Render()}),
+				hbox({ text(L"ISSUE DATE  :") 	| bold, input_loan_date_issue->Render()}),
+				hbox({ text(L"DUE DATE    :") 	| bold,	input_loan_date_due->Render()}),
 				});
 	};
 
@@ -632,7 +632,7 @@ int main(int argc, char* argv[]) {
 			DTO<Patron>* temp_selected_patron = hash_table_patron[patron_loaning_id];
 			// TODO - VALIDATE BOOK (AVAILABILITY) & PATRON (MAX BORROWING)
 			if (nullptr!=temp_selected_book && nullptr!=temp_selected_patron){
-				Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_day_content, input_loan_month_content);
+				Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
 				DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));
 				std::wstring loan_line_content_menu_entry = UI_Helper<Loan>::ui_dto_entry_string(temp_dto_loan);
 				loan_menu_entries.push_back(loan_line_content_menu_entry);

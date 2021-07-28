@@ -63,8 +63,8 @@ void UI_Helper<T>::populate_loan_editor(DTO<Loan> dto_loan, std::vector<std::wst
     *(input_loan_content_vector[2]) = dto_loan.dataobj.getBookName();
     *(input_loan_content_vector[3]) = std::to_wstring(dto_loan.dataobj.getPatronId());
     *(input_loan_content_vector[4]) = dto_loan.dataobj.getPatronName();
-    *(input_loan_content_vector[5]) = dto_loan.dataobj.getLoanDay();
-    *(input_loan_content_vector[6]) = dto_loan.dataobj.getLoanMonth();
+    *(input_loan_content_vector[5]) = dto_loan.dataobj.getLoanDateIssue();
+    *(input_loan_content_vector[6]) = dto_loan.dataobj.getLoanDateDue();
 }
 
 template<class T>
@@ -116,8 +116,8 @@ void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std:
 
 template<class T>
 void UI_Helper<T>::save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstring*> input_loan_content_vector){
-    dto_loan->dataobj.setLoanDay(*(input_loan_content_vector[5]));
-    dto_loan->dataobj.setLoanMonth(*(input_loan_content_vector[6]));
+    dto_loan->dataobj.setLoanDateIssue(*(input_loan_content_vector[5]));
+    dto_loan->dataobj.setLoanDateDue(*(input_loan_content_vector[6]));
 }
 
 template<class T>
