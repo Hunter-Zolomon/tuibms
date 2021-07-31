@@ -2,6 +2,7 @@
 #include <string>      // for wstring, basic_string, operator+, to_wstring
 #include <thread>      // for sleep_for, thread
 #include <vector>      // for vector
+#include <time.h>
 
 #include <ftxui/component/captured_mouse.hpp>  // for ftxui
 #include <ftxui/component/component.hpp>  // for Checkbox, Renderer, Horizontal, Vertical, Input, Menu, Radiobox, Tab, Toggle
@@ -25,6 +26,8 @@
 using namespace ftxui;
 
 int main(int argc, char* argv[]) {
+
+	srand(time(NULL)); //To further seed rand for DTO id generation
 
 	HashTable<Book> hash_table_book(1000); //For testing
 	HashTable<Patron> hash_table_patron(1000); //For testing

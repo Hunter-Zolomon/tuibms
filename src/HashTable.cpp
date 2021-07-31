@@ -35,12 +35,13 @@ HashTable<T>::~HashTable() {
 }
 
 template<class T>
-size_t HashTable<T>::hashFunction(unsigned int key, unsigned int p) {
+unsigned int HashTable<T>::hashFunction(unsigned int key, unsigned int p) {
 	// Change Hash Function If Required
 	short mach_word_bit_size = sizeof(size_t) * 5; // Using half of machine's word size
 	long double A = (sqrt(5) - 1) / 2;
 	size_t s = floor(A * (long double)(2^mach_word_bit_size)); 
-	return (size_t)(key * s >> (mach_word_bit_size - p));
+	unsigned int generated_key = ((size_t)(key * s >> (mach_word_bit_size - p))) % this->tblsize; //This temp step is for debugging the gen-key.
+	return generated_key; 
 }
 
 /**
@@ -116,6 +117,7 @@ bool HashTable<T>::removeFromTable(unsigned int key) {
 	if (nullptr != (this->hashtable + searchidx)->data) {
 		if ((this->hashtable + searchidx)->data->id == key) {
 			delete (hashtable + searchidx)->data;
+			(hashtable + searchidx)->data = nullptr;
 			this->datacount--;
 			return true;
 		}
