@@ -6,6 +6,7 @@
 #include <Patron.h>
 #include <Loan.h>
 #include <DTO.h>
+#include <algorithm>
 
 template<class T>
 void UI_Helper<T>::grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector){
@@ -154,6 +155,12 @@ void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed
     for (std::wstring line: last_borrowed){
         display_vector.push_back(line);
     }
+}
+
+template<class T>
+bool UI_Helper<T>::bool_of_wstring(std::wstring line){
+    std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+    return ((line == L"true" || line == L"1") ? true : false);
 }
 
 template class UI_Helper<Book>;

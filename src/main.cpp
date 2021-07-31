@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	// ---------------------------------------- Error Dialog ---------------------------------------- 
 	std::wstring error_dialog_error_string;
 	ButtonOption error_dialog_button_ok_option;
-	auto error_dialog_button_ok = Button(L"OK", [&]{ 
+	auto error_dialog_button_ok = Button(L"Continue", [&]{ 
 		dialog_to_show = 0; 
 	}, &error_dialog_button_ok_option);
 
@@ -87,6 +87,7 @@ int main(int argc, char* argv[]) {
 	std::vector<std::wstring> book_menu_entries = {}; //UI Display Vector that displays Books
 	int book_menu_entries_selectedidx = 0; //Selected book 
 	MenuOption book_menu_option;
+	
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx, &book_menu_option); //Menu containing books
 
 	// Book Menu - Searching Functionality
@@ -156,24 +157,26 @@ int main(int argc, char* argv[]) {
 	// Book Editor - Buttons
 	ButtonOption book_button_editor_option;
 
-	auto book_button_add 	= Button(L"Add New",[&](){
-		if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
-			Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, input_book_year_content, input_book_category_content, input_book_genre_content,true); 
-			DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
-			if (nullptr != temp_dto_book) {
-				std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
-				book_menu_entries.push_back(book_line_content_menu_entry);
-				UI_Helper<Book>::clear_editor(book_editor_input_vector);
-			} 
-			else
-				UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 101);
-			book_editing_id = -1;
-			book_editing_index = -1;
+auto book_button_add 	= Button(L"Add New",[&](){
+	if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
+		Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, 
+								input_book_year_content, input_book_category_content, input_book_genre_content, 
+								UI_Helper<Book>::bool_of_wstring(input_book_available_content)); 
+		DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
+		if (nullptr != temp_dto_book) {
+			std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
+			book_menu_entries.push_back(book_line_content_menu_entry);
+			UI_Helper<Book>::clear_editor(book_editor_input_vector);
 		} 
 		else
-			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
+			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 101);
+		book_editing_id = -1;
+		book_editing_index = -1;
+	} 
+	else
+		UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
 
-	}, &book_button_editor_option);
+}, &book_button_editor_option);
 
 	auto book_button_save 	= Button(L"Save Changes",[&](){
 		if (book_editing_id >= 0 && book_editing_index >= 0){
@@ -654,7 +657,7 @@ int main(int argc, char* argv[]) {
 			if (nullptr != temp_selected_book && nullptr != temp_selected_patron){
 				if (!temp_selected_book->dataobj.getIsAvailable())
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 203);
-				else if (temp_selected_patron->dataobj.getNumBorrowed() > 2)
+				else if (temp_selected_patron->dataobj.getNumBorrowed() >= 3)
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 204);
 				else{
 					Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
