@@ -160,7 +160,7 @@ void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed
 template<class T>
 bool UI_Helper<T>::bool_of_wstring(std::wstring line){
     std::transform(line.begin(), line.end(), line.begin(), ::tolower);
-    return ((line == L"true" || line == L"1") ? true : false);
+    return ((line == L"true" || line == L"1" || line == L"t") ? true : false);
 }
 
 template class UI_Helper<Book>;

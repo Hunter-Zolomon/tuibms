@@ -286,29 +286,29 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				text(book_menu_entries[book_menu_entries_selectedidx]),
 				separator(),
 				hbox(book_dialog_container->Render())  | center,
-		}) | border;
+		}) | border | color(Color::GrayLight);
 	});
 
 	// Book - Tab Render Function
 	auto book_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
 		return vbox({
-				book_user_search_input->Render() | flex 	| color(Color::GrayLight),
+				book_user_search_input->Render() | flex,
 				separator(),
 				hbox({
-					window(	text(left_window_text) 			| color(Color::GreenLight), 
+					window(	text(left_window_text), 
 							vbox({
 								book_menu->Render()			| frame | size(HEIGHT, LESS_THAN, 11)
-						})) | flex 							| color(Color::GreenLight),
+						})) | flex,
 					vbox({ 
-						window(	text(right_window_text) 	| color(Color::GreenLight), 
+						window(	text(right_window_text), 
 								vbox({
-									book_editor_section()	| color(Color::GreenLight)
-								}))							| color(Color::GreenLight), 
+									book_editor_section()
+								})), 
 							hbox({
 								book_button_add->	Render()| flex,
 								book_button_save->	Render()| flex,
 								book_button_cancel->Render()| flex
-								}) 							| color(Color::GreenLight)
+								})
 						})
 					})
 				});
@@ -317,8 +317,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Book - Main Renderer 
 	auto book_tab_renderer = Renderer(book_tab_container, [&]() { 
-			return book_tab(L"BOOKS", L"BOOK EDITOR");
-	});
+			return book_tab(L"BOOKS", L"BOOK EDITOR") | color(Color::Green);
+	}) ;
 
 
 	#pragma endregion 
@@ -386,7 +386,6 @@ auto book_button_add 	= Button(L"Add New",[&](){
 															&input_patron_name_content, 	&input_patron_email_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
 															&input_patron_phone_content, 	&input_patron_num_borrowed_content};
-
 	
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
@@ -543,20 +542,20 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				patron_user_search_input->Render() 		| flex,
 				separator(),
 				hbox({
-					window(	text(left_window_text) 		|	color(Color::BlueLight), 
+					window(	text(left_window_text), 
 							vbox({
 								patron_menu->Render()	| frame | size(HEIGHT, LESS_THAN, 11)
-							})) | flex 					| 	color(Color::BlueLight),
+							})) | flex,
 					vbox({ 
-						window(	text(right_window_text)	| 	color(Color::BlueLight), 
+						window(	text(right_window_text), 
 							vbox({
-								patron_editor_section() | 	color(Color::BlueLight)
-							}))							|	color(Color::BlueLight),
+								patron_editor_section()
+							})),
 							hbox({
 								patron_button_add->		Render() | flex,
 								patron_button_save->	Render() | flex,
 								patron_button_cancel->	Render() | flex
-								}) 						|	color(Color::BlueLight),
+								}),
 						})
 					})
 				});
@@ -564,7 +563,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Patron - Main Renderer 
 	auto patron_tab_renderer = Renderer(patron_tab_container, [&]() { 
-			return patron_tab(L"PATRONS", L"PATRON EDITOR");
+			return patron_tab(L"PATRONS", L"PATRON EDITOR") |	color(Color::BlueLight);
 		}
 	);
 
@@ -729,29 +728,17 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Loan - Dialog Box
 	std::vector<std::wstring> loan_dialog_entries = {
-		L"Edit Loan", L"Extend Loan", L"Return Loan", L"Cancel",
+		L"Extend Loan", L"Return Loan", L"Cancel",
 	};
 
 	ButtonOption loan_button_dialog_option;
 
-	auto loan_button_dialog_edit = 		Button(&loan_dialog_entries[0], [&]{
-		dialog_to_show = 0;
-		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
-		loan_editing_id = id;
-		loan_editing_index = loan_menu_entries_selectedidx;
-		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
-		if (nullptr!=temp_selected_loan)
-			UI_Helper<Loan>::populate_loan_editor(*temp_selected_loan, loan_editor_input_vector);
-		else
-			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-	}, &loan_button_dialog_option);
-
-	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[1], [&]{
+	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[0], [&]{
 		//TODO
 	}, &loan_button_dialog_option);
 
 
-	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[2], [&]{
+	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[1], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
 		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
 		if (nullptr!=temp_selected_loan){
@@ -769,10 +756,9 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		loan_editing_index = -1;
 	}, &loan_button_dialog_option);
 
-	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[3], [&]{ dialog_to_show = 0; }, &loan_button_dialog_option);
+	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[2], [&]{ dialog_to_show = 0; }, &loan_button_dialog_option);
 
 	auto loan_dialog_container = Container::Horizontal({
-		loan_button_dialog_edit,
 		loan_button_dialog_extend,
 		loan_button_dialog_return,
 		loan_button_dialog_exit
@@ -783,7 +769,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			text(loan_menu_entries[loan_menu_entries_selectedidx]),
 			separator(), 
 			hbox(loan_dialog_container->Render())  | center,
-		}) | border;
+		}) | border ;
 	});
 
 
@@ -793,21 +779,20 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			loan_user_search_input->Render() | flex, 
 			separator(),
 			hbox({
-				window(text(left_window_text) 			| color(Color::CyanLight), 
+				window(text(left_window_text),
 					vbox({
 						loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 11)
-					})) | flex 							| color(Color::CyanLight),
-
+					})) | flex,
 				vbox({
-					window(text(right_window_text) 		| color(Color::CyanLight),
+					window(text(right_window_text),
 						vbox({
-							loan_editor_section()  		| color(Color::CyanLight),
-						}))								| color(Color::CyanLight),
+							loan_editor_section(),
+						})),
 						hbox({
 							loan_button_add->Render()| flex,
 							loan_button_save->Render()| flex,
 							loan_button_cancel->Render()| flex
-						}) 								| color(Color::CyanLight)
+						}) 								
 				})
 			})
 		});
@@ -815,7 +800,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	//Loan - Main Renderer
 	auto loan_tab_renderer = Renderer(loan_tab_container, [&]() { 
-				return loan_tab(L"LOANS", L"LOAN EDITOR");
+				return loan_tab(L"LOANS", L"LOAN EDITOR") | color(Color::MagentaLight);
 			}
 		);
 	
@@ -879,8 +864,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 					tab_toggle->Render() | hcenter,
 					separator(),
 					tab_container->Render() 
-					}) |
-			border;
+					}) 
+					| border;
 	});
 
 	// Gotta be a better way
