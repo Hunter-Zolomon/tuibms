@@ -944,6 +944,13 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		});
 	});
 
+	final_renderer = CatchEvent(final_renderer, [&](Event event) {
+		if (event == Event::Escape) {
+			exit(0);
+			return true;
+		}
+		return false;
+	});
 
 	auto screen = ScreenInteractive::TerminalOutput();
 	screen.Loop(final_renderer);
