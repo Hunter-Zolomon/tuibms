@@ -292,6 +292,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	// Book - Tab Render Function
 	auto book_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
 		return vbox({
+				separator(),
 				book_user_search_input->Render() | flex,
 				separator(),
 				hbox({
@@ -317,7 +318,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Book - Main Renderer 
 	auto book_tab_renderer = Renderer(book_tab_container, [&]() { 
-			return book_tab(L"BOOKS", L"BOOK EDITOR") | color(Color::Green);
+			return book_tab(L"BOOKS", L"BOOK EDITOR") | color(Color::DarkGoldenrod);
 	}) ;
 
 
@@ -368,7 +369,6 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_address_content_option);
 	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		L"", &input_patron_postcode_content_option);
 	auto input_patron_phone 	= 	Input(&input_patron_phone_content, 			L"", &input_patron_phone_content_option);
-	auto input_patron_num_borrowed =Input(&input_patron_num_borrowed_content,	L"", &input_patron_num_borrowed_content_option);
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
@@ -378,14 +378,13 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		input_patron_address,
 		input_patron_postcode,
 		input_patron_phone,
-		input_patron_num_borrowed
 	});
 
 	// Patron Editor - Vector of Input Strings
 	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_status_content, 
 															&input_patron_name_content, 	&input_patron_email_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
-															&input_patron_phone_content, 	&input_patron_num_borrowed_content};
+															&input_patron_phone_content,	&input_patron_num_borrowed_content};
 	
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
@@ -396,14 +395,14 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({ text(L"ADDRESS    :") | bold, input_patron_address->Render() }),
 				hbox({ text(L"POST CODE  :") | bold, input_patron_postcode->Render() }),
 				hbox({ text(L"CONTACT NO :") | bold, input_patron_phone->Render() }),
-				hbox({ text(L"BORROWING  :") | bold, input_patron_num_borrowed->Render() })
+				hbox({ text(L"BORROWING  :") | bold, text(input_patron_num_borrowed_content) })
 				});
 	};
 
 	// Patron Editor - Buttons
 	ButtonOption patron_button_editor_option;
 	auto patron_button_add = 	Button(L"Add New",[&](){
-		if (!UI_Helper<Patron>::is_editor_empty(patron_editor_input_vector)){
+		if (!UI_Helper<Patron>::is_editor_empty({patron_editor_input_vector.begin(), patron_editor_input_vector.end() - 1})){
 			Patron patron_line_content(input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_phone_content);
 			DTO<Patron>* temp_dto_patron = hash_table_patron(new DTO<Patron>(patron_line_content));
 			if (nullptr != temp_dto_patron){
@@ -539,7 +538,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	// Patron - Tab Render Function
 	auto patron_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
 		return vbox({
-				patron_user_search_input->Render() 		| flex,
+				separator(),
+				patron_user_search_input->Render() | flex,
 				separator(),
 				hbox({
 					window(	text(left_window_text), 
@@ -563,7 +563,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Patron - Main Renderer 
 	auto patron_tab_renderer = Renderer(patron_tab_container, [&]() { 
-			return patron_tab(L"PATRONS", L"PATRON EDITOR") |	color(Color::BlueLight);
+			return patron_tab(L"PATRONS", L"PATRON EDITOR") | color(Color::BlueLight);
 		}
 	);
 
@@ -608,21 +608,11 @@ auto book_button_add 	= Button(L"Add New",[&](){
 					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
 					input_loan_date_issue_option, 			input_loan_date_due_option;
 
-	auto input_loan_book_id   	= 	Input(&input_loan_book_id_content, 		L"", &input_loan_book_id_content_option);
-	auto input_loan_book_isbn 	=	Input(&input_loan_book_isbn_content, 	L"", &input_loan_book_isbn_content_option);
-	auto input_loan_book_name 	= 	Input(&input_loan_book_name_content,	L"", &input_loan_book_name_content_option);
-	auto input_loan_patron_id	=	Input(&input_loan_patron_id_content,	L"", &input_loan_patron_id_content_option);
-	auto input_loan_patron_name =	Input(&input_loan_patron_name_content,	L"", &input_loan_patron_name_content_option);
 	auto input_loan_date_issue  =	Input(&input_loan_date_issue_content, 	L"", &input_loan_date_issue_option);
 	auto input_loan_date_due 	=	Input(&input_loan_date_due_content, 	L"", &input_loan_date_due_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
-		input_loan_book_id,
-		input_loan_book_isbn,
-		input_loan_book_name,
-		input_loan_patron_id,
-		input_loan_patron_name,
 		input_loan_date_issue,
 		input_loan_date_due
 	});
@@ -636,11 +626,11 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	// Loan Editor - Render Function
 	auto loan_editor_section = [&](){
 		return vbox({
-				hbox({ text(L"BOOK ID     :") 	| bold, input_loan_book_id->Render()}),
-				hbox({ text(L"BOOK ISBN   :") 	| bold, input_loan_book_isbn->Render()}),
-				hbox({ text(L"BOOK NAME   :") 	| bold, input_loan_book_name->Render()}),
-				hbox({ text(L"PATRON ID   :") 	| bold, input_loan_patron_id->Render()}),
-				hbox({ text(L"PATRON NAME :") 	| bold, input_loan_patron_name->Render()}),				
+				hbox({ text(L"BOOK ID     :") 	| bold, text(input_loan_book_id_content)}),
+				hbox({ text(L"BOOK ISBN   :") 	| bold, text(input_loan_book_isbn_content)}),
+				hbox({ text(L"BOOK NAME   :") 	| bold, text(input_loan_book_name_content)}),
+				hbox({ text(L"PATRON ID   :") 	| bold, text(input_loan_patron_id_content)}),
+				hbox({ text(L"PATRON NAME :") 	| bold, text(input_patron_name_content)}),				
 				hbox({ text(L"ISSUE DATE  :") 	| bold, input_loan_date_issue->Render()}),
 				hbox({ text(L"DUE DATE    :") 	| bold,	input_loan_date_due->Render()}),
 				});
@@ -776,26 +766,27 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	//Loan - Tab Render Function
 	auto loan_tab = [&](std::wstring left_window_text, std::wstring right_window_text){
 		return vbox({
-			loan_user_search_input->Render() | flex, 
-			separator(),
-			hbox({
-				window(text(left_window_text),
-					vbox({
-						loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 11)
-					})) | flex,
-				vbox({
-					window(text(right_window_text),
+				separator(),
+				loan_user_search_input->Render() | flex, 
+				separator(),
+				hbox({
+					window(text(left_window_text),
 						vbox({
-							loan_editor_section(),
-						})),
-						hbox({
-							loan_button_add->Render()| flex,
-							loan_button_save->Render()| flex,
-							loan_button_cancel->Render()| flex
-						}) 								
+							loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 11)
+						})) | flex,
+					vbox({
+						window(text(right_window_text),
+							vbox({
+								loan_editor_section(),
+							})),
+							hbox({
+								loan_button_add->Render()| flex,
+								loan_button_save->Render()| flex,
+								loan_button_cancel->Render()| flex
+							}) 								
+					})
 				})
-			})
-		});
+			});
 	};
 
 	//Loan - Main Renderer
@@ -861,11 +852,9 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	auto main_renderer = Renderer(main_container, [&] {
 		return vbox({
-					tab_toggle->Render() | hcenter,
-					separator(),
+					tab_toggle->Render() | hcenter | border,
 					tab_container->Render() 
-					}) 
-					| border;
+					});
 	});
 
 	// Gotta be a better way
@@ -878,7 +867,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	}, &dialog_to_show);
 
 	auto final_renderer = Renderer(final_container, [&]{
-		Element document = main_renderer->Render();
+		Element document = main_renderer->Render() | color(Color::Green);
 
 		if (dialog_to_show==1 && !book_menu_entries.empty()){
 			document = dbox({
