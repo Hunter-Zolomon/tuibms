@@ -62,7 +62,10 @@ int main(int argc, char* argv[]) {
 	MenuOption book_menu_option;
 	auto book_menu = Menu(&book_menu_entries, &book_menu_entries_selectedidx, &book_menu_option); //Menu containing books
 
-	book_menu_option.on_enter = [&](){ dialog_to_show = 1; }; //Triggered when Enter is pressed on a selected menu entry 
+	book_menu_option.on_enter = [&](){
+		if (!(book_menu_entries.empty()))
+			dialog_to_show = 1;
+	}; //Triggered when Enter is pressed on a selected menu entry 
 
 	// Book Editor - Inputs
 	std::wstring 	input_book_id_content, 		input_book_isbn_content, 
@@ -257,7 +260,10 @@ int main(int argc, char* argv[]) {
 	MenuOption patron_menu_option;
 	auto patron_menu = Menu(&patron_menu_entries, &patron_menu_entries_selectedidx, &patron_menu_option);
 
-	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
+	patron_menu_option.on_enter = [&](){ 
+		if (!(patron_menu_entries.empty()))
+			dialog_to_show = 2; 
+	};
 
 	// Patron Editor - Inputs
 	std::wstring 	input_patron_id_content, 		input_patron_status_content, 
@@ -423,7 +429,10 @@ int main(int argc, char* argv[]) {
 	MenuOption loan_menu_option;
 	auto loan_menu = Menu(&loan_menu_entries, &loan_menu_entries_selectedidx, &loan_menu_option);
 
-	loan_menu_option.on_enter = [&](){ dialog_to_show = 3; };
+	loan_menu_option.on_enter = [&](){ 
+		if (!(loan_menu_entries.empty()))
+			dialog_to_show = 3; 
+	};
 
 	// Loan Editor - Inputs
 	std::wstring 	input_loan_id_content, 			input_loan_book_id_content, 
@@ -627,19 +636,19 @@ int main(int argc, char* argv[]) {
 	auto final_renderer = Renderer(final_container, [&]{
 		Element document = main_renderer->Render();
 
-		if (dialog_to_show==1 && !book_menu_entries.empty()){
+		if (dialog_to_show==1){
 			document = dbox({
 				document, 
 				book_dialog_renderer->Render() | clear_under | center,
 			});
 		}
-		if (dialog_to_show==2 && !patron_menu_entries.empty()){
+		if (dialog_to_show==2){
 			document = dbox({
 				document,
 				patron_dialog_renderer->Render() | clear_under | center,
 			});
 		} 
-		if (dialog_to_show==3 && !loan_menu_entries.empty()){
+		if (dialog_to_show==3){
 			document = dbox({
 				document, 
 				loan_dialog_renderer->Render() | clear_under | center,
