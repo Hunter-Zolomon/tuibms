@@ -501,13 +501,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		patron_editing_index = -1;
 	}, &patron_dialog_button_option);
 
-	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{
-		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
-		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
-		UI_Helper<Patron>::display_last_borrowed(temp_selected_patron->dataobj.getLastBorrowed(), loan_menu_entries);
-		selected_tab = 2;
-		dialog_to_show = 0;
-	}, &patron_dialog_button_option);
+	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{ dialog_to_show = 5; }, &patron_dialog_button_option);
 
 
 	auto patron_dialog_button_loan = 	Button(	&patron_dialog_entries[3], [&]{
@@ -516,7 +510,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		dialog_to_show = 0;
 	}, &patron_dialog_button_option);
 
-	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0;}, &patron_dialog_button_option);
+	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0; }, &patron_dialog_button_option);
 
 	auto patron_dialog_container = Container::Horizontal({
 		patron_dialog_button_edit,
@@ -534,6 +528,50 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		}) | border;
 	});
 
+	// Patron - Menu Display Dialog Box
+	std::vector<std::wstring> patron_menu_display_dialog_menu_entries = {L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something"};
+
+	MenuOption patron_menu_display_dialog_menu_option;
+	patron_menu_display_dialog_menu_option.style_focused = nothing;
+	patron_menu_display_dialog_menu_option.style_normal = nothing;
+	patron_menu_display_dialog_menu_option.style_selected = nothing;
+	patron_menu_display_dialog_menu_option.style_selected_focused = nothing;
+	int patron_menu_display_dialog_menu_selectedidx = -1;
+
+	auto patron_menu_display_dialog_menu = Menu(&patron_menu_display_dialog_menu_entries, &patron_menu_display_dialog_menu_selectedidx, &patron_menu_display_dialog_menu_option);
+
+	ButtonOption patron_menu_display_dialog_button_lastthree_option, patron_menu_display_dialog_button_lastten_option, patron_menu_display_dialog_button_exit_option;
+
+	auto patron_menu_display_dialog_button_lastthree = Button(L"Current Borrows", [&] {
+		//TODO Implement pointer to Books current borrowed and populate the menu
+	}, &patron_menu_display_dialog_button_lastthree_option); 
+
+	auto patron_menu_display_dialog_button_lastten = Button(L"Last 10 Books Borrowed", [&] {
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
+		UI_Helper<Patron>::display_last_borrowed(temp_selected_patron->dataobj.getLastBorrowed(), patron_menu_display_dialog_menu_entries);
+	}, &patron_menu_display_dialog_button_lastten_option); 
+	
+	auto patron_menu_display_dialog_button_exit = Button(L"Exit", [&] {
+		patron_menu_display_dialog_menu_entries.clear();
+		dialog_to_show = 0;
+	}, &patron_menu_display_dialog_button_exit_option); 
+
+	auto patron_menu_display_dialog_container = Container::Horizontal({
+		patron_menu_display_dialog_button_lastthree,
+		patron_menu_display_dialog_button_lastten,
+		patron_menu_display_dialog_button_exit 
+	});
+
+	auto patron_menu_display_dialog_renderer = Renderer(patron_menu_display_dialog_container, [&]{
+		return vbox({
+			text(L"Patron Borrow Display") | center,
+			separator(), 
+			hbox({patron_menu_display_dialog_button_lastthree->Render() | flex, patron_menu_display_dialog_button_lastten->Render() | flex, patron_menu_display_dialog_button_exit->Render() | flex}) | center,
+			separator(),
+			patron_menu_display_dialog_menu->Render() | size(HEIGHT, LESS_THAN, 11)
+			}) | border;
+	});
 
 	// Patron - Tab Render Function
 	auto patron_tab = [&](std::wstring left_window_text, std::wstring right_window_text) {
@@ -715,7 +753,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		loan_user_search_input,
 		loan_content_container
 	});
-
+	
 	// Loan - Dialog Box
 	std::vector<std::wstring> loan_dialog_entries = {
 		L"Extend Loan", L"Return Loan", L"Cancel",
@@ -863,7 +901,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		book_dialog_renderer, //1
 		patron_dialog_renderer, //2
 		loan_dialog_renderer, //3
-		error_dialog_renderer
+		error_dialog_renderer, //4
+		patron_menu_display_dialog_renderer //5
 	}, &dialog_to_show);
 
 	auto final_renderer = Renderer(final_container, [&]{
@@ -872,25 +911,31 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		if (dialog_to_show==1 && !book_menu_entries.empty()){
 			document = dbox({
 				document, 
-				book_dialog_renderer->Render() | clear_under | center,
+				book_dialog_renderer->Render() | clear_under | center
 			});
 		}
 		if (dialog_to_show==2 && !patron_menu_entries.empty()){
 			document = dbox({
 				document,
-				patron_dialog_renderer->Render() | clear_under | center,
+				patron_dialog_renderer->Render() | clear_under | center
 			});
 		} 
 		if (dialog_to_show==3 && !loan_menu_entries.empty()){
 			document = dbox({
 				document, 
-				loan_dialog_renderer->Render() | clear_under | center,
+				loan_dialog_renderer->Render() | clear_under | center
 			});
 		}
 		if (dialog_to_show==4){
 			document = dbox({
 				document,
-				error_dialog_renderer->Render() | clear_under | center,
+				error_dialog_renderer->Render() | clear_under | center
+			});
+		}
+		if (dialog_to_show==5){
+			document = dbox({
+				document,
+				patron_menu_display_dialog_renderer->Render() | clear_under | center
 			});
 		}
 		return vbox({
