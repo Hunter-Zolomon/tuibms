@@ -228,12 +228,18 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	
 	// Book - Dialog Box 
 	std::vector<std::wstring> book_dialog_entries = {
-		L"Edit Book", L"Delete Book", L"Loan", L"Exit",
+		L"Loan", L"Edit Book", L"Delete Book", L"Exit",
 	};
 
 	ButtonOption book_dialog_button_option;
 
-	auto book_dialog_button_edit = Button(&book_dialog_entries[0], [&] {
+	auto book_dialog_button_loan = Button(&book_dialog_entries[0], [&] {
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
+		book_loaning_id = id;
+		dialog_to_show = 0;
+	}, &book_dialog_button_option);
+
+	auto book_dialog_button_edit = Button(&book_dialog_entries[1], [&] {
 		dialog_to_show = 0;
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		book_editing_id = id;
@@ -247,7 +253,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		
 	}, &book_dialog_button_option);
 
-	auto book_dialog_button_delete = Button(&book_dialog_entries[1], [&] {
+	auto book_dialog_button_delete = Button(&book_dialog_entries[2], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		DTO<Book>* temp_selected_book = hash_table_book[id];
 		if (temp_selected_book->dataobj.getIsAvailable()){
@@ -265,19 +271,13 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			
 	}, &book_dialog_button_option);
 
-	auto book_dialog_button_loan = Button(&book_dialog_entries[2], [&] {
-		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
-		book_loaning_id = id;
-		dialog_to_show = 0;
-	}, &book_dialog_button_option);
-
 
 	auto book_dialog_button_exit = Button(&book_dialog_entries[3], [&] {dialog_to_show = 0;}, &book_dialog_button_option);
 
 	auto book_dialog_container = Container::Horizontal({
+		book_dialog_button_loan,
 		book_dialog_button_edit,
 		book_dialog_button_delete,
-		book_dialog_button_loan,
 		book_dialog_button_exit
 	});
 
@@ -468,11 +468,17 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	});
 
 	// Patron - Dialog Box
-	std::vector<std::wstring> patron_dialog_entries = { L"Edit Patron", L"Delete Patron", L"View Borrows", L"Loan", L"Cancel" };
+	std::vector<std::wstring> patron_dialog_entries = { L"Loan", L"Edit Patron", L"Delete Patron", L"View Borrows",  L"Cancel" };
 
 	ButtonOption patron_dialog_button_option;
 
-	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[0], [&]{
+	auto patron_dialog_button_loan = 	Button(	&patron_dialog_entries[0], [&]{
+		unsigned int id = UI_Helper<Book>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		patron_loaning_id = id;
+		dialog_to_show = 0;
+	}, &patron_dialog_button_option);
+
+	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[1], [&]{
 		dialog_to_show = 0;
 		unsigned int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
 		patron_editing_id = id;
@@ -484,7 +490,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
 	}, &patron_dialog_button_option);
 
-	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[1], [&]{
+	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[2], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
 		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
 		if (0==temp_selected_patron->dataobj.getNumBorrowed()){
@@ -501,22 +507,15 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		patron_editing_index = -1;
 	}, &patron_dialog_button_option);
 
-	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[2], [&]{ dialog_to_show = 5; }, &patron_dialog_button_option);
-
-
-	auto patron_dialog_button_loan = 	Button(	&patron_dialog_entries[3], [&]{
-		unsigned int id = UI_Helper<Book>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
-		patron_loaning_id = id;
-		dialog_to_show = 0;
-	}, &patron_dialog_button_option);
+	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 5; }, &patron_dialog_button_option);
 
 	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0; }, &patron_dialog_button_option);
 
 	auto patron_dialog_container = Container::Horizontal({
+		patron_dialog_button_loan,
 		patron_dialog_button_edit,
 		patron_dialog_button_delete,
 		patron_dialog_button_view,
-		patron_dialog_button_loan,
 		patron_dialog_button_exit
 	});
 
