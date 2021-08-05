@@ -141,7 +141,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         //Loan related
         {201, L"Can't delete a book with an existing loan"},
         {202, L"Can't delete a patron with an existing loan"},
-        {203, L"Failed to create loan. Book is already loaned"},
+        {203, L"Failed to create loan. Book is unavailable!"},
         {204, L"Failed to create loan. Patron is borrowing maximum books"},
         {205, L"Failed to return loan. Please try again"}
     };
@@ -154,6 +154,14 @@ void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed
     display_vector.clear();
     for (std::wstring line: last_borrowed){
         display_vector.push_back(line);
+    }
+}
+
+template<class T>
+void UI_Helper<T>::display_currently_borrowing(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector, int num_borrowed){
+    display_vector.clear();
+    for (int i = (last_borrowed.size()-num_borrowed); i<last_borrowed.size(); i++){
+        display_vector.push_back(last_borrowed[i]);
     }
 }
 

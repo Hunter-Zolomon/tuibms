@@ -529,7 +529,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	});
 
 	// Patron - Menu Display Dialog Box
-	std::vector<std::wstring> patron_menu_display_dialog_menu_entries = {L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something",L"Something"};
+	std::vector<std::wstring> patron_menu_display_dialog_menu_entries;
 
 	MenuOption patron_menu_display_dialog_menu_option;
 	patron_menu_display_dialog_menu_option.style_focused = nothing;
@@ -543,7 +543,9 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	ButtonOption patron_menu_display_dialog_button_lastthree_option, patron_menu_display_dialog_button_lastten_option, patron_menu_display_dialog_button_exit_option;
 
 	auto patron_menu_display_dialog_button_lastthree = Button(L"Current Borrows", [&] {
-		//TODO Implement pointer to Books current borrowed and populate the menu
+		unsigned int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
+		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
+		UI_Helper<Patron>::display_currently_borrowing(temp_selected_patron->dataobj.getLastBorrowed(), patron_menu_display_dialog_menu_entries, temp_selected_patron->dataobj.getNumBorrowed());
 	}, &patron_menu_display_dialog_button_lastthree_option); 
 
 	auto patron_menu_display_dialog_button_lastten = Button(L"Last 10 Books Borrowed", [&] {
@@ -668,7 +670,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({ text(L"BOOK ISBN   :") 	| bold, text(input_loan_book_isbn_content)}),
 				hbox({ text(L"BOOK NAME   :") 	| bold, text(input_loan_book_name_content)}),
 				hbox({ text(L"PATRON ID   :") 	| bold, text(input_loan_patron_id_content)}),
-				hbox({ text(L"PATRON NAME :") 	| bold, text(input_patron_name_content)}),				
+				hbox({ text(L"PATRON NAME :") 	| bold, text(input_loan_patron_name_content)}),				
 				hbox({ text(L"ISSUE DATE  :") 	| bold, input_loan_date_issue->Render()}),
 				hbox({ text(L"DUE DATE    :") 	| bold,	input_loan_date_due->Render()}),
 				});
