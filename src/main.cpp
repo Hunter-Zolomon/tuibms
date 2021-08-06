@@ -352,18 +352,18 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
 
 	// Patron Editor - Inputs
-	std::wstring 	input_patron_status_content, 	
+	std::wstring 	input_patron_active_content, 	
 					input_patron_name_content, 		input_patron_email_content,
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_phone_content, 	input_patron_num_borrowed_content;
 					
 	// Patron Editor - InputOptions
-	InputOption	 	input_patron_status_content_option,		
+	InputOption	 	input_patron_active_content_option,		
 					input_patron_name_content_option, 		input_patron_email_content_option,
 					input_patron_address_content_option, 	input_patron_postcode_content_option, 
 					input_patron_phone_content_option, 	input_patron_num_borrowed_content_option;
 
-	auto input_patron_status = 		Input(&input_patron_status_content, 		L"", &input_patron_status_content_option);
+	auto input_patron_active = 		Input(&input_patron_active_content, 		L"", &input_patron_active_content_option);
 	auto input_patron_name = 		Input(&input_patron_name_content, 			L"", &input_patron_name_content_option);
 	auto input_patron_email = 		Input(&input_patron_email_content, 			L"", &input_patron_email_content_option);
 	auto input_patron_address = 	Input(&input_patron_address_content, 		L"", &input_patron_address_content_option);
@@ -372,7 +372,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
-		input_patron_status,
+		input_patron_active,
 		input_patron_name,
 		input_patron_email,
 		input_patron_address,
@@ -381,7 +381,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	});
 
 	// Patron Editor - Vector of Input Strings
-	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_status_content, 
+	std::vector<std::wstring*> patron_editor_input_vector{	&input_patron_active_content, 
 															&input_patron_name_content, 	&input_patron_email_content, 
 															&input_patron_address_content, 	&input_patron_postcode_content,  
 															&input_patron_phone_content,	&input_patron_num_borrowed_content};
@@ -389,7 +389,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	// Patron Editor - Render Function
 	auto patron_editor_section = [&]() {
 		return vbox({
-				hbox({ text(L"STATUS     :") | bold, input_patron_status->Render() }),
+				hbox({ text(L"ACTIVE     :") | bold, input_patron_active->Render() }),
 				hbox({ text(L"NAME       :") | bold, input_patron_name->Render() }),
 				hbox({ text(L"EMAIL      :") | bold, input_patron_email->Render() }),
 				hbox({ text(L"ADDRESS    :") | bold, input_patron_address->Render() }),
@@ -403,7 +403,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	ButtonOption patron_button_editor_option;
 	auto patron_button_add = 	Button(L"Add New",[&](){
 		if (!UI_Helper<Patron>::is_editor_empty({patron_editor_input_vector.begin(), patron_editor_input_vector.end() - 1})){
-			Patron patron_line_content(input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_phone_content);
+			Patron patron_line_content(UI_Helper<Book>::bool_of_wstring(input_patron_active_content), input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_phone_content);
 			DTO<Patron>* temp_dto_patron = hash_table_patron(new DTO<Patron>(patron_line_content));
 			if (nullptr != temp_dto_patron){
 				std::wstring patron_line_content_menu_entry = UI_Helper<Patron>::ui_dto_entry_string(temp_dto_patron);
@@ -687,6 +687,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 203);
 				else if (temp_selected_patron->dataobj.getNumBorrowed() >= 3)
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 204);
+				else if (!temp_selected_patron->dataobj.getIsActive())
+					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 206);
 				else{
 					Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
 					DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));

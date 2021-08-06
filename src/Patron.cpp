@@ -4,8 +4,8 @@
 
 Patron::Patron(){}
 
-Patron::Patron(std::wstring name,std::wstring email,std::wstring address,std::wstring postcode,std::wstring phone){  
-                    setIsBorrowing(false);
+Patron::Patron(bool isActive, std::wstring name,std::wstring email,std::wstring address,std::wstring postcode,std::wstring phone){  
+                    setIsActive(isActive);
                     setName(name);
                     setEmail(email);
                     setAddress(address);
@@ -16,8 +16,8 @@ Patron::Patron(std::wstring name,std::wstring email,std::wstring address,std::ws
 
 // Patron - Getters
 
-bool Patron::getIsBorrowing(){
-    return patron_is_borrowing;
+bool Patron::getIsActive(){
+    return patron_is_active;
 }
 
 std::wstring Patron::getName(){
@@ -45,7 +45,7 @@ unsigned int Patron::getNumBorrowed(){
 }
 
 std::wstring Patron::getMenuEntry(){
-    return  std::to_wstring(patron_is_borrowing) + L" - " + 
+    return  std::to_wstring(patron_is_active) + L" - " + 
             patron_name     + L" - " + 
             patron_email    + L" - " + 
             patron_address  + L" - " + 
@@ -60,8 +60,8 @@ std::vector<std::wstring> Patron::getLastBorrowed(){
 
 // Patron - Setters
 
-void Patron::setIsBorrowing(bool is_borrowing){
-    patron_is_borrowing = is_borrowing;
+void Patron::setIsActive(bool is_active){
+    patron_is_active = is_active;
 }
 
 void Patron::setName(std::wstring name){

@@ -48,7 +48,7 @@ void UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wst
 
 template<class T>
 void UI_Helper<T>::populate_patron_editor(DTO<Patron> dto_patron, std::vector<std::wstring*> input_patron_content_vector){
-    *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsBorrowing() ? L"True" : L"False";
+    *(input_patron_content_vector[0]) = dto_patron.dataobj.getIsActive() ? L"True" : L"False";
     *(input_patron_content_vector[1]) = dto_patron.dataobj.getName();
     *(input_patron_content_vector[2]) = dto_patron.dataobj.getEmail();
     *(input_patron_content_vector[3]) = dto_patron.dataobj.getAddress();
@@ -101,11 +101,12 @@ void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
     dto_book->dataobj.setYear(*(input_book_content_vector[3]));
     dto_book->dataobj.setCategory(*(input_book_content_vector[4]));
     dto_book->dataobj.setGenre(*(input_book_content_vector[5]));
-    dto_book->dataobj.setIsAvailable(true); //TODO - Fix
+    dto_book->dataobj.setIsAvailable(bool_of_wstring(*(input_book_content_vector[6])));
 }
 
 template<class T>
 void UI_Helper<T>::save_patron_changes(DTO<Patron>* dto_patron, std::vector<std::wstring*> input_patron_content_vector){
+    dto_patron->dataobj.setIsActive(bool_of_wstring(*(input_patron_content_vector[0]))); 
     dto_patron->dataobj.setName(*(input_patron_content_vector[1])); 
     dto_patron->dataobj.setEmail(*(input_patron_content_vector[2])); 
     dto_patron->dataobj.setAddress(*(input_patron_content_vector[3])); 
@@ -143,7 +144,8 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         {202, L"Can't delete a patron with an existing loan"},
         {203, L"Failed to create loan. Book is unavailable!"},
         {204, L"Failed to create loan. Patron is borrowing maximum books"},
-        {205, L"Failed to return loan. Please try again"}
+        {205, L"Failed to return loan. Please try again"},
+        {206, L"Failed to create loan. Patron is not active"},
     };
     *dialog_to_show = 4;
     *message = error_codes[error_code];
