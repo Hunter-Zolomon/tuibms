@@ -249,8 +249,6 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			UI_Helper<Book>::populate_book_editor(*temp_selected_book, book_editor_input_vector);
 		else
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-
-		
 	}, &book_dialog_button_option);
 
 	auto book_dialog_button_delete = Button(&book_dialog_entries[2], [&] {
@@ -298,7 +296,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({
 					window(	text(left_window_text), 
 							vbox({
-								book_menu->Render()			| frame | size(HEIGHT, LESS_THAN, 11)
+								book_menu->Render()			| frame | size(HEIGHT, LESS_THAN, 10)
 						})) | flex,
 					vbox({ 
 						window(	text(right_window_text), 
@@ -570,7 +568,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			separator(), 
 			hbox({patron_menu_display_dialog_button_lastthree->Render() | flex, patron_menu_display_dialog_button_lastten->Render() | flex, patron_menu_display_dialog_button_exit->Render() | flex}) | center,
 			separator(),
-			patron_menu_display_dialog_menu->Render() | size(HEIGHT, LESS_THAN, 11)
+			patron_menu_display_dialog_menu->Render() | size(HEIGHT, LESS_THAN, 10)
 			}) | border;
 	});
 
@@ -583,7 +581,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({
 					window(	text(left_window_text), 
 							vbox({
-								patron_menu->Render()	| frame | size(HEIGHT, LESS_THAN, 11)
+								patron_menu->Render()	| frame | size(HEIGHT, LESS_THAN, 10)
 							})) | flex,
 					vbox({ 
 						window(	text(right_window_text), 
@@ -813,7 +811,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({
 					window(text(left_window_text),
 						vbox({
-							loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 11)
+							loan_menu -> Render()			| frame | size(HEIGHT, LESS_THAN, 10)
 						})) | flex,
 					vbox({
 						window(text(right_window_text),
@@ -947,15 +945,15 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		});
 	});
 
+	auto screen = ScreenInteractive::TerminalOutput();
 	final_renderer = CatchEvent(final_renderer, [&](Event event) {
 		if (event == Event::Escape) {
-			exit(0);
+			screen.Clear();
+			screen.ExitLoopClosure();
 			return true;
 		}
 		return false;
 	});
-
-	auto screen = ScreenInteractive::TerminalOutput();
 	screen.Loop(final_renderer);
 	#pragma endregion
 

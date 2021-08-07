@@ -1,4 +1,8 @@
 #include <string>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
+#include <cstring>
 #include <DTO.h>
 #include <Book.h>
 #include <Patron.h>
@@ -8,12 +12,14 @@
 
 
 class Loan{
-    std::wstring loan_date_issue,loan_date_due;
+	static inline const std::wstring dateFormat {L"%d-%m-%Y"};
     DTO<Book>* book_dto;
     DTO<Patron>* patron_dto;
     public:
         Loan();
         Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_date_issue, std::wstring loan_date_due);
+
+		std::tm* loan_date_issue,* loan_date_due;
 
         unsigned int getBookId();
         unsigned int getPatronId();

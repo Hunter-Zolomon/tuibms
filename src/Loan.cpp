@@ -3,13 +3,15 @@
 
 Loan::Loan(){}
 
-Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_date_issue, std::wstring loan_date_due){
+Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring user_loan_date_issue, std::wstring user_loan_date_due){
     setBook(book_dto);
     book_dto->dataobj.setIsAvailable(false);
     setPatron(patron_dto);
     patron_dto->dataobj.incrementNumBorrowed();
-    setLoanDateIssue(loan_date_issue);
-    setLoanDateDue(loan_date_due);
+	*loan_date_issue = {0,0,0,0,0,0,0,0,0,0};
+	*loan_date_due = {0,0,0,0,0,0,0,0,0,0};
+    setLoanDateIssue(user_loan_date_issue);
+    setLoanDateDue(user_loan_date_due);
 }
 
 // Loan - Getters
@@ -38,11 +40,13 @@ std::wstring Loan::getPatronName(){
 }
 
 std::wstring Loan::getLoanDateIssue(){
-    return loan_date_issue;
+	std::wstring temp_loan_date_issue = std::to_wstring(this->loan_date_issue->tm_mday) + L"/" + std::to_wstring(this->loan_date_issue->tm_mon + 1) + L"/" + std::to_wstring(this->loan_date_issue->tm_year);
+    return temp_loan_date_issue;
 }
 
 std::wstring Loan::getLoanDateDue(){
-    return loan_date_due;
+	std::wstring temp_loan_date_due = std::to_wstring(this->loan_date_due->tm_mday) + L"/" + std::to_wstring(this->loan_date_due->tm_mon + 1) + L"/" + std::to_wstring(this->loan_date_due->tm_year);
+    return temp_loan_date_due;
 }
 
 
@@ -65,11 +69,17 @@ void Loan::setPatron(DTO<Patron>* patron){
 }
 
 void Loan::setLoanDateIssue(std::wstring date_issue){
-    loan_date_issue = date_issue;
+	std::wistringstream ss{ date_issue };
+	std::tm temporary_tm = {0,0,0,0,0,0,0,0,0,0};
+	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
+	*(this->loan_date_issue) = temporary_tm;
 }
 
 void Loan::setLoanDateDue(std::wstring date_due){
-    loan_date_due = date_due;
+	std::wistringstream ss{ date_due };
+	std::tm temporary_tm = {0,0,0,0,0,0,0,0,0,0};
+	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
+	*(this->loan_date_due) = temporary_tm;
 }
 
 void Loan::prepForLoanReturn(){
