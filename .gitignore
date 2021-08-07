@@ -3,3 +3,4 @@ build/
 .cache/
 Debug/
 compile_commands.json
+src/Snippets.cpp

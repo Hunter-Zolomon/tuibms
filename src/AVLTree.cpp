@@ -245,8 +245,6 @@ std::vector<DTO<T>*> AVL<T>::getAllElements() {
 	return this->getAllInorder(this->rootNode);
 }
 
-template class AVL<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
-template class AVL<std::wstring>; //Provided for testing purposes DELETE AFTER PRODUCTION
 template class AVL<Book>;
 template class AVL<Patron>;
 template class AVL<Loan>;

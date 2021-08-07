@@ -137,8 +137,6 @@ bool HashTable<T>::removeFromTable(unsigned int key) {
     return false;
 }
 
-template class HashTable<std::string>; //Provided for testing purposes DELETE AFTER PRODUCTION
-template class HashTable<std::wstring>;
 template class HashTable<Book>;
 template class HashTable<Patron>;
 template class HashTable<Loan>;

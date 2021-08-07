@@ -1,48 +1,39 @@
 #include <string>
+#include <vector>
 
 #ifndef PATRON_H_
 #define PATRON_H_
 
-
 class Patron{
-
     unsigned int patron_num_borrowed;
-    
-    std::wstring    patron_fname,   patron_lname,   
-    patron_address, patron_postcode,patron_contact;
-
+    std::wstring patron_name, patron_email, patron_address, patron_postcode,patron_phone;
     bool patron_is_active;
-
-    unsigned int last_borrowed_book_id[10];
-
+    std::vector<std::wstring> last_loans, current_loans;
     public:
         Patron();
-        Patron(bool is_active, std::wstring fname, std::wstring lname, 
-                std::wstring address, std::wstring postcode, 
-                std::wstring contact, unsigned int num_borrowed);
-
-
+        Patron(bool isActive, std::wstring name, std::wstring email, std::wstring address, std::wstring postcode, std::wstring phone);
         bool getIsActive();
-        std::wstring getFname();
-        std::wstring getLname();
+        std::wstring getName();
+        std::wstring getEmail();
         std::wstring getAddress();
         std::wstring getPostcode();
-        std::wstring getContact();
+        std::wstring getPhone();
         unsigned int getNumBorrowed();
-
         std::wstring getMenuEntry();
-
- 
+        std::vector<std::wstring> getLastBorrowed();
+        std::vector<std::wstring> getCurrentBorrows();
         void setIsActive(bool is_active);
-        void setFname(std::wstring fname);
-        void setLname(std::wstring lname);
+        void setName(std::wstring name);
+        void setEmail(std::wstring email);
         void setAddress(std::wstring address);
         void setPostcode(std::wstring postcode);
-        void setContact(std::wstring contact);
+        void setPhone(std::wstring phone);
         void setNumBorrowed(unsigned int num_borrowed);
-
         void incrementNumBorrowed();
         void decrementNumBorrowed();
+        void addToLastBorrowed(std::wstring loan_entry);
+        void addToCurrentBorrows(std::wstring loan_entry);
+        void delFromCurrentBorrows(std::wstring loan_entry);
+        
 };
-
 #endif
