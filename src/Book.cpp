@@ -5,14 +5,15 @@ Book::Book(){};
 
 Book::Book( std::wstring isbn, 
             std::wstring title, std::wstring author, std::wstring year, 
-            std::wstring category, std::wstring genre,bool isAvailable) {
+            std::wstring category, std::wstring genre, int available) {
                 setIsbn(isbn);
                 setTitle(title);
                 setAuthor(author);
                 setYear(year);
                 setCategory(category);
                 setGenre(genre);
-                setIsAvailable(isAvailable);
+                num_available = available;
+                num_total_books = available;
 }
 
 // Book - Getters
@@ -48,11 +49,15 @@ std::wstring Book::getMenuEntry(){
             book_year   + L" - " + 
             book_category+ L" - " + 
             book_genre  + L" - " + 
-            std::to_wstring(book_isAvailable);
+            std::to_wstring(num_available);
 }
 
-bool Book::getIsAvailable(){
-    return book_isAvailable;
+unsigned int Book::getNumAvailable(){
+    return num_available;
+}
+
+unsigned int Book::getNumTotal(){
+    return num_total_books;
 }
 
 // Book - Setters
@@ -80,8 +85,13 @@ void Book::setGenre(std::wstring genre){
     book_genre = genre;
 }
 
-void Book::setIsAvailable(bool isAvailable){
-    book_isAvailable = isAvailable;
+void Book::changeAvailValue(int amount){
+    num_available += amount;
 }
 
+void Book::setTotal(unsigned int total){
+    num_available += (total-num_total_books);
+    num_total_books = total;
+}
+    
 

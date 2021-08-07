@@ -13,9 +13,9 @@
 
 class Loan{
 	static inline const std::wstring dateFormat {L"%d-%m-%Y"};
-    DTO<Book>* book_dto;
-    DTO<Patron>* patron_dto;
     public:
+        DTO<Book>* book_dto;
+        DTO<Patron>* patron_dto;
         Loan();
         Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring loan_date_issue, std::wstring loan_date_due);
 

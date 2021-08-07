@@ -159,19 +159,23 @@ int main(int argc, char* argv[]) {
 
 auto book_button_add 	= Button(L"Add New",[&](){
 	if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
-		Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, 
-								input_book_year_content, input_book_category_content, input_book_genre_content, 
-								UI_Helper<Book>::bool_of_wstring(input_book_available_content)); 
-		DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
-		if (nullptr != temp_dto_book) {
-			std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
-			book_menu_entries.push_back(book_line_content_menu_entry);
-			UI_Helper<Book>::clear_editor(book_editor_input_vector);
-		} 
-		else
-			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 101);
-		book_editing_id = -1;
-		book_editing_index = -1;
+		if (!UI_Helper<Book>::is_valid_int(input_book_available_content))
+			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 106);
+		else{
+			Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, 
+									input_book_year_content, input_book_category_content, input_book_genre_content, 
+									std::stoi(input_book_available_content)); 
+			DTO<Book>* temp_dto_book = hash_table_book(new DTO<Book>(book_line_content));
+			if (nullptr != temp_dto_book) {
+				std::wstring book_line_content_menu_entry = UI_Helper<Book>::ui_dto_entry_string(temp_dto_book);
+				book_menu_entries.push_back(book_line_content_menu_entry);
+				UI_Helper<Book>::clear_editor(book_editor_input_vector);
+			} 
+			else
+				UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 101);
+			book_editing_id = -1;
+			book_editing_index = -1;			
+		}
 	} 
 	else
 		UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
@@ -182,11 +186,16 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		if (book_editing_id >= 0 && book_editing_index >= 0){
 			DTO<Book>* temp_selected_book = hash_table_book[book_editing_id];
 			if (nullptr != temp_selected_book) {
-				UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
-				book_menu_entries[book_editing_index] = UI_Helper<Book>::ui_dto_entry_string(temp_selected_book);
-				UI_Helper<Book>::clear_editor(book_editor_input_vector);
-				book_editing_id = -1;
-				book_editing_index = -1;
+				if (!UI_Helper<Book>::is_valid_int(input_book_available_content)){
+					UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 106);
+				}
+				else{
+					UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
+					book_menu_entries[book_editing_index] = UI_Helper<Book>::ui_dto_entry_string(temp_selected_book);
+					UI_Helper<Book>::clear_editor(book_editor_input_vector);
+					book_editing_id = -1;
+					book_editing_index = -1;
+				}
 			} 
 			else
 				UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
@@ -254,7 +263,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	auto book_dialog_button_delete = Button(&book_dialog_entries[2], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_wstring(book_menu_entries[book_menu_entries_selectedidx]);
 		DTO<Book>* temp_selected_book = hash_table_book[id];
-		if (temp_selected_book->dataobj.getIsAvailable()){
+		if (temp_selected_book->dataobj.getNumAvailable()==temp_selected_book->dataobj.getNumTotal()){
 			if (hash_table_book.removeFromTable(id)){
 				book_menu_entries.erase(book_menu_entries.begin()+book_menu_entries_selectedidx);
 				dialog_to_show = 0;
@@ -542,7 +551,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	auto patron_menu_display_dialog_button_lastthree = Button(L"Current Borrows", [&] {
 		unsigned int id = UI_Helper<Patron>::get_id_from_wstring(patron_menu_entries[patron_menu_entries_selectedidx]);
 		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
-		UI_Helper<Patron>::display_currently_borrowing(temp_selected_patron->dataobj.getLastBorrowed(), patron_menu_display_dialog_menu_entries, temp_selected_patron->dataobj.getNumBorrowed());
+		UI_Helper<Patron>::display_currently_borrowing(temp_selected_patron->dataobj.getCurrentBorrows(), patron_menu_display_dialog_menu_entries);
 	}, &patron_menu_display_dialog_button_lastthree_option); 
 
 	auto patron_menu_display_dialog_button_lastten = Button(L"Last 10 Books Borrowed", [&] {
@@ -640,18 +649,13 @@ auto book_button_add 	= Button(L"Add New",[&](){
 					input_loan_date_issue_content,  input_loan_date_due_content;
 
 	// Loan Editor - InputOptions
-	InputOption		input_loan_book_id_content_option, 
-					input_loan_book_isbn_content_option, 	input_loan_book_name_content_option,
-					input_loan_patron_id_content_option, 	input_loan_patron_name_content_option,
-					input_loan_date_issue_option, 			input_loan_date_due_option;
+	InputOption		input_loan_date_issue_option;
 
 	auto input_loan_date_issue  =	Input(&input_loan_date_issue_content, 	L"", &input_loan_date_issue_option);
-	auto input_loan_date_due 	=	Input(&input_loan_date_due_content, 	L"", &input_loan_date_due_option);
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
-		input_loan_date_issue,
-		input_loan_date_due
+		input_loan_date_issue
 	});
 
 	// Loan Editor - Vector of Input Strings
@@ -669,7 +673,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				hbox({ text(L"PATRON ID   :") 	| bold, text(input_loan_patron_id_content)}),
 				hbox({ text(L"PATRON NAME :") 	| bold, text(input_loan_patron_name_content)}),				
 				hbox({ text(L"ISSUE DATE  :") 	| bold, input_loan_date_issue->Render()}),
-				hbox({ text(L"DUE DATE    :") 	| bold,	input_loan_date_due->Render()}),
+				hbox({ text(L"DUE DATE    :") 	| bold,	text(input_loan_date_due_content)}),
 				});
 	};
 
@@ -677,35 +681,41 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	ButtonOption loan_button_editor_option;
 
 	auto loan_button_add 	= Button(L"Add New", 		[&](){
+		bool reset_id = false;
 		if (book_loaning_id >=0 && patron_loaning_id >=0 ){
 			DTO<Book>* temp_selected_book = hash_table_book[book_loaning_id];
 			DTO<Patron>* temp_selected_patron = hash_table_patron[patron_loaning_id];
 			if (nullptr != temp_selected_book && nullptr != temp_selected_patron){
-				if (!temp_selected_book->dataobj.getIsAvailable())
+				if (temp_selected_book->dataobj.getNumAvailable() < 1)
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 203);
 				else if (temp_selected_patron->dataobj.getNumBorrowed() >= 3)
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 204);
 				else if (!temp_selected_patron->dataobj.getIsActive())
 					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 206);
+				else if (!UI_Helper<Loan>::is_valid_date(input_loan_date_issue_content)){
+					UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 207);
+					reset_id = true;
+				}
 				else{
 					Loan loan_line_contents(temp_selected_book, temp_selected_patron, input_loan_date_issue_content, input_loan_date_due_content);
 					DTO<Loan>* temp_dto_loan = hash_table_loan(new DTO<Loan>(loan_line_contents));
 					std::wstring loan_line_content_menu_entry = UI_Helper<Loan>::ui_dto_entry_string(temp_dto_loan);
-					temp_selected_patron->dataobj.addToLastBorrowed(loan_line_content_menu_entry);
+					temp_selected_patron->dataobj.addToCurrentBorrows(temp_selected_book->dataobj.getMenuEntry());
 					loan_menu_entries.push_back(loan_line_content_menu_entry);
 					UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
 				}
 			}
 			else
 				UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-			book_loaning_id = -1;
-			patron_loaning_id = -1; 
+			if (!reset_id){
+				book_loaning_id = -1;
+				patron_loaning_id = -1; 
+			}
 		}
 		else
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
-
-
 	}, &loan_button_editor_option);
+
 	auto loan_button_save 	= Button(L"Save Changes", 	[&](){
 		if (loan_editing_id  >=0 && loan_editing_index >= 0){
 			DTO<Loan>* temp_selected_loan = hash_table_loan[loan_editing_id];
@@ -763,7 +773,11 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	ButtonOption loan_button_dialog_option;
 
 	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[0], [&]{
-		//TODO
+		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
+		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
+		temp_selected_loan->dataobj.extendDateDue();
+		loan_menu_entries[loan_menu_entries_selectedidx] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
+		dialog_to_show = 0;
 	}, &loan_button_dialog_option);
 
 
@@ -771,6 +785,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		unsigned int id = UI_Helper<Loan>::get_id_from_wstring(loan_menu_entries[loan_menu_entries_selectedidx]);
 		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
 		if (nullptr!=temp_selected_loan){
+			temp_selected_loan->dataobj.patron_dto->dataobj.addToLastBorrowed(temp_selected_loan->dataobj.book_dto->dataobj.getMenuEntry());
 			temp_selected_loan->dataobj.prepForLoanReturn();
 			if (hash_table_loan.removeFromTable(id)){
 				loan_menu_entries.erase(loan_menu_entries.begin()+loan_menu_entries_selectedidx);
@@ -868,6 +883,13 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				DTO<Patron>* temp_dto_patron = hash_table_patron[patron_loaning_id];
 				if (nullptr != temp_dto_patron)
 					UI_Helper<Loan>::populate_loan_editor_patron_info(temp_dto_patron, loan_editor_input_vector);
+			}
+			if (book_loaning_id>=0 && patron_loaning_id>=0){
+				std::time_t time_now = std::time(0);
+				std::tm struct_time_now = *(std::localtime(&time_now));
+				std::wstringstream wss;
+				wss << std::put_time(&struct_time_now, L"%d-%m-%Y");
+				input_loan_date_issue_content = wss.str();
 			}
 		}
 	};

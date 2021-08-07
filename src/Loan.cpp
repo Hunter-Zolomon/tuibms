@@ -5,11 +5,11 @@ Loan::Loan(){}
 
 Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring user_loan_date_issue, std::wstring user_loan_date_due){
     setBook(book_dto);
-    book_dto->dataobj.setIsAvailable(false);
+    book_dto->dataobj.changeAvailValue(-1);
     setPatron(patron_dto);
     patron_dto->dataobj.incrementNumBorrowed();
-	loan_date_issue = {0,0,0,0,0,0,0,0,0,0};
-	loan_date_due = {0,0,0,0,0,0,0,0,0,0};
+	loan_date_issue = {0};
+	loan_date_due = {0};
     setLoanDateIssue(user_loan_date_issue);
     //setLoanDateDue(user_loan_date_due);
 	setLoanDateDue();
@@ -45,7 +45,7 @@ std::wstring Loan::getLoanDateIssue(){
 	time_t calculated_time = std::mktime(&this->loan_date_issue);
 	std::tm calculated_tm = *std::localtime(&calculated_time);
 	std::wstringstream wss;
-	wss << std::put_time(&calculated_tm, L"%F");
+	wss << std::put_time(&calculated_tm, L"%d-%m-%Y");
     //return temp_loan_date_issue;
 	return wss.str();
 }
@@ -55,7 +55,7 @@ std::wstring Loan::getLoanDateDue(){
 	time_t calculated_time = std::mktime(&this->loan_date_due);
 	std::tm calculated_tm = *std::localtime(&calculated_time);
 	std::wstringstream wss;
-	wss << std::put_time(&calculated_tm, L"%F");
+	wss << std::put_time(&calculated_tm, L"%d-%m-%Y");
     //return temp_loan_date_due;
 	return wss.str();
 }
@@ -81,7 +81,7 @@ void Loan::setPatron(DTO<Patron>* patron){
 
 void Loan::setLoanDateIssue(std::wstring date_issue){
 	std::wistringstream ss{ date_issue };
-	std::tm temporary_tm = {0,0,0,0,0,0,0,0,0,0};
+	std::tm temporary_tm = {0};
 	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
 	this->loan_date_issue = temporary_tm;
 }
@@ -94,7 +94,7 @@ void Loan::setLoanDateDue(){
 
 void Loan::setLoanDateDue(std::wstring date_due){
 	std::wistringstream ss{ date_due };
-	std::tm temporary_tm = {0,0,0,0,0,0,0,0,0,0};
+	std::tm temporary_tm = {0};
 	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
 	this->loan_date_due = temporary_tm;
 }
@@ -104,6 +104,6 @@ void Loan::extendDateDue(){
 }
 
 void Loan::prepForLoanReturn(){
-    book_dto->dataobj.setIsAvailable(true);
+	book_dto->dataobj.changeAvailValue(1);
     patron_dto->dataobj.decrementNumBorrowed();
 }

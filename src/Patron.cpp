@@ -55,7 +55,11 @@ std::wstring Patron::getMenuEntry(){
 }
 
 std::vector<std::wstring> Patron::getLastBorrowed(){
-    return last_borrowed;
+    return last_loans;
+}
+
+std::vector<std::wstring> Patron::getCurrentBorrows(){
+    return current_loans;
 }
 
 // Patron - Setters
@@ -97,7 +101,22 @@ void Patron::decrementNumBorrowed(){
 }
 
 void Patron::addToLastBorrowed(std::wstring loan_entry){
-    if (10==last_borrowed.size())
-        last_borrowed.erase(last_borrowed.begin());
-    last_borrowed.push_back(loan_entry);
+    if (10==last_loans.size())
+        last_loans.erase(last_loans.begin());
+    last_loans.push_back(loan_entry);
+    delFromCurrentBorrows(loan_entry);
+}
+
+void Patron::addToCurrentBorrows(std::wstring loan_entry){
+    current_loans.push_back(loan_entry);
+}
+
+void Patron::delFromCurrentBorrows(std::wstring loan_entry){
+    int c = 0;
+    for (std::wstring loan: current_loans){
+        c++;
+        if (loan==loan_entry){
+            current_loans.erase(current_loans.begin(), current_loans.begin()+c);
+        }
+    }
 }

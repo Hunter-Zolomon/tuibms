@@ -6,6 +6,7 @@
 #include <Loan.h>
 #include <DTO.h>
 #include <algorithm>
+#include <ctime>
 
 #ifndef UI_HELPER_H_
 #define UI_HELPER_H_
@@ -31,8 +32,10 @@ class UI_Helper{
         static bool is_editor_empty(std::vector<std::wstring*> input_loan_content_vector);
         static void display_dialog_message(int* dialog_to_show, std::wstring* message, int error_code);
         static void display_last_borrowed(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector);
-        static void display_currently_borrowing(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector, int num_borrowed);
+        static void display_currently_borrowing(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector);
         static bool bool_of_wstring(std::wstring line);
+        static bool is_valid_date(std::wstring date);
+        static bool is_valid_int(std::wstring num_wstring);
 };
 
 #endif

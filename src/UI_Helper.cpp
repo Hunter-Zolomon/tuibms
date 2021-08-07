@@ -43,7 +43,7 @@ void UI_Helper<T>::populate_book_editor(DTO<Book> dto_book, std::vector<std::wst
     *(input_book_content_vector[3]) = dto_book.dataobj.getYear();
     *(input_book_content_vector[4]) = dto_book.dataobj.getCategory();
     *(input_book_content_vector[5]) = dto_book.dataobj.getGenre();
-    *(input_book_content_vector[6]) = dto_book.dataobj.getIsAvailable() ? L"True" : L"False";
+    *(input_book_content_vector[6]) = std::to_wstring(dto_book.dataobj.getNumTotal());
 }
 
 template<class T>
@@ -101,7 +101,7 @@ void UI_Helper<T>::save_book_changes(DTO<Book>* dto_book, std::vector<std::wstri
     dto_book->dataobj.setYear(*(input_book_content_vector[3]));
     dto_book->dataobj.setCategory(*(input_book_content_vector[4]));
     dto_book->dataobj.setGenre(*(input_book_content_vector[5]));
-    dto_book->dataobj.setIsAvailable(bool_of_wstring(*(input_book_content_vector[6])));
+    dto_book->dataobj.setTotal(std::stoi(*(input_book_content_vector[6])));
 }
 
 template<class T>
@@ -139,6 +139,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         {103, L"Failed to save changes. Please try again"},
         {104, L"Failed to locate object(s). Please try again"},
         {105, L"Failed to delete object. Please try again"},
+        {106, L"Failed to create book. Invalid number of books."},
         //Loan related
         {201, L"Can't delete a book with an existing loan"},
         {202, L"Can't delete a patron with an existing loan"},
@@ -146,6 +147,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         {204, L"Failed to create loan. Patron is borrowing maximum books"},
         {205, L"Failed to return loan. Please try again"},
         {206, L"Failed to create loan. Patron is not active"},
+        {207, L"Failed to create loan. Date is invalid"},
     };
     *dialog_to_show = 4;
     *message = error_codes[error_code];
@@ -160,10 +162,10 @@ void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed
 }
 
 template<class T>
-void UI_Helper<T>::display_currently_borrowing(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector, int num_borrowed){
+void UI_Helper<T>::display_currently_borrowing(std::vector<std::wstring> current_loans, std::vector<std::wstring>& display_vector){
     display_vector.clear();
-    for (int i = (last_borrowed.size()-num_borrowed); i<last_borrowed.size(); i++){
-        display_vector.push_back(last_borrowed[i]);
+    for (std::wstring loan: current_loans){
+        display_vector.push_back(loan);
     }
 }
 
@@ -171,6 +173,26 @@ template<class T>
 bool UI_Helper<T>::bool_of_wstring(std::wstring line){
     std::transform(line.begin(), line.end(), line.begin(), ::tolower);
     return ((line == L"true" || line == L"1" || line == L"t") ? true : false);
+}
+
+template<class T>
+bool UI_Helper<T>::is_valid_date(std::wstring date){
+    std::string temp_string(date.begin(), date.end());
+    int day, month, year;
+    sscanf((char*)(temp_string.c_str()), "%2d-%2d-%4d", &day, &month, &year);
+    if ((day<32 && day>0) && (month<13 && month>0) && (year>1995 && year<2025)){
+        return true;
+    }
+    return false;
+}
+
+template<class T>
+bool UI_Helper<T>::is_valid_int(std::wstring num_wstring){
+    for (char const &i: num_wstring){
+        if (std::isdigit(i)==0){
+            return false;
+        }
+    } return true;
 }
 
 template class UI_Helper<Book>;

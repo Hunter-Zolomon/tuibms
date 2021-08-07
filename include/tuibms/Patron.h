@@ -8,7 +8,7 @@ class Patron{
     unsigned int patron_num_borrowed;
     std::wstring patron_name, patron_email, patron_address, patron_postcode,patron_phone;
     bool patron_is_active;
-    std::vector<std::wstring> last_borrowed;
+    std::vector<std::wstring> last_loans, current_loans;
     public:
         Patron();
         Patron(bool isActive, std::wstring name, std::wstring email, std::wstring address, std::wstring postcode, std::wstring phone);
@@ -21,6 +21,7 @@ class Patron{
         unsigned int getNumBorrowed();
         std::wstring getMenuEntry();
         std::vector<std::wstring> getLastBorrowed();
+        std::vector<std::wstring> getCurrentBorrows();
         void setIsActive(bool is_active);
         void setName(std::wstring name);
         void setEmail(std::wstring email);
@@ -31,5 +32,8 @@ class Patron{
         void incrementNumBorrowed();
         void decrementNumBorrowed();
         void addToLastBorrowed(std::wstring loan_entry);
+        void addToCurrentBorrows(std::wstring loan_entry);
+        void delFromCurrentBorrows(std::wstring loan_entry);
+        
 };
 #endif
