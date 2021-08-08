@@ -189,9 +189,10 @@ auto book_button_add 	= Button(L"Add New",[&](){
 		if (book_editing_id >= 0 && book_editing_index >= 0){
 			DTO<Book>* temp_selected_book = hash_table_book[book_editing_id];
 			if (nullptr != temp_selected_book) {
-				if (!UI_Helper<Book>::is_valid_int(input_book_available_content)){
+				if (!UI_Helper<Book>::is_valid_int(input_book_available_content))
 					UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 106);
-				}
+				if (!UI_Helper<Book>::is_total_books_valid(input_book_available_content, temp_selected_book))
+					UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 107);
 				else{
 					UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
 					book_menu_entries[book_editing_index] = UI_Helper<Book>::ui_dto_entry_string(temp_selected_book);
@@ -293,7 +294,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	auto book_dialog_renderer = Renderer(book_dialog_container, [&]{
 		return vbox({
-				text(book_menu_entries[book_menu_entries_selectedidx]),
+				text(L"Select a book menu option") | center,
 				separator(),
 				hbox(book_dialog_container->Render())  | center,
 		}) | border | color(Color::GrayLight);
@@ -531,7 +532,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	auto patron_dialog_renderer = Renderer(patron_dialog_container, [&]{
 		return vbox({
-			text(patron_menu_entries[patron_menu_entries_selectedidx]),
+			text(L"Select a patron menu option") | center,
 			separator(),
 			hbox(patron_dialog_container->Render()) | center,  
 		}) | border;
@@ -816,7 +817,7 @@ auto book_button_add 	= Button(L"Add New",[&](){
 
 	auto loan_dialog_renderer = Renderer(loan_dialog_container, [&]{
 		return vbox({
-			text(loan_menu_entries[loan_menu_entries_selectedidx]),
+			text(L"Select a loan menu option") | center,
 			separator(), 
 			hbox(loan_dialog_container->Render())  | center,
 		}) | border ;
@@ -897,6 +898,8 @@ auto book_button_add 	= Button(L"Add New",[&](){
 				wss << std::put_time(&struct_time_now, L"%d-%m-%Y");
 				input_loan_date_issue_content = wss.str();
 			}
+			else
+				UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
 		}
 	};
 

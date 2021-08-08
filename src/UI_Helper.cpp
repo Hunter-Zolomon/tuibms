@@ -140,6 +140,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         {104, L"Failed to locate object(s). Please try again"},
         {105, L"Failed to delete object. Please try again"},
         {106, L"Failed to create book. Invalid number of books."},
+        {107, L"Total can't be less than currently loaned books."},
         //Loan related
         {201, L"Can't delete a book with an existing loan"},
         {202, L"Can't delete a patron with an existing loan"},
@@ -189,10 +190,16 @@ bool UI_Helper<T>::is_valid_date(std::wstring date){
 template<class T>
 bool UI_Helper<T>::is_valid_int(std::wstring num_wstring){
     for (char const &i: num_wstring){
-        if (std::isdigit(i)==0){
+        if (std::isdigit(i)==0)
             return false;
-        }
-    } return true;
+    } 
+    return true;
+}
+template<class T>
+bool UI_Helper<T>::is_total_books_valid(std::wstring num_input, DTO<Book>* dto_book){
+    if (std::stoi(num_input) < (dto_book->dataobj.getNumTotal()-dto_book->dataobj.getNumAvailable()))
+        return false;
+    return true;
 }
 
 template class UI_Helper<Book>;

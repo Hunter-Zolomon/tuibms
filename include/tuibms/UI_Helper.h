@@ -36,6 +36,7 @@ class UI_Helper{
         static bool bool_of_wstring(std::wstring line);
         static bool is_valid_date(std::wstring date);
         static bool is_valid_int(std::wstring num_wstring);
+        static bool is_total_books_valid(std::wstring num_input, DTO<Book>* dto_book);
 };
 
 #endif
