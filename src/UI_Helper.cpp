@@ -30,6 +30,21 @@ void UI_Helper<T>::search_vector(std::wstring search_string, std::vector<std::ws
 }
 
 template<class T>
+void UI_Helper<T>::search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector, std::wstring num_borrowing){
+    std::vector<std::wstring> search_display_vector;
+    if (is_valid_int(num_borrowing.substr(3)))
+        num_borrowing = num_borrowing.substr(3);
+    else
+        num_borrowing = L"0";
+    for (std::wstring line: display_vector){
+        if (line.back() == *num_borrowing.c_str()){
+            search_display_vector.push_back(line);
+        }       
+    }
+    display_vector = search_display_vector;
+}
+
+template<class T>
 unsigned int UI_Helper<T>::get_id_from_wstring(std::wstring menu_entry){
 	unsigned int id = std::stoul(menu_entry.substr(0, 10));
     return id;
@@ -189,11 +204,14 @@ bool UI_Helper<T>::is_valid_date(std::wstring date){
 
 template<class T>
 bool UI_Helper<T>::is_valid_int(std::wstring num_wstring){
-    for (char const &i: num_wstring){
-        if (std::isdigit(i)==0)
-            return false;
-    } 
-    return true;
+    if (!num_wstring.empty()){
+        for (char const &i: num_wstring){
+            if (std::isdigit(i)==0)
+                return false;
+        } 
+        return true;
+    }
+    return false;
 }
 template<class T>
 bool UI_Helper<T>::is_total_books_valid(std::wstring num_input, DTO<Book>* dto_book){

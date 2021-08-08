@@ -357,7 +357,10 @@ auto book_button_add 	= Button(L"Add New",[&](){
 	patron_user_search_input_option.on_change = [&](){
 		std::vector<DTO<Patron>*> all_patrons = hash_table_patron.getAllElements();
 		UI_Helper<Patron>::grab_all_populate(all_patrons, patron_menu_entries);
-		UI_Helper<Patron>::search_vector(patron_user_search_text, patron_menu_entries);
+		if (patron_user_search_text.substr(0,3) == L"#ab")
+			UI_Helper<Patron>::search_vector(patron_user_search_text, patron_menu_entries, patron_user_search_text);
+		else
+			UI_Helper<Patron>::search_vector(patron_user_search_text, patron_menu_entries);
 	};
 	
 	patron_menu_option.on_enter = [&](){ dialog_to_show = 2; };
