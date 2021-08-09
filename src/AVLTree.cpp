@@ -1,10 +1,4 @@
-#include <string>
-#include <AVLNode.h>
 #include <AVLTree.h>
-#include <vector>
-#include <Book.h>
-#include <Patron.h>
-#include <Loan.h>
 
 /**
  * AVL tree constructor. Creates root node with no left/right pointers and an empty container.

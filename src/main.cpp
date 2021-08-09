@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
 
 auto book_button_add 	= Button(L"Add New",[&](){
 	if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
-		if (!UI_Helper<Book>::is_valid_int(input_book_available_content))
+		if (!UI_Helper<Book>::is_valid_int(input_book_available_content) || UI_Helper<Book>::validate_isbn(input_book_isbn_content, book_menu_entries))
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 106);
 		else{
 			Book book_line_content(	input_book_isbn_content, input_book_title_content, input_book_author_content, 
@@ -191,9 +191,9 @@ auto book_button_add 	= Button(L"Add New",[&](){
 			if (nullptr != temp_selected_book) {
 				if (!UI_Helper<Book>::is_valid_int(input_book_available_content))
 					UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 106);
-				if (!UI_Helper<Book>::is_total_books_valid(input_book_available_content, temp_selected_book))
-					UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 107);
 				else{
+					if (!UI_Helper<Book>::is_total_books_valid(input_book_available_content, temp_selected_book))
+						UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 107);
 					UI_Helper<Book>::save_book_changes(temp_selected_book, book_editor_input_vector);
 					book_menu_entries[book_editing_index] = UI_Helper<Book>::ui_dto_entry_string(temp_selected_book);
 					UI_Helper<Book>::clear_editor(book_editor_input_vector);

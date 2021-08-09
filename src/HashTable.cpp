@@ -1,11 +1,4 @@
-#include <cstddef>
-#include <cmath>
-#include <string>
-#include <vector>
 #include <HashTable.h>
-#include <Book.h>
-#include <Patron.h>
-#include <Loan.h>
 
 #define HASH_P 14
 

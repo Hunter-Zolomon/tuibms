@@ -1,32 +1,40 @@
-#include <vector>
-#include <map>
-#include <string>
 #include <UI_Helper.h>
-#include <Book.h>
-#include <Patron.h>
-#include <Loan.h>
-#include <DTO.h>
-#include <algorithm>
+
+template<class T>
+std::vector<std::wstring> UI_Helper<T>::split_string_by_delimiter(const std::wstring str, const std::wstring regex_str)
+{
+    std::wregex regexz(regex_str);
+    std::vector<std::wstring> list(std::wsregex_token_iterator(str.begin(), str.end(), regexz, -1), std::wsregex_token_iterator());
+    return list;
+}
+
+template<class T>
+bool UI_Helper<T>::validate_isbn(std::wstring isbn_string, std::vector<std::wstring> display_vector){
+	for (std::wstring entry : display_vector)
+		if (split_string_by_delimiter(entry, L" - ")[1] == isbn_string)
+			return true;
+	return false;
+}
 
 template<class T>
 void UI_Helper<T>::grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector){
     display_vector.clear();
-    for (DTO<T>* instance: dto_vector){
+    for (DTO<T>* instance : dto_vector){
         std::wstring line = ui_dto_entry_string(instance);
         display_vector.push_back(line);
     }
 }
 
-
 template<class T>
 void UI_Helper<T>::search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector){
     std::vector<std::wstring> search_display_vector;
-    for (std::wstring line: display_vector){
-        if (line.find(search_string) != std::wstring::npos){
-            search_display_vector.push_back(line);
-        }       
-    }
-    display_vector = search_display_vector;
+	if (search_string != L""){
+		for (std::wstring line : display_vector){
+			if (rapidfuzz::fuzz::partial_token_ratio(line, search_string) >= 65.0)
+				search_display_vector.push_back(line);
+		}
+		display_vector = search_display_vector;
+	}
 }
 
 template<class T>
@@ -36,7 +44,7 @@ void UI_Helper<T>::search_vector(std::wstring search_string, std::vector<std::ws
         num_borrowing = num_borrowing.substr(3);
     else
         num_borrowing = L"0";
-    for (std::wstring line: display_vector){
+    for (std::wstring line : display_vector){
         if (line.back() == *num_borrowing.c_str()){
             search_display_vector.push_back(line);
         }       
@@ -137,7 +145,7 @@ void UI_Helper<T>::save_loan_changes(DTO<Loan>* dto_loan, std::vector<std::wstri
 
 template<class T>
 bool UI_Helper<T>::is_editor_empty(std::vector<std::wstring*> input_loan_content_vector){
-    for (std::wstring* line: input_loan_content_vector){
+    for (std::wstring* line : input_loan_content_vector){
         if (line->empty())
             return true;
     }
@@ -154,7 +162,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
         {103, L"Failed to save changes. Please try again"},
         {104, L"Failed to locate object(s). Please try again"},
         {105, L"Failed to delete object. Please try again"},
-        {106, L"Failed to create book. Invalid number of books."},
+        {106, L"Failed to create book. Invalid number of books or Existing ISBN"},
         {107, L"Total can't be less than currently loaned books."},
         //Loan related
         {201, L"Can't delete a book with an existing loan"},
@@ -172,7 +180,7 @@ void UI_Helper<T>::display_dialog_message(int* dialog_to_show, std::wstring* mes
 template<class T>
 void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed, std::vector<std::wstring>& display_vector){
     display_vector.clear();
-    for (std::wstring line: last_borrowed){
+    for (std::wstring line : last_borrowed){
         display_vector.push_back(line);
     }
 }
@@ -180,7 +188,7 @@ void UI_Helper<T>::display_last_borrowed(std::vector<std::wstring> last_borrowed
 template<class T>
 void UI_Helper<T>::display_currently_borrowing(std::vector<std::wstring> current_loans, std::vector<std::wstring>& display_vector){
     display_vector.clear();
-    for (std::wstring loan: current_loans){
+    for (std::wstring loan : current_loans){
         display_vector.push_back(loan);
     }
 }
@@ -205,7 +213,7 @@ bool UI_Helper<T>::is_valid_date(std::wstring date){
 template<class T>
 bool UI_Helper<T>::is_valid_int(std::wstring num_wstring){
     if (!num_wstring.empty()){
-        for (char const &i: num_wstring){
+        for (char const &i : num_wstring){
             if (std::isdigit(i)==0)
                 return false;
         } 

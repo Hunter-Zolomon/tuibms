@@ -1,5 +1,9 @@
-#include "AVLNode.h"
+#include <AVLNode.h>
 #include <vector>
+#include <string>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 #ifndef AVLTREE_H_
 #define AVLTREE_H_

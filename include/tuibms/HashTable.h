@@ -1,7 +1,12 @@
-//#include <string>
+#include <DTO.h>
+#include <AVLTree.h>
 #include <vector>
-#include "DTO.h"
-#include "AVLTree.h"
+#include <cstddef>
+#include <cmath>
+#include <string>
+#include <Book.h>
+#include <Patron.h>
+#include <Loan.h>
 
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_

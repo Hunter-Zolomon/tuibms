@@ -7,6 +7,8 @@
 #include <DTO.h>
 #include <algorithm>
 #include <ctime>
+#include <regex>
+#include <rapidfuzz/fuzz.hpp>
 
 #ifndef UI_HELPER_H_
 #define UI_HELPER_H_
@@ -14,7 +16,9 @@
 template<class T>
 class UI_Helper{
     public:
-        static void grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector);
+        static std::vector<std::wstring> split_string_by_delimiter(const std::wstring str, const std::wstring regex_str);
+		static bool validate_isbn(std::wstring isbn_string, std::vector<std::wstring> display_vector);
+		static void grab_all_populate(std::vector<DTO<T>*> dto_vector, std::vector<std::wstring>& display_vector);
         static void search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector);
         static void search_vector(std::wstring search_string, std::vector<std::wstring>& display_vector, std::wstring num_borrowing);
         static void add_to_vector(std::vector<std::wstring>* vec, std::wstring search_string);

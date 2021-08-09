@@ -1,4 +1,3 @@
-#include <string>
 #include <Book.h>
 
 Book::Book(){};

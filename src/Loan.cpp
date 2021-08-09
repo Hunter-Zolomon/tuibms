@@ -1,4 +1,3 @@
-#include <string>
 #include <Loan.h>
 
 Loan::Loan(){}
