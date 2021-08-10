@@ -107,19 +107,13 @@ int main(int argc, char* argv[]) {
 					input_book_year_content,	input_book_category_content, 
 					input_book_genre_content, 	input_book_available_content;
 
-	// Book Editor - InputOptions
-	InputOption 	input_book_isbn_content_option,	
-					input_book_title_content_option, 	input_book_author_content_option,	
-					input_book_year_content_option, 	input_book_category_content_option,
-					input_book_genre_content_option, 	input_book_available_content_option;
-
-	auto input_book_isbn = 		Input(&input_book_isbn_content, 	"", &input_book_isbn_content_option);
-	auto input_book_title = 	Input(&input_book_title_content, 	"", &input_book_title_content_option);
-	auto input_book_author = 	Input(&input_book_author_content, 	"", &input_book_author_content_option);
-	auto input_book_year = 		Input(&input_book_year_content, 	"", &input_book_year_content_option);
-	auto input_book_category = 	Input(&input_book_category_content, "", &input_book_category_content_option);
-	auto input_book_genre = 	Input(&input_book_genre_content, 	"", &input_book_genre_content_option);
-	auto input_book_available = Input(&input_book_available_content,"", &input_book_available_content_option);
+	auto input_book_isbn = 		Input(&input_book_isbn_content, 	"");
+	auto input_book_title = 	Input(&input_book_title_content, 	"");
+	auto input_book_author = 	Input(&input_book_author_content, 	"");
+	auto input_book_year = 		Input(&input_book_year_content, 	"");
+	auto input_book_category = 	Input(&input_book_category_content, "");
+	auto input_book_genre = 	Input(&input_book_genre_content, 	"");
+	auto input_book_available = Input(&input_book_available_content,"");
 
 	// Book Editor - Container
 	auto book_editor_section_input = Container::Vertical({
@@ -151,9 +145,6 @@ int main(int argc, char* argv[]) {
 				});
 	};
 
-	// Book Editor - Buttons
-	ButtonOption book_button_editor_option;
-
 	auto book_button_add 	= Button("Add New",[&](){
 		if (!UI_Helper<Book>::is_editor_empty(book_editor_input_vector)){
 			if (!UI_Helper<Book>::is_valid_int(input_book_available_content) || UI_Helper<Book>::validate_isbn(input_book_isbn_content, book_menu_entries))
@@ -177,7 +168,7 @@ int main(int argc, char* argv[]) {
 		else
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
 
-	}, &book_button_editor_option);
+	});
 
 	auto book_button_save 	= Button("Save Changes",[&](){
 		if (book_editing_id >= 0 && book_editing_index >= 0){
@@ -200,13 +191,13 @@ int main(int argc, char* argv[]) {
 		} 
 		else
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 102);
-	}, &book_button_editor_option);
+	});
 
 	auto book_button_cancel = Button("Cancel", [&](){
 		UI_Helper<Book>::clear_editor(book_editor_input_vector);
 		book_editing_id = -1;
 		book_editing_index = -1;
-	}, &book_button_editor_option);
+	});
 
 	// Book Editor - Button Container
 	auto book_button_container = Container::Horizontal({
@@ -238,13 +229,11 @@ int main(int argc, char* argv[]) {
 		"Loan", "Edit Book", "Delete Book", "Exit",
 	};
 
-	ButtonOption book_dialog_button_option;
-
 	auto book_dialog_button_loan = Button(&book_dialog_entries[0], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_string(book_menu_entries[book_menu_entries_selectedidx]);
 		book_loaning_id = id;
 		dialog_to_show = 0;
-	}, &book_dialog_button_option);
+	});
 
 	auto book_dialog_button_edit = Button(&book_dialog_entries[1], [&] {
 		dialog_to_show = 0;
@@ -256,7 +245,7 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Book>::populate_book_editor(*temp_selected_book, book_editor_input_vector);
 		else
 			UI_Helper<Book>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-	}, &book_dialog_button_option);
+	});
 
 	auto book_dialog_button_delete = Button(&book_dialog_entries[2], [&] {
 		unsigned int id = UI_Helper<Book>::get_id_from_string(book_menu_entries[book_menu_entries_selectedidx]);
@@ -274,9 +263,9 @@ int main(int argc, char* argv[]) {
 		book_editing_id = -1;
 		book_editing_index = -1;
 			
-	}, &book_dialog_button_option);
+	});
 
-	auto book_dialog_button_exit = Button(&book_dialog_entries[3], [&] {dialog_to_show = 0;}, &book_dialog_button_option);
+	auto book_dialog_button_exit = Button(&book_dialog_entries[3], [&] {dialog_to_show = 0;});
 
 	auto book_dialog_container = Container::Horizontal({
 		book_dialog_button_loan,
@@ -318,7 +307,6 @@ int main(int argc, char* argv[]) {
 					})
 				});
 	};
-
 
 	// Book - Main Renderer 
 	auto book_tab_renderer = Renderer(book_tab_container, [&]() { 
@@ -362,19 +350,13 @@ int main(int argc, char* argv[]) {
 					input_patron_name_content, 		input_patron_email_content,
 					input_patron_address_content, 	input_patron_postcode_content, 
 					input_patron_phone_content, 	input_patron_num_borrowed_content;
-					
-	// Patron Editor - InputOptions
-	InputOption	 	input_patron_active_content_option,		
-					input_patron_name_content_option, 		input_patron_email_content_option,
-					input_patron_address_content_option, 	input_patron_postcode_content_option, 
-					input_patron_phone_content_option, 	input_patron_num_borrowed_content_option;
 
-	auto input_patron_active = 		Input(&input_patron_active_content, 		"", &input_patron_active_content_option);
-	auto input_patron_name = 		Input(&input_patron_name_content, 			"", &input_patron_name_content_option);
-	auto input_patron_email = 		Input(&input_patron_email_content, 			"", &input_patron_email_content_option);
-	auto input_patron_address = 	Input(&input_patron_address_content, 		"", &input_patron_address_content_option);
-	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		"", &input_patron_postcode_content_option);
-	auto input_patron_phone 	= 	Input(&input_patron_phone_content, 			"", &input_patron_phone_content_option);
+	auto input_patron_active = 		Input(&input_patron_active_content, 		"");
+	auto input_patron_name = 		Input(&input_patron_name_content, 			"");
+	auto input_patron_email = 		Input(&input_patron_email_content, 			"");
+	auto input_patron_address = 	Input(&input_patron_address_content, 		"");
+	auto input_patron_postcode = 	Input(&input_patron_postcode_content, 		"");
+	auto input_patron_phone 	= 	Input(&input_patron_phone_content, 			"");
 
 	// Patron Editor - Container
 	auto patron_editor_section_input = Container::Vertical({
@@ -405,8 +387,6 @@ int main(int argc, char* argv[]) {
 				});
 	};
 
-	// Patron Editor - Buttons
-	ButtonOption patron_button_editor_option;
 	auto patron_button_add = 	Button("Add New",[&](){
 		if (!UI_Helper<Patron>::is_editor_empty({patron_editor_input_vector.begin(), patron_editor_input_vector.end() - 1})){
 			Patron patron_line_content(UI_Helper<Book>::bool_of_string(input_patron_active_content), input_patron_name_content, input_patron_email_content, input_patron_address_content,input_patron_postcode_content,input_patron_phone_content);
@@ -423,7 +403,7 @@ int main(int argc, char* argv[]) {
 		} 
 		else
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
-	}, &patron_button_editor_option);
+	});
 
 	auto patron_button_save = 	Button("Save Changes", [&](){
 		if (patron_editing_id >=0 && patron_editing_index >=0){
@@ -440,13 +420,13 @@ int main(int argc, char* argv[]) {
 		} 
 		else
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 102);
-	}, &patron_button_editor_option);
+	});
 
 	auto patron_button_cancel = Button("Cancel", 		[&](){
 		UI_Helper<Patron>::clear_editor(patron_editor_input_vector);
 		patron_editing_id = -1;
 		patron_editing_index = -1;
-	}, &patron_button_editor_option);
+	});
 
 	// Patron Editor - Button Container
 	auto patron_button_container = Container::Horizontal({
@@ -476,13 +456,11 @@ int main(int argc, char* argv[]) {
 	// Patron - Dialog Box
 	std::vector<std::string> patron_dialog_entries = { "Loan", "Edit Patron", "Delete Patron", "View Borrows",  "Cancel" };
 
-	ButtonOption patron_dialog_button_option;
-
 	auto patron_dialog_button_loan = 	Button(	&patron_dialog_entries[0], [&]{
 		unsigned int id = UI_Helper<Book>::get_id_from_string(patron_menu_entries[patron_menu_entries_selectedidx]);
 		patron_loaning_id = id;
 		dialog_to_show = 0;
-	}, &patron_dialog_button_option);
+	});
 
 	auto patron_dialog_button_edit = 	Button(	&patron_dialog_entries[1], [&]{
 		dialog_to_show = 0;
@@ -494,7 +472,7 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Book>::populate_patron_editor(*temp_selected_patron, patron_editor_input_vector);
 		else
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
-	}, &patron_dialog_button_option);
+	});
 
 	auto patron_dialog_button_delete = 	Button(	&patron_dialog_entries[2], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_string(patron_menu_entries[patron_menu_entries_selectedidx]);
@@ -511,11 +489,11 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Patron>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 202);
 		patron_editing_id = -1;
 		patron_editing_index = -1;
-	}, &patron_dialog_button_option);
+	});
 
-	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 5; }, &patron_dialog_button_option);
+	auto patron_dialog_button_view = 	Button(	&patron_dialog_entries[3], [&]{ dialog_to_show = 5; });
 
-	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0; }, &patron_dialog_button_option);
+	auto patron_dialog_button_exit = 	Button(	&patron_dialog_entries[4], [&]{ dialog_to_show = 0; });
 
 	auto patron_dialog_container = Container::Horizontal({
 		patron_dialog_button_loan,
@@ -545,24 +523,22 @@ int main(int argc, char* argv[]) {
 
 	auto patron_menu_display_dialog_menu = Menu(&patron_menu_display_dialog_menu_entries, &patron_menu_display_dialog_menu_selectedidx, &patron_menu_display_dialog_menu_option);
 
-	ButtonOption patron_menu_display_dialog_button_lastthree_option, patron_menu_display_dialog_button_lastten_option, patron_menu_display_dialog_button_exit_option;
-
 	auto patron_menu_display_dialog_button_lastthree = Button("Current Borrows", [&] {
 		unsigned int id = UI_Helper<Patron>::get_id_from_string(patron_menu_entries[patron_menu_entries_selectedidx]);
 		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
 		UI_Helper<Patron>::display_currently_borrowing(temp_selected_patron->dataobj.getCurrentBorrows(), patron_menu_display_dialog_menu_entries);
-	}, &patron_menu_display_dialog_button_lastthree_option); 
+	}); 
 
 	auto patron_menu_display_dialog_button_lastten = Button("Last 10 Books Borrowed", [&] {
 		unsigned int id = UI_Helper<Loan>::get_id_from_string(patron_menu_entries[patron_menu_entries_selectedidx]);
 		DTO<Patron>* temp_selected_patron = hash_table_patron[id];
 		UI_Helper<Patron>::display_last_borrowed(temp_selected_patron->dataobj.getLastBorrowed(), patron_menu_display_dialog_menu_entries);
-	}, &patron_menu_display_dialog_button_lastten_option); 
+	}); 
 	
 	auto patron_menu_display_dialog_button_exit = Button("Exit", [&] {
 		patron_menu_display_dialog_menu_entries.clear();
 		dialog_to_show = 0;
-	}, &patron_menu_display_dialog_button_exit_option); 
+	}); 
 
 	auto patron_menu_display_dialog_container = Container::Horizontal({
 		patron_menu_display_dialog_button_lastthree,
@@ -648,10 +624,7 @@ int main(int argc, char* argv[]) {
 					input_loan_patron_id_content, 	input_loan_patron_name_content,
 					input_loan_date_issue_content,  input_loan_date_due_content;
 
-	// Loan Editor - InputOptions
-	InputOption		input_loan_date_issue_option;
-
-	auto input_loan_date_issue  =	Input(&input_loan_date_issue_content, 	"", &input_loan_date_issue_option);
+	auto input_loan_date_issue  =	Input(&input_loan_date_issue_content, 	"");
 
 	// Loan Editor - Container
 	auto loan_editor_section_input = Container::Vertical({
@@ -676,9 +649,6 @@ int main(int argc, char* argv[]) {
 				hbox({ text("DUE DATE    :") 	| bold,	text(input_loan_date_due_content)}),
 				});
 	};
-
-	// Loan Editor - Buttons
-	ButtonOption loan_button_editor_option;
 
 	auto loan_button_add 	= Button("Add New", 		[&](){
 		bool reset_id = false;
@@ -714,7 +684,7 @@ int main(int argc, char* argv[]) {
 		}
 		else
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 100);
-	}, &loan_button_editor_option);
+	});
 
 	auto loan_button_save 	= Button("Save Changes", 	[&](){
 		if (loan_editing_id  >=0 && loan_editing_index >= 0){
@@ -731,14 +701,14 @@ int main(int argc, char* argv[]) {
 		}
 		else
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 102);
-	}, &loan_button_editor_option);
+	});
 
 
 	auto loan_button_cancel = Button("Cancel", 		[&](){
 		UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
 		book_loaning_id = -1;
 		patron_loaning_id = -1;
-	}, &loan_button_editor_option);
+	});
 
 	// Loan Editor - Button Container
 	auto loan_button_container = Container::Horizontal({
@@ -770,15 +740,13 @@ int main(int argc, char* argv[]) {
 		"Extend Loan", "Return Loan", "Cancel",
 	};
 
-	ButtonOption loan_button_dialog_option;
-
 	auto loan_button_dialog_extend = 	Button(&loan_dialog_entries[0], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_string(loan_menu_entries[loan_menu_entries_selectedidx]);
 		DTO<Loan>* temp_selected_loan = hash_table_loan[id];
 		temp_selected_loan->dataobj.extendDateDue();
 		loan_menu_entries[loan_menu_entries_selectedidx] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
 		dialog_to_show = 0;
-	}, &loan_button_dialog_option);
+	});
 
 
 	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[1], [&]{
@@ -798,9 +766,9 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 104);
 		loan_editing_id = -1;
 		loan_editing_index = -1;
-	}, &loan_button_dialog_option);
+	});
 
-	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[2], [&]{ dialog_to_show = 0; }, &loan_button_dialog_option);
+	auto loan_button_dialog_exit = 		Button(&loan_dialog_entries[2], [&]{ dialog_to_show = 0; });
 
 	auto loan_dialog_container = Container::Horizontal({
 		loan_button_dialog_extend,
