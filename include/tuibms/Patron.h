@@ -5,35 +5,37 @@
 #define PATRON_H_
 
 class Patron{
-    unsigned int patron_num_borrowed;
-    std::wstring patron_name, patron_email, patron_address, patron_postcode,patron_phone;
-    bool patron_is_active;
-    std::vector<std::wstring> last_loans, current_loans;
+	private:
+		unsigned int patron_num_borrowed;
+		std::string patron_name, patron_email, patron_address, patron_postcode,patron_phone;
+		bool patron_is_active;
+		std::vector<std::string> last_loans, current_loans;
     public:
         Patron();
-        Patron(bool isActive, std::wstring name, std::wstring email, std::wstring address, std::wstring postcode, std::wstring phone);
+        Patron(bool isActive, std::string name, std::string email, std::string address, std::string postcode, std::string phone);
         bool getIsActive();
-        std::wstring getName();
-        std::wstring getEmail();
-        std::wstring getAddress();
-        std::wstring getPostcode();
-        std::wstring getPhone();
+        std::string getName();
+        std::string getEmail();
+        std::string getAddress();
+        std::string getPostcode();
+        std::string getPhone();
         unsigned int getNumBorrowed();
-        std::wstring getMenuEntry();
-        std::vector<std::wstring> getLastBorrowed();
-        std::vector<std::wstring> getCurrentBorrows();
+        std::string getMenuEntry();
+        std::vector<std::string> getLastBorrowed();
+        std::vector<std::string> getCurrentBorrows();
         void setIsActive(bool is_active);
-        void setName(std::wstring name);
-        void setEmail(std::wstring email);
-        void setAddress(std::wstring address);
-        void setPostcode(std::wstring postcode);
-        void setPhone(std::wstring phone);
+        void setName(std::string name);
+        void setEmail(std::string email);
+        void setAddress(std::string address);
+        void setPostcode(std::string postcode);
+        void setPhone(std::string phone);
         void setNumBorrowed(unsigned int num_borrowed);
         void incrementNumBorrowed();
         void decrementNumBorrowed();
-        void addToLastBorrowed(std::wstring loan_entry);
-        void addToCurrentBorrows(std::wstring loan_entry);
-        void delFromCurrentBorrows(std::wstring loan_entry);
+        void addToLastBorrowed(std::string loan_entry);
+        void addToCurrentBorrows(std::string loan_entry);
+        void delFromCurrentBorrows(std::string loan_entry);
         
 };
+
 #endif

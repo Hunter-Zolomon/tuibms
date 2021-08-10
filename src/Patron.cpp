@@ -2,7 +2,7 @@
 
 Patron::Patron(){}
 
-Patron::Patron(bool isActive, std::wstring name,std::wstring email,std::wstring address,std::wstring postcode,std::wstring phone){  
+Patron::Patron(bool isActive, std::string name,std::string email,std::string address,std::string postcode,std::string phone){  
                     setIsActive(isActive);
                     setName(name);
                     setEmail(email);
@@ -18,23 +18,23 @@ bool Patron::getIsActive(){
     return patron_is_active;
 }
 
-std::wstring Patron::getName(){
+std::string Patron::getName(){
     return patron_name;
 }
 
-std::wstring Patron::getEmail(){
+std::string Patron::getEmail(){
     return patron_email;
 }
 
-std::wstring Patron::getAddress(){
+std::string Patron::getAddress(){
     return patron_address;
 }
 
-std::wstring Patron::getPostcode(){
+std::string Patron::getPostcode(){
     return patron_postcode;
 }
 
-std::wstring Patron::getPhone(){
+std::string Patron::getPhone(){
     return patron_phone;
 }
 
@@ -42,21 +42,21 @@ unsigned int Patron::getNumBorrowed(){
     return patron_num_borrowed;
 }
 
-std::wstring Patron::getMenuEntry(){
-    return  std::to_wstring(patron_is_active) + L" - " + 
-            patron_name     + L" - " + 
-            patron_email    + L" - " + 
-            patron_address  + L" - " + 
-            patron_postcode + L" - " + 
-            patron_phone    + L" - " + 
-            std::to_wstring(patron_num_borrowed);
+std::string Patron::getMenuEntry(){
+    return  std::to_string(patron_is_active) + " - " + 
+            patron_name     + " - " + 
+            patron_email    + " - " + 
+            patron_address  + " - " + 
+            patron_postcode + " - " + 
+            patron_phone    + " - " + 
+            std::to_string(patron_num_borrowed);
 }
 
-std::vector<std::wstring> Patron::getLastBorrowed(){
+std::vector<std::string> Patron::getLastBorrowed(){
     return last_loans;
 }
 
-std::vector<std::wstring> Patron::getCurrentBorrows(){
+std::vector<std::string> Patron::getCurrentBorrows(){
     return current_loans;
 }
 
@@ -66,23 +66,23 @@ void Patron::setIsActive(bool is_active){
     patron_is_active = is_active;
 }
 
-void Patron::setName(std::wstring name){
+void Patron::setName(std::string name){
     patron_name = name;
 }
 
-void Patron::setEmail(std::wstring email){
+void Patron::setEmail(std::string email){
     patron_email = email;
 }
 
-void Patron::setAddress(std::wstring address){
+void Patron::setAddress(std::string address){
     patron_address = address;
 }
 
-void Patron::setPostcode(std::wstring postcode){
+void Patron::setPostcode(std::string postcode){
     patron_postcode = postcode;
 }
 
-void Patron::setPhone(std::wstring phone){
+void Patron::setPhone(std::string phone){
     patron_phone = phone;
 }
 
@@ -98,20 +98,20 @@ void Patron::decrementNumBorrowed(){
     patron_num_borrowed--;
 }
 
-void Patron::addToLastBorrowed(std::wstring loan_entry){
+void Patron::addToLastBorrowed(std::string loan_entry){
     if (10==last_loans.size())
         last_loans.erase(last_loans.begin());
     last_loans.push_back(loan_entry);
     delFromCurrentBorrows(loan_entry);
 }
 
-void Patron::addToCurrentBorrows(std::wstring loan_entry){
+void Patron::addToCurrentBorrows(std::string loan_entry){
     current_loans.push_back(loan_entry);
 }
 
-void Patron::delFromCurrentBorrows(std::wstring loan_entry){
+void Patron::delFromCurrentBorrows(std::string loan_entry){
     int c = 0;
-    for (std::wstring loan: current_loans){
+    for (std::string loan: current_loans){
         c++;
         if (loan==loan_entry){
             current_loans.erase(current_loans.begin(), current_loans.begin()+c);

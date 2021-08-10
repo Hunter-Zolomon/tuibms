@@ -2,9 +2,9 @@
 
 Book::Book(){};
 
-Book::Book( std::wstring isbn, 
-            std::wstring title, std::wstring author, std::wstring year, 
-            std::wstring category, std::wstring genre, int available) {
+Book::Book( std::string isbn, 
+            std::string title, std::string author, std::string year, 
+            std::string category, std::string genre, int available) {
                 setIsbn(isbn);
                 setTitle(title);
                 setAuthor(author);
@@ -17,38 +17,38 @@ Book::Book( std::wstring isbn,
 
 // Book - Getters
 
-std::wstring Book::getIsbn(){
+std::string Book::getIsbn(){
     return book_isbn;
 }
 
-std::wstring Book::getTitle(){
+std::string Book::getTitle(){
     return book_title;
 }
 
-std::wstring Book::getAuthor(){
+std::string Book::getAuthor(){
     return book_author;
 }
 
-std::wstring Book::getYear(){
+std::string Book::getYear(){
     return book_year;
 }
 
-std::wstring Book::getCategory(){
+std::string Book::getCategory(){
     return book_category;
 }
 
-std::wstring Book::getGenre(){
+std::string Book::getGenre(){
     return book_genre;
 }
 
-std::wstring Book::getMenuEntry(){
-    return  book_isbn   + L" - " + 
-            book_title  + L" - " + 
-            book_author + L" - " + 
-            book_year   + L" - " + 
-            book_category+ L" - " + 
-            book_genre  + L" - " + 
-            std::to_wstring(num_available);
+std::string Book::getMenuEntry(){
+    return  book_isbn   + " - " + 
+            book_title  + " - " + 
+            book_author + " - " + 
+            book_year   + " - " + 
+            book_category+ " - " + 
+            book_genre  + " - " + 
+            std::to_string(num_available);
 }
 
 unsigned int Book::getNumAvailable(){
@@ -61,26 +61,26 @@ unsigned int Book::getNumTotal(){
 
 // Book - Setters
 
-void Book::setIsbn(std::wstring isbn){
+void Book::setIsbn(std::string isbn){
     book_isbn = isbn;
 }
-void Book::setTitle(std::wstring title){
+void Book::setTitle(std::string title){
     book_title = title;
 }
 
-void Book::setAuthor(std::wstring author){
+void Book::setAuthor(std::string author){
     book_author = author;
 }
 
-void Book::setYear(std::wstring year){
+void Book::setYear(std::string year){
     book_year = year;
 }
 
-void Book::setCategory(std::wstring category){
+void Book::setCategory(std::string category){
     book_category = category;
 }
 
-void Book::setGenre(std::wstring genre){
+void Book::setGenre(std::string genre){
     book_genre = genre;
 }
 

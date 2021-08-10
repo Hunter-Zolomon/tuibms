@@ -2,7 +2,7 @@
 
 Loan::Loan(){}
 
-Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::wstring user_loan_date_issue, std::wstring user_loan_date_due){
+Loan::Loan(DTO<Book>* book_dto, DTO<Patron>* patron_dto, std::string user_loan_date_issue, std::string user_loan_date_due){
     setBook(book_dto);
     book_dto->dataobj.changeAvailValue(-1);
     setPatron(patron_dto);
@@ -23,49 +23,45 @@ unsigned int Loan::getPatronId(){
     return patron_dto->id;
 }
 
-std::wstring Loan::getBookIsbn(){
+std::string Loan::getBookIsbn(){
     return book_dto->dataobj.getIsbn();
 }
 
-std::wstring Loan::getBookName(){
+std::string Loan::getBookName(){
     return book_dto->dataobj.getTitle();
 }
 
-std::wstring Loan::getBookAuthor(){
+std::string Loan::getBookAuthor(){
     return book_dto->dataobj.getAuthor();
 }
 
-std::wstring Loan::getPatronName(){
+std::string Loan::getPatronName(){
     return patron_dto->dataobj.getName();
 }
 
-std::wstring Loan::getLoanDateIssue(){
-	//std::wstring temp_loan_date_issue = std::to_wstring(this->loan_date_issue->tm_mday) + L"/" + std::to_wstring(this->loan_date_issue->tm_mon + 1) + L"/" + std::to_wstring(this->loan_date_issue->tm_year);
+std::string Loan::getLoanDateIssue(){
 	time_t calculated_time = std::mktime(&this->loan_date_issue);
 	std::tm calculated_tm = *std::localtime(&calculated_time);
-	std::wstringstream wss;
-	wss << std::put_time(&calculated_tm, L"%d-%m-%Y");
-    //return temp_loan_date_issue;
+	std::stringstream wss;
+	wss << std::put_time(&calculated_tm, "%d-%m-%Y");
 	return wss.str();
 }
 
-std::wstring Loan::getLoanDateDue(){
-	//std::wstring temp_loan_date_due = std::to_wstring(this->loan_date_due->tm_mday) + L"/" + std::to_wstring(this->loan_date_due->tm_mon + 1) + L"/" + std::to_wstring(this->loan_date_due->tm_year);
+std::string Loan::getLoanDateDue(){
 	time_t calculated_time = std::mktime(&this->loan_date_due);
 	std::tm calculated_tm = *std::localtime(&calculated_time);
-	std::wstringstream wss;
-	wss << std::put_time(&calculated_tm, L"%d-%m-%Y");
-    //return temp_loan_date_due;
+	std::stringstream wss;
+	wss << std::put_time(&calculated_tm, "%d-%m-%Y");
 	return wss.str();
 }
 
 
-std::wstring Loan::getMenuEntry(){
-    return  std::to_wstring(getBookId())     + L" - " +
-            getBookName()   + L" - " + 
-            getBookAuthor() + L" - " + 
-            getPatronName() + L" - " + 
-            getLoanDateIssue() + L" - " + 
+std::string Loan::getMenuEntry(){
+    return  std::to_string(getBookId())     + " - " +
+            getBookName()   + " - " + 
+            getBookAuthor() + " - " + 
+            getPatronName() + " - " + 
+            getLoanDateIssue() + " - " + 
             getLoanDateDue(); 
 }
 
@@ -78,8 +74,8 @@ void Loan::setPatron(DTO<Patron>* patron){
     patron_dto = patron;
 }
 
-void Loan::setLoanDateIssue(std::wstring date_issue){
-	std::wistringstream ss{ date_issue };
+void Loan::setLoanDateIssue(std::string date_issue){
+	std::istringstream ss{ date_issue };
 	std::tm temporary_tm = {0};
 	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
 	this->loan_date_issue = temporary_tm;
@@ -91,8 +87,8 @@ void Loan::setLoanDateDue(){
 	this->loan_date_due = temp_tm;
 }
 
-void Loan::setLoanDateDue(std::wstring date_due){
-	std::wistringstream ss{ date_due };
+void Loan::setLoanDateDue(std::string date_due){
+	std::istringstream ss{ date_due };
 	std::tm temporary_tm = {0};
 	ss >> std::get_time(&temporary_tm, this->dateFormat.c_str());
 	this->loan_date_due = temporary_tm;
