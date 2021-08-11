@@ -2,7 +2,7 @@
 #include <string>      // for wstring, basic_string, operator+, to_wstring
 #include <thread>      // for sleep_for, thread
 #include <vector>      // for vector
-#include <time.h>
+#include <time.h>      // for time grabbing
 
 #include <ftxui/component/captured_mouse.hpp>  // for ftxui
 #include <ftxui/component/component.hpp>  // for Checkbox, Renderer, Horizontal, Vertical, Input, Menu, Radiobox, Tab, Toggle
@@ -28,9 +28,9 @@ int main(int argc, char* argv[]) {
 
 	srand(time(NULL)); //To further seed rand for DTO id generation
 
-	HashTable<Book> hash_table_book(1000); //For testing
-	HashTable<Patron> hash_table_patron(1000); //For testing
-	HashTable<Loan> hash_table_loan(1000); //For testing
+	HashTable<Book> hash_table_book(20000); //For testing
+	HashTable<Patron> hash_table_patron(20000); //For testing
+	HashTable<Loan> hash_table_loan(20000); //For testing
 
 	// Title
 	const auto title = [&] () {
@@ -58,10 +58,9 @@ int main(int argc, char* argv[]) {
 
 	// ---------------------------------------- Error Dialog ---------------------------------------- 
 	std::string error_dialog_error_string;
-	ButtonOption error_dialog_button_ok_option;
 	auto error_dialog_button_ok = Button("Continue", [&]{ 
 		dialog_to_show = 0; 
-	}, &error_dialog_button_ok_option);
+	});
 
 	auto error_dialog_renderer = Renderer(error_dialog_button_ok, [&]{
 		return vbox({
@@ -299,8 +298,8 @@ int main(int argc, char* argv[]) {
 									book_editor_section()
 								})), 
 							hbox({
-								book_button_add->	Render()| flex,
-								book_button_save->	Render()| flex,
+								book_button_add->Render()| flex,
+								book_button_save->Render()| flex,
 								book_button_cancel->Render()| flex
 								})
 						})
@@ -573,9 +572,9 @@ int main(int argc, char* argv[]) {
 								patron_editor_section()
 							})),
 							hbox({
-								patron_button_add->		Render() | flex,
-								patron_button_save->	Render() | flex,
-								patron_button_cancel->	Render() | flex
+								patron_button_add->Render() | flex,
+								patron_button_save->Render() | flex,
+								patron_button_cancel->Render() | flex
 								}),
 						})
 					})
@@ -703,7 +702,6 @@ int main(int argc, char* argv[]) {
 			UI_Helper<Loan>::display_dialog_message(&dialog_to_show, &error_dialog_error_string, 102);
 	});
 
-
 	auto loan_button_cancel = Button("Cancel", 		[&](){
 		UI_Helper<Loan>::clear_editor(loan_editor_input_vector);
 		book_loaning_id = -1;
@@ -747,7 +745,6 @@ int main(int argc, char* argv[]) {
 		loan_menu_entries[loan_menu_entries_selectedidx] = UI_Helper<Loan>::ui_dto_entry_string(temp_selected_loan);
 		dialog_to_show = 0;
 	});
-
 
 	auto loan_button_dialog_return = 	Button(&loan_dialog_entries[1], [&]{
 		unsigned int id = UI_Helper<Loan>::get_id_from_string(loan_menu_entries[loan_menu_entries_selectedidx]);
@@ -936,11 +933,15 @@ int main(int argc, char* argv[]) {
 		});
 	});
 
+#ifdef __unix__
+	auto screen = ScreenInteractive::Fullscreen();
+#elif defined(_WIN32) || defined(_WIN64) 
 	auto screen = ScreenInteractive::TerminalOutput();
+#endif
 	final_renderer = CatchEvent(final_renderer, [&](Event event) {
 		if (event == Event::Escape) {
 			screen.Clear();
-			screen.ExitLoopClosure();
+			screen.ExitLoopClosure()();
 			return true;
 		}
 		return false;
