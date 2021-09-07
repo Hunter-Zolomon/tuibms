@@ -938,14 +938,6 @@ int main(int argc, char* argv[]) {
 #elif defined(_WIN32) || defined(_WIN64) 
 	auto screen = ScreenInteractive::TerminalOutput();
 #endif
-	final_renderer = CatchEvent(final_renderer, [&](Event event) {
-		if (event == Event::Escape) {
-			screen.Clear();
-			screen.ExitLoopClosure()();
-			return true;
-		}
-		return false;
-	});
 	screen.Loop(final_renderer);
 	#pragma endregion
 

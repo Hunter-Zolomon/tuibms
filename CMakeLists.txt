@@ -26,3 +26,5 @@ add_executable(tuibms src/main.cpp src/AVLTree.cpp src/HashTable.cpp src/Book.cp
 target_include_directories(tuibms PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/tuibms PRIVATE src)
 target_link_libraries(tuibms PRIVATE ftxui::screen PRIVATE ftxui::dom PRIVATE ftxui::component PRIVATE rapidfuzz::rapidfuzz) #PRIVATE Catch2::Catch2)
 set_target_properties(tuibms PROPERTIES CXX_STANDARD 17)
+
+set(CMAKE_CXX_FLAGS "-fpermissive")
