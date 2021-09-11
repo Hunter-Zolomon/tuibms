@@ -4,16 +4,13 @@ include (FetchContent)
 set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
 FetchContent_Declare(
 	ftxui 
-	GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI)
-#FetchContent_Declare(
-#	Catch2
-#	GIT_REPOSITORY https://github.com/catchorg/Catch2.git)
+	GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI
+	GIT_TAG 4d50dadb4167f356583cc2bb7b4257b340ba6275)
 FetchContent_Declare(
 	rapidfuzz
-	GIT_REPOSITORY https://github.com/maxbachmann/rapidfuzz-cpp.git
-	GIT_TAG master)
+	GIT_REPOSITORY https://github.com/maxbachmann/rapidfuzz-cpp
+	GIT_TAG d2c7de7002d7c9c274dc5a0205e393907033aa3f)
 FetchContent_GetProperties(ftxui)
-#FetchContent_MakeAvailable(Catch2)
 FetchContent_MakeAvailable(rapidfuzz)
 
 if(NOT ftxui_POPULATED)
@@ -24,5 +21,5 @@ endif()
 project(tuibms LANGUAGES CXX VERSION 1.0.0)
 add_executable(tuibms src/main.cpp src/AVLTree.cpp src/HashTable.cpp src/Book.cpp src/Loan.cpp src/Patron.cpp src/UI_Helper.cpp)
 target_include_directories(tuibms PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/tuibms PRIVATE src)
-target_link_libraries(tuibms PRIVATE ftxui::screen PRIVATE ftxui::dom PRIVATE ftxui::component PRIVATE rapidfuzz::rapidfuzz) #PRIVATE Catch2::Catch2)
+target_link_libraries(tuibms PRIVATE ftxui::screen PRIVATE ftxui::dom PRIVATE ftxui::component PRIVATE rapidfuzz::rapidfuzz)
 set_target_properties(tuibms PROPERTIES CXX_STANDARD 17)
